@@ -519,7 +519,6 @@
                 submitBtn.disabled = true;
                 
                 setTimeout(() => {
-                    alert('Welcome back! Signing you in...');
                     let email=document.getElementById("loginEmail");
                     let password=document.getElementById("loginPassword");
                     if(email.value.includes("student")){
@@ -530,6 +529,9 @@
                     }
                     else if(email.value.includes("mentor")){
                         window.location.href="/Mentor/mentor.html";
+                    }
+                    else if(email.value.includes("admin")){
+                        window.location.href="/Admin/admin.html";
                     }
                     else{
                         alert("Is Not Make Sure");
