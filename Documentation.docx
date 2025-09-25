@@ -1,0 +1,55 @@
+System Documentation
+1. User Roles and Responsibilities
+1.1 Student
+
+Students will be able to:
+
+Access documents and study materials.
+
+Take online quizzes.
+
+Book study sessions.
+
+Access online resources such as videos, recordings, and group discussions.
+
+Participate in career guidance programs.
+
+Manage and update their profile.
+
+1.2 Teacher
+
+Teachers will be able to:
+
+Create study sessions for their schools.
+
+Upload and share resources with students.
+
+Create quizzes for students.
+
+Add and view student marks.
+
+Approve students to join groups.
+
+Manage resource-level access for students.
+
+1.3 Mentor
+
+Mentors will be able to:
+
+Hold group sessions with students.
+
+Conduct one-to-one mentoring sessions.
+
+Upload resources for student access.
+
+1.4 Admin
+
+Admins will be responsible for:
+
+Managing the overall system.
+
+Overseeing user roles (students, teachers, and mentors).
+
+Approving or removing content.
+
+Monitoring system performance and ensuring smooth operations.
