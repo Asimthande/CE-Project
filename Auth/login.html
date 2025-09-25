@@ -37,6 +37,7 @@
         }
         .floating-label {
             transition: all 0.3s ease;
+            pointer-events: none;
         }
         .floating-label.active {
             transform: translateY(-20px) scale(0.8);
@@ -44,6 +45,9 @@
         }
         .input-field {
             transition: all 0.3s ease;
+            z-index: 1;
+            position: relative;
+            background: transparent;
         }
         .input-field:focus {
             border-color: #3b82f6;
@@ -77,6 +81,21 @@
         }
         .overlay-panel {
             background: linear-gradient(135deg, rgba(30, 58, 138, 0.9) 0%, rgba(59, 130, 246, 0.9) 100%);
+        }
+        .input-container {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        .input-container input {
+            padding-top: 1.5rem;
+            padding-bottom: 0.5rem;
+        }
+        .input-container label {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            transition: all 0.3s ease;
+            z-index: 0;
         }
     </style>
 </head>
@@ -112,46 +131,46 @@
                     <form id="signupFormElement" class="space-y-4">
                         <!-- Name and Surname Row -->
                         <div class="grid grid-cols-2 gap-4">
-                            <div class="relative">
-                                <input type="text" id="firstName" name="firstName" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none peer" placeholder=" " required>
-                                <label for="firstName" class="floating-label absolute left-4 top-3 text-gray-500 pointer-events-none peer-focus:active peer-[:not(:placeholder-shown)]:active">
+                            <div class="input-container">
+                                <input type="text" id="firstName" name="firstName" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none" required>
+                                <label for="firstName" class="floating-label text-gray-500">
                                     <i class="fas fa-user mr-2"></i>First Name
                                 </label>
                             </div>
-                            <div class="relative">
-                                <input type="text" id="lastName" name="lastName" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none peer" placeholder=" " required>
-                                <label for="lastName" class="floating-label absolute left-4 top-3 text-gray-500 pointer-events-none peer-focus:active peer-[:not(:placeholder-shown)]:active">
+                            <div class="input-container">
+                                <input type="text" id="lastName" name="lastName" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none" required>
+                                <label for="lastName" class="floating-label text-gray-500">
                                     <i class="fas fa-user mr-2"></i>Last Name
                                 </label>
                             </div>
                         </div>
 
                         <!-- Email -->
-                        <div class="relative">
-                            <input type="email" id="email" name="email" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none peer" placeholder=" " required>
-                            <label for="email" class="floating-label absolute left-4 top-3 text-gray-500 pointer-events-none peer-focus:active peer-[:not(:placeholder-shown)]:active">
+                        <div class="input-container">
+                            <input type="email" id="email" name="email" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none" required>
+                            <label for="email" class="floating-label text-gray-500">
                                 <i class="fas fa-envelope mr-2"></i>Email Address
                             </label>
                         </div>
 
                         <!-- Phone Number -->
-                        <div class="relative">
-                            <input type="tel" id="phone" name="phone" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none peer" placeholder=" " required>
-                            <label for="phone" class="floating-label absolute left-4 top-3 text-gray-500 pointer-events-none peer-focus:active peer-[:not(:placeholder-shown)]:active">
+                        <div class="input-container">
+                            <input type="tel" id="phone" name="phone" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none" required>
+                            <label for="phone" class="floating-label text-gray-500">
                                 <i class="fas fa-phone mr-2"></i>Phone Number
                             </label>
                         </div>
 
                         <!-- ID Number -->
-                        <div class="relative">
-                            <input type="text" id="idNumber" name="idNumber" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none peer" placeholder=" " maxlength="13" required>
-                            <label for="idNumber" class="floating-label absolute left-4 top-3 text-gray-500 pointer-events-none peer-focus:active peer-[:not(:placeholder-shown)]:active">
+                        <div class="input-container">
+                            <input type="text" id="idNumber" name="idNumber" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none" maxlength="13" required>
+                            <label for="idNumber" class="floating-label text-gray-500">
                                 <i class="fas fa-id-card mr-2"></i>ID Number
                             </label>
                         </div>
 
                         <!-- Province -->
-                        <div class="relative">
+                        <div class="input-container">
                             <select id="province" name="province" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none appearance-none bg-white" required>
                                 <option value="">Select Province</option>
                                 <option value="eastern-cape">Eastern Cape</option>
@@ -169,9 +188,9 @@
                         </div>
 
                         <!-- Password -->
-                        <div class="relative">
-                            <input type="password" id="password" name="password" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none peer pr-12" placeholder=" " required>
-                            <label for="password" class="floating-label absolute left-4 top-3 text-gray-500 pointer-events-none peer-focus:active peer-[:not(:placeholder-shown)]:active">
+                        <div class="input-container">
+                            <input type="password" id="password" name="password" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none pr-12" required>
+                            <label for="password" class="floating-label text-gray-500">
                                 <i class="fas fa-lock mr-2"></i>Password
                             </label>
                             <button type="button" onclick="togglePassword('password')" class="absolute right-4 top-4 text-gray-500 hover:text-gray-700">
@@ -182,9 +201,9 @@
                         </div>
 
                         <!-- Confirm Password -->
-                        <div class="relative">
-                            <input type="password" id="confirmPassword" name="confirmPassword" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none peer pr-12" placeholder=" " required>
-                            <label for="confirmPassword" class="floating-label absolute left-4 top-3 text-gray-500 pointer-events-none peer-focus:active peer-[:not(:placeholder-shown)]:active">
+                        <div class="input-container">
+                            <input type="password" id="confirmPassword" name="confirmPassword" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none pr-12" required>
+                            <label for="confirmPassword" class="floating-label text-gray-500">
                                 <i class="fas fa-lock mr-2"></i>Confirm Password
                             </label>
                             <button type="button" onclick="togglePassword('confirmPassword')" class="absolute right-4 top-4 text-gray-500 hover:text-gray-700">
@@ -227,17 +246,17 @@
 
                     <form id="signinFormElement" class="space-y-6">
                         <!-- Email/Phone -->
-                        <div class="relative">
-                            <input type="text" id="loginEmail" name="loginEmail" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none peer" placeholder=" " required>
-                            <label for="loginEmail" class="floating-label absolute left-4 top-3 text-gray-500 pointer-events-none peer-focus:active peer-[:not(:placeholder-shown)]:active">
+                        <div class="input-container">
+                            <input type="text" id="loginEmail" name="loginEmail" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none" required>
+                            <label for="loginEmail" class="floating-label text-gray-500">
                                 <i class="fas fa-envelope mr-2"></i>Email or Phone
                             </label>
                         </div>
 
                         <!-- Password -->
-                        <div class="relative">
-                            <input type="password" id="loginPassword" name="loginPassword" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none peer pr-12" placeholder=" " required>
-                            <label for="loginPassword" class="floating-label absolute left-4 top-3 text-gray-500 pointer-events-none peer-focus:active peer-[:not(:placeholder-shown)]:active">
+                        <div class="input-container">
+                            <input type="password" id="loginPassword" name="loginPassword" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none pr-12" required>
+                            <label for="loginPassword" class="floating-label text-gray-500">
                                 <i class="fas fa-lock mr-2"></i>Password
                             </label>
                             <button type="button" onclick="togglePassword('loginPassword')" class="absolute right-4 top-4 text-gray-500 hover:text-gray-700">
@@ -430,13 +449,26 @@
 
             // Floating labels
             document.querySelectorAll('.input-field').forEach(input => {
+                // Check if input already has value on page load
+                if (input.value !== '') {
+                    input.parentElement.querySelector('label').classList.add('active');
+                }
+                
                 input.addEventListener('focus', function() {
-                    this.previousElementSibling.classList.add('active');
+                    this.parentElement.querySelector('label').classList.add('active');
                 });
                 
                 input.addEventListener('blur', function() {
                     if (this.value === '') {
-                        this.previousElementSibling.classList.remove('active');
+                        this.parentElement.querySelector('label').classList.remove('active');
+                    }
+                });
+                
+                input.addEventListener('input', function() {
+                    if (this.value !== '') {
+                        this.parentElement.querySelector('label').classList.add('active');
+                    } else {
+                        this.parentElement.querySelector('label').classList.remove('active');
                     }
                 });
             });
@@ -486,5 +518,5 @@
             });
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'984ae3a564e373c0',t:'MTc1ODgwNzE2NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
