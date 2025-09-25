@@ -1,7 +1,7 @@
 git add .
 
+git pull
+
 git commit -am "Message"
 
 git push
-
-Martin
