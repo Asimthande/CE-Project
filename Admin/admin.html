@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - UJ Community Engagement</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 107, 53, 0.15);
+        }
+        .orange-glow {
+            box-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
+        }
+        .terminal {
+            background: #1a1a1a;
+            font-family: 'Courier New', monospace;
+            color: #00ff00;
+        }
+        .terminal-input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            width: 100%;
+        }
+        .terminal-line {
+            margin-bottom: 4px;
+        }
+        .terminal-prompt {
+            color: #ff6b35;
+        }
+        .terminal-command {
+            color: #00ff00;
+        }
+        .terminal-output {
+            color: #ffffff;
+        }
+        .terminal-error {
+            color: #ff4444;
+        }
+        .progress-bar {
+            transition: width 0.5s ease;
+        }
+        .blink {
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .status-online { background-color: #22c55e; }
+        .status-warning { background-color: #f59e0b; }
+        .status-offline { background-color: #ef4444; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                        <span class="text-orange-500 font-bold text-lg">UJ</span>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold">System Administrator</h1>
+                        <p class="text-orange-100 text-sm">UJ Community Engagement - Admin Panel</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-right">
+                        <p class="font-semibold">Admin Root</p>
+                        <p class="text-orange-100 text-sm">System Administrator</p>
+                    </div>
+                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                        <i class="fas fa-user-shield text-orange-500"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- System Status Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg p-6 shadow-md card-hover">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-server text-green-600 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-gray-600 text-sm">System Status</p>
+                        <p class="text-lg font-bold text-green-600">
+                            <span class="status-indicator status-online"></span>Online
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg p-6 shadow-md card-hover">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-users text-orange-600 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-gray-600 text-sm">Total Users</p>
+                        <p class="text-2xl font-bold text-gray-900">1,247</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg p-6 shadow-md card-hover">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-exclamation-triangle text-blue-600 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-gray-600 text-sm">Pending Actions</p>
+                        <p class="text-2xl font-bold text-gray-900">23</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg p-6 shadow-md card-hover">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-chart-line text-purple-600 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-gray-600 text-sm">System Load</p>
+                        <p class="text-2xl font-bold text-gray-900">67%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column - System Management -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- CLI Terminal -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="bg-gray-800 px-4 py-2 flex items-center space-x-2">
+                        <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                        <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                        <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                        <span class="text-gray-300 text-sm ml-4">UJ Admin Terminal</span>
+                    </div>
+                    <div class="terminal p-4 h-80 overflow-y-auto" id="terminal">
+                        <div class="terminal-line">
+                            <span class="terminal-prompt">admin@uj-system:~$</span> <span class="terminal-command">system status</span>
+                        </div>
+                        <div class="terminal-line terminal-output">System Status: ONLINE</div>
+                        <div class="terminal-line terminal-output">CPU Usage: 67% | Memory: 4.2GB/8GB | Disk: 234GB/500GB</div>
+                        <div class="terminal-line terminal-output">Active Sessions: 156 | Database: Connected</div>
+                        <div class="terminal-line">
+                            <span class="terminal-prompt">admin@uj-system:~$</span> <span class="terminal-command">user count</span>
+                        </div>
+                        <div class="terminal-line terminal-output">Students: 1,089 | Teachers: 124 | Mentors: 34 | Total: 1,247</div>
+                        <div class="terminal-line">
+                            <span class="terminal-prompt">admin@uj-system:~$</span> <span class="terminal-command">pending alerts</span>
+                        </div>
+                        <div class="terminal-line terminal-output">Content Review Queue: 15 items</div>
+                        <div class="terminal-line terminal-output">User Role Changes: 8 pending</div>
+                        <div class="terminal-line">
+                            <span class="terminal-prompt">admin@uj-system:~$</span> 
+                            <input type="text" class="terminal-input" id="terminalInput" placeholder="Type command..." autocomplete="off">
+                            <span class="blink">_</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Management -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold text-gray-900">User Role Management</h2>
+                        <div class="flex space-x-2">
+                            <select class="border border-gray-300 rounded px-3 py-1 text-sm">
+                                <option>All Roles</option>
+                                <option>Students</option>
+                                <option>Teachers</option>
+                                <option>Mentors</option>
+                            </select>
+                            <button class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm">
+                                <i class="fas fa-plus mr-2"></i>Add User
+                            </button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-2 text-left">User</th>
+                                    <th class="px-4 py-2 text-left">Role</th>
+                                    <th class="px-4 py-2 text-left">Status</th>
+                                    <th class="px-4 py-2 text-left">Last Active</th>
+                                    <th class="px-4 py-2 text-left">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-2">
+                                        <div class="flex items-center space-x-2">
+                                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                                <span class="text-blue-600 text-xs font-bold">SJ</span>
+                                            </div>
+                                            <div>
+                                                <p class="font-medium">Sarah Johnson</p>
+                                                <p class="text-gray-500 text-xs">sarah.j@uj.ac.za</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Teacher</span>
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        <span class="status-indicator status-online"></span>Online
+                                    </td>
+                                    <td class="px-4 py-2 text-gray-600">2 min ago</td>
+                                    <td class="px-4 py-2">
+                                        <button class="text-orange-600 hover:text-orange-700 mr-2">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="text-red-600 hover:text-red-700">
+                                            <i class="fas fa-ban"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-2">
+                                        <div class="flex items-center space-x-2">
+                                            <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                                                <span class="text-purple-600 text-xs font-bold">MT</span>
+                                            </div>
+                                            <div>
+                                                <p class="font-medium">Michael Thompson</p>
+                                                <p class="text-gray-500 text-xs">m.thompson@uj.ac.za</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs">Mentor</span>
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        <span class="status-indicator status-online"></span>Online
+                                    </td>
+                                    <td class="px-4 py-2 text-gray-600">5 min ago</td>
+                                    <td class="px-4 py-2">
+                                        <button class="text-orange-600 hover:text-orange-700 mr-2">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="text-red-600 hover:text-red-700">
+                                            <i class="fas fa-ban"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-2">
+                                        <div class="flex items-center space-x-2">
+                                            <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                                                <span class="text-gray-600 text-xs font-bold">JS</span>
+                                            </div>
+                                            <div>
+                                                <p class="font-medium">John Smith</p>
+                                                <p class="text-gray-500 text-xs">john.smith@student.uj.ac.za</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">Student</span>
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        <span class="status-indicator status-warning"></span>Away
+                                    </td>
+                                    <td class="px-4 py-2 text-gray-600">1 hour ago</td>
+                                    <td class="px-4 py-2">
+                                        <button class="text-orange-600 hover:text-orange-700 mr-2">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="text-red-600 hover:text-red-700">
+                                            <i class="fas fa-ban"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Content Moderation -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold text-gray-900">Content Approval Queue</h2>
+                        <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium">15 Pending</span>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-900">Advanced Calculus Notes - Chapter 7</h4>
+                                    <p class="text-gray-600 text-sm">Uploaded by: Prof. Sarah Johnson</p>
+                                    <p class="text-gray-500 text-xs">PDF • 2.4 MB • Submitted 2 hours ago</p>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors">
+                                        <i class="fas fa-check mr-1"></i>Approve
+                                    </button>
+                                    <button class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors">
+                                        <i class="fas fa-times mr-1"></i>Reject
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-900">Study Group Discussion Forum Post</h4>
+                                    <p class="text-gray-600 text-sm">Posted by: John Smith (Student)</p>
+                                    <p class="text-gray-500 text-xs">Text Post • Flagged for review • 4 hours ago</p>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors">
+                                        <i class="fas fa-check mr-1"></i>Approve
+                                    </button>
+                                    <button class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors">
+                                        <i class="fas fa-times mr-1"></i>Reject
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-900">Career Guidance Presentation</h4>
+                                    <p class="text-gray-600 text-sm">Uploaded by: Dr. Michael Thompson</p>
+                                    <p class="text-gray-500 text-xs">PowerPoint • 15.2 MB • Submitted 6 hours ago</p>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors">
+                                        <i class="fas fa-check mr-1"></i>Approve
+                                    </button>
+                                    <button class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors">
+                                        <i class="fas fa-times mr-1"></i>Reject
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - System Monitoring -->
+            <div class="space-y-6">
+                <!-- System Performance -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">System Performance</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>CPU Usage</span>
+                                <span>67%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-orange-500 h-2 rounded-full progress-bar" style="width: 67%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Memory</span>
+                                <span>52%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-500 h-2 rounded-full progress-bar" style="width: 52%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Disk Space</span>
+                                <span>47%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-green-500 h-2 rounded-full progress-bar" style="width: 47%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Network</span>
+                                <span>23%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-purple-500 h-2 rounded-full progress-bar" style="width: 23%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent System Alerts -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">System Alerts</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-start space-x-3 p-3 bg-yellow-50 rounded-lg border-l-4 border-yellow-500">
+                            <i class="fas fa-exclamation-triangle text-yellow-600 mt-1"></i>
+                            <div class="flex-1">
+                                <p class="text-gray-900 text-sm font-medium">High CPU Usage Detected</p>
+                                <p class="text-gray-600 text-xs">System load above 65% for 10 minutes</p>
+                                <p class="text-gray-500 text-xs">5 minutes ago</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                            <i class="fas fa-info-circle text-blue-600 mt-1"></i>
+                            <div class="flex-1">
+                                <p class="text-gray-900 text-sm font-medium">Database Backup Completed</p>
+                                <p class="text-gray-600 text-xs">Scheduled backup finished successfully</p>
+                                <p class="text-gray-500 text-xs">1 hour ago</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3 p-3 bg-green-50 rounded-lg border-l-4 border-green-500">
+                            <i class="fas fa-check-circle text-green-600 mt-1"></i>
+                            <div class="flex-1">
+                                <p class="text-gray-900 text-sm font-medium">Security Update Applied</p>
+                                <p class="text-gray-600 text-xs">System security patches installed</p>
+                                <p class="text-gray-500 text-xs">3 hours ago</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick System Actions -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Quick Actions</h3>
+                    <div class="space-y-3">
+                        <button class="w-full text-left p-3 rounded-lg border border-gray-200 hover:border-orange-300 hover:bg-orange-50 transition-colors">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-database text-orange-600"></i>
+                                <span class="text-gray-900">Backup Database</span>
+                            </div>
+                        </button>
+                        <button class="w-full text-left p-3 rounded-lg border border-gray-200 hover:border-orange-300 hover:bg-orange-50 transition-colors">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-sync text-orange-600"></i>
+                                <span class="text-gray-900">Restart Services</span>
+                            </div>
+                        </button>
+                        <button class="w-full text-left p-3 rounded-lg border border-gray-200 hover:border-orange-300 hover:bg-orange-50 transition-colors">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-shield-alt text-orange-600"></i>
+                                <span class="text-gray-900">Security Scan</span>
+                            </div>
+                        </button>
+                        <button class="w-full text-left p-3 rounded-lg border border-gray-200 hover:border-orange-300 hover:bg-orange-50 transition-colors">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-chart-bar text-orange-600"></i>
+                                <span class="text-gray-900">Generate Reports</span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const terminal = document.getElementById('terminal');
+            const terminalInput = document.getElementById('terminalInput');
+            let commandHistory = [];
+            let historyIndex = -1;
+
+            // CLI Commands
+            const commands = {
+                'help': () => {
+                    return [
+                        'Available commands:',
+                        '  system status    - Show system status',
+                        '  user list        - List all users',
+                        '  user count       - Show user statistics',
+                        '  pending alerts   - Show pending alerts',
+                        '  backup start     - Start database backup',
+                        '  logs show        - Show recent logs',
+                        '  clear           - Clear terminal',
+                        '  help            - Show this help'
+                    ];
+                },
+                'system status': () => {
+                    return [
+                        'System Status: ONLINE',
+                        'Uptime: 15 days, 7 hours, 23 minutes',
+                        'CPU: 67% | Memory: 4.2GB/8GB | Disk: 234GB/500GB',
+                        'Active Sessions: 156 | Database: Connected',
+                        'Last Backup: 2024-03-15 02:00:00'
+                    ];
+                },
+                'user list': () => {
+                    return [
+                        'Recent Active Users:',
+                        '  sarah.j@uj.ac.za        [Teacher]   Online',
+                        '  m.thompson@uj.ac.za     [Mentor]    Online',
+                        '  john.smith@student.uj   [Student]   Away',
+                        '  emma.davis@student.uj   [Student]   Online',
+                        '  alex.chen@student.uj    [Student]   Offline'
+                    ];
+                },
+                'user count': () => {
+                    return [
+                        'User Statistics:',
+                        '  Students: 1,089 (87.3%)',
+                        '  Teachers: 124 (9.9%)',
+                        '  Mentors: 34 (2.7%)',
+                        '  Total: 1,247 users',
+                        '  Active (last 24h): 892 users'
+                    ];
+                },
+                'pending alerts': () => {
+                    return [
+                        'Pending System Alerts:',
+                        '  Content Review Queue: 15 items',
+                        '  User Role Changes: 8 pending',
+                        '  System Updates: 3 available',
+                        '  Security Notifications: 2 unread'
+                    ];
+                },
+                'backup start': () => {
+                    return [
+                        'Starting database backup...',
+                        'Backup initiated at ' + new Date().toLocaleTimeString(),
+                        'Estimated completion: 15 minutes',
+                        'Status: IN PROGRESS'
+                    ];
+                },
+                'logs show': () => {
+                    return [
+                        'Recent System Logs:',
+                        '[INFO] User login: sarah.j@uj.ac.za',
+                        '[WARN] High CPU usage detected: 67%',
+                        '[INFO] Content approved: calculus_notes.pdf',
+                        '[INFO] Database backup completed',
+                        '[ERROR] Failed login attempt from 192.168.1.100'
+                    ];
+                },
+                'clear': () => {
+                    terminal.innerHTML = '';
+                    addTerminalLine('admin@uj-system:~$', '', 'input');
+                    return [];
+                }
+            };
+
+            function addTerminalLine(prompt, command, type = 'output') {
+                const line = document.createElement('div');
+                line.className = 'terminal-line';
+                
+                if (type === 'input') {
+                    line.innerHTML = `<span class="terminal-prompt">${prompt}</span> <input type="text" class="terminal-input" placeholder="Type command..." autocomplete="off"><span class="blink">_</span>`;
+                    const input = line.querySelector('.terminal-input');
+                    input.addEventListener('keydown', handleCommand);
+                    terminal.appendChild(line);
+                    input.focus();
+                } else if (type === 'command') {
+                    line.innerHTML = `<span class="terminal-prompt">${prompt}</span> <span class="terminal-command">${command}</span>`;
+                    terminal.appendChild(line);
+                } else {
+                    line.innerHTML = `<span class="terminal-output">${command}</span>`;
+                    terminal.appendChild(line);
+                }
+                
+                terminal.scrollTop = terminal.scrollHeight;
+            }
+
+            function handleCommand(e) {
+                if (e.key === 'Enter') {
+                    const command = e.target.value.trim().toLowerCase();
+                    
+                    // Remove current input line
+                    e.target.parentElement.remove();
+                    
+                    // Add command to history
+                    if (command) {
+                        commandHistory.push(command);
+                        historyIndex = commandHistory.length;
+                        
+                        // Show command
+                        addTerminalLine('admin@uj-system:~$', command, 'command');
+                        
+                        // Execute command
+                        if (commands[command]) {
+                            const output = commands[command]();
+                            output.forEach(line => {
+                                addTerminalLine('', line);
+                            });
+                        } else if (command) {
+                            addTerminalLine('', `Command not found: ${command}. Type 'help' for available commands.`, 'error');
+                        }
+                    }
+                    
+                    // Add new input line
+                    addTerminalLine('admin@uj-system:~$', '', 'input');
+                }
+                
+                if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    if (historyIndex > 0) {
+                        historyIndex--;
+                        e.target.value = commandHistory[historyIndex];
+                    }
+                }
+                
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    if (historyIndex < commandHistory.length - 1) {
+                        historyIndex++;
+                        e.target.value = commandHistory[historyIndex];
+                    } else {
+                        historyIndex = commandHistory.length;
+                        e.target.value = '';
+                    }
+                }
+            }
+
+            // Initialize terminal input
+            terminalInput.addEventListener('keydown', handleCommand);
+
+            // Add hover effects to cards
+            document.querySelectorAll('.card-hover').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.classList.add('orange-glow');
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.classList.remove('orange-glow');
+                });
+            });
+
+            // Handle content approval buttons
+            document.querySelectorAll('button').forEach(button => {
+                if (button.textContent.includes('Approve')) {
+                    button.addEventListener('click', function() {
+                        const card = this.closest('.border');
+                        card.style.backgroundColor = '#f0fdf4';
+                        card.style.borderColor = '#22c55e';
+                        this.textContent = 'Approved';
+                        this.disabled = true;
+                        this.classList.remove('bg-green-500', 'hover:bg-green-600');
+                        this.classList.add('bg-gray-400');
+                        
+                        // Hide reject button
+                        const rejectBtn = card.querySelector('button:last-child');
+                        if (rejectBtn) rejectBtn.style.display = 'none';
+                    });
+                }
+                
+                if (button.textContent.includes('Reject')) {
+                    button.addEventListener('click', function() {
+                        const card = this.closest('.border');
+                        card.style.backgroundColor = '#fef2f2';
+                        card.style.borderColor = '#ef4444';
+                        this.textContent = 'Rejected';
+                        this.disabled = true;
+                        this.classList.remove('bg-red-500', 'hover:bg-red-600');
+                        this.classList.add('bg-gray-400');
+                        
+                        // Hide approve button
+                        const approveBtn = card.querySelector('button:first-child');
+                        if (approveBtn) approveBtn.style.display = 'none';
+                    });
+                }
+            });
+
+            // Simulate real-time system updates
+            setInterval(() => {
+                const cpuBar = document.querySelector('.progress-bar');
+                if (cpuBar) {
+                    const newValue = Math.floor(Math.random() * 30) + 50; // 50-80%
+                    cpuBar.style.width = newValue + '%';
+                    cpuBar.parentElement.previousElementSibling.querySelector('span:last-child').textContent = newValue + '%';
+                }
+            }, 5000);
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'984df7c7a38f60b5',t:'MTc1ODgzOTQ0NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

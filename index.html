@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to UJ Community Engagement</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        
+        .rainbow-bg {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff9ff3, #54a0ff);
+            background-size: 400% 400%;
+            animation: rainbowShift 8s ease-in-out infinite;
+        }
+        
+        @keyframes rainbowShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .floating-shape {
+            position: absolute;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .floating-shape:nth-child(1) { animation-delay: 0s; }
+        .floating-shape:nth-child(2) { animation-delay: -2s; }
+        .floating-shape:nth-child(3) { animation-delay: -4s; }
+        .floating-shape:nth-child(4) { animation-delay: -1s; }
+        .floating-shape:nth-child(5) { animation-delay: -3s; }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+        }
+        
+        .typewriter {
+            overflow: hidden;
+            border-right: 3px solid white;
+            white-space: nowrap;
+            animation: typing 4s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+        
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: white; }
+        }
+        
+        .role-card {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(0) scale(1);
+        }
+        
+        .role-card:hover {
+            transform: translateY(-15px) scale(1.05) rotateY(5deg);
+        }
+        
+        .role-card-student:hover {
+            box-shadow: 0 25px 50px rgba(59, 130, 246, 0.4);
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+        }
+        
+        .role-card-teacher:hover {
+            box-shadow: 0 25px 50px rgba(16, 185, 129, 0.4);
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+        }
+        
+        .role-card-mentor:hover {
+            box-shadow: 0 25px 50px rgba(139, 92, 246, 0.4);
+            background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+        }
+        
+        .pulse-button {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .bounce-in {
+            animation: bounceIn 1s ease-out;
+        }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .slide-in-left {
+            animation: slideInLeft 1s ease-out;
+        }
+        
+        @keyframes slideInLeft {
+            0% { transform: translateX(-100%); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+        
+        .slide-in-right {
+            animation: slideInRight 1s ease-out;
+        }
+        
+        @keyframes slideInRight {
+            0% { transform: translateX(100%); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+        
+        .static-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        .static-icon:hover {
+            transform: scale(1.1);
+        }
+        
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 50%;
+            background: white;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+            left: 0;
+        }
+        
+        .section-fade-in {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
+        }
+        
+        .section-fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientText 3s ease-in-out infinite;
+        }
+        
+        @keyframes gradientText {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .card-3d {
+            perspective: 1000px;
+        }
+        
+        .card-inner {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        
+        .card-3d:hover .card-inner {
+            transform: rotateY(10deg) rotateX(5deg);
+        }
+    </style>
+</head>
+<body class="min-h-screen overflow-x-hidden">
+    <!-- Animated Background -->
+    <div class="fixed inset-0 rainbow-bg"></div>
+    
+    <!-- Floating Shapes -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden">
+        <div class="floating-shape top-20 left-10 w-20 h-20 bg-white bg-opacity-10 rounded-full"></div>
+        <div class="floating-shape top-40 right-20 w-16 h-16 bg-white bg-opacity-15 transform rotate-45" style="clip-path: polygon(50% 0%, 0% 100%, 100% 100%);"></div>
+        <div class="floating-shape bottom-32 left-1/4 w-24 h-24 bg-white bg-opacity-5 rounded-lg transform rotate-12"></div>
+        <div class="floating-shape bottom-20 right-10 w-18 h-18 bg-white bg-opacity-10" style="clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);"></div>
+        <div class="floating-shape top-1/2 left-1/2 w-14 h-14 bg-white bg-opacity-8 rounded-full"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="relative z-20 py-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3 bounce-in">
+                    <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center pulse-button">
+                        <span class="text-blue-600 font-bold text-xl">UJ</span>
+                    </div>
+                    <span class="text-white font-bold text-xl">University of Johannesburg</span>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#home" class="nav-link text-white hover:text-blue-200">Home</a>
+                    <a href="#about" class="nav-link text-white hover:text-blue-200">About Us</a>
+                    <a href="#mission" class="nav-link text-white hover:text-blue-200">Mission</a>
+                    <a href="#values" class="nav-link text-white hover:text-blue-200">Values</a>
+                    <a href="#contact" class="nav-link text-white hover:text-blue-200">Contact</a>
+                    <a href="#privacy" class="nav-link text-white hover:text-blue-200">Privacy</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="relative z-10">
+        <!-- Hero Section -->
+        <section id="home" class="min-h-screen flex items-center justify-center py-20">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <div class="mb-12">
+                    <h1 class="text-6xl md:text-7xl font-bold text-white mb-6 typewriter">
+                        Welcome to Your Future
+                    </h1>
+                    <p class="text-2xl text-white mb-8 max-w-4xl mx-auto slide-in-left">
+                        Join our vibrant community of learners, educators, and mentors in an innovative platform designed to transform education and empower minds.
+                    </p>
+                </div>
+
+                <!-- Role Selection Cards -->
+                <div class="grid md:grid-cols-3 gap-8 mb-12">
+                    <div class="role-card role-card-student card-3d bg-white rounded-3xl p-8 shadow-2xl">
+                        <div class="card-inner">
+                            <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6 static-icon">
+                                <i class="fas fa-graduation-cap text-blue-600 text-4xl"></i>
+                            </div>
+                            <h3 class="text-3xl font-bold text-gray-900 mb-4">Student Portal</h3>
+                            <p class="text-gray-600 mb-6 leading-relaxed">
+                                Discover personalized learning paths, connect with study groups, and access world-class resources tailored to your academic journey.
+                            </p>
+                            <button class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-6 rounded-xl pulse-button">
+                                Begin Learning Adventure
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="role-card role-card-teacher card-3d bg-white rounded-3xl p-8 shadow-2xl">
+                        <div class="card-inner">
+                            <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 static-icon">
+                                <i class="fas fa-chalkboard-teacher text-green-600 text-4xl"></i>
+                            </div>
+                            <h3 class="text-3xl font-bold text-gray-900 mb-4">Educator Hub</h3>
+                            <p class="text-gray-600 mb-6 leading-relaxed">
+                                Create inspiring content, manage dynamic classrooms, and foster meaningful connections with students in our collaborative ecosystem.
+                            </p>
+                            <button class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-xl pulse-button">
+                                Start Teaching Excellence
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="role-card role-card-mentor card-3d bg-white rounded-3xl p-8 shadow-2xl">
+                        <div class="card-inner">
+                            <div class="w-24 h-24 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6 static-icon">
+                                <i class="fas fa-hands-helping text-purple-600 text-4xl"></i>
+                            </div>
+                            <h3 class="text-3xl font-bold text-gray-900 mb-4">Mentor Network</h3>
+                            <p class="text-gray-600 mb-6 leading-relaxed">
+                                Share your expertise, guide emerging talents, and create lasting impact through personalized mentoring and career development.
+                            </p>
+                            <button class="w-full bg-purple-500 hover:bg-purple-600 text-white font-bold py-4 px-6 rounded-xl pulse-button">
+                                Inspire Future Leaders
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-6 px-12 rounded-2xl text-xl pulse-button shadow-2xl">
+                    <i class="fas fa-rocket mr-3"></i>
+                    Launch Your Journey Today
+                </button>
+            </div>
+        </section>
+
+        <!-- About Us Section -->
+        <section id="about" class="py-20 bg-white bg-opacity-95">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="section-fade-in text-center mb-16">
+                    <h2 class="text-5xl font-bold gradient-text mb-8">About University of Johannesburg</h2>
+                    <p class="text-xl text-gray-700 max-w-4xl mx-auto leading-relaxed">
+                        Founded on the principles of excellence, innovation, and inclusivity, the University of Johannesburg stands as a beacon of higher education in Africa. Our community engagement platform represents our commitment to bridging the gap between academic excellence and real-world impact.
+                    </p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="slide-in-left">
+                        <h3 class="text-3xl font-bold text-gray-900 mb-6">Our Story</h3>
+                        <p class="text-gray-700 mb-6 leading-relaxed">
+                            Since our establishment, we have been at the forefront of educational innovation, consistently ranking among the top universities globally. Our community engagement platform is the latest evolution in our mission to democratize quality education and create meaningful connections between learners and educators.
+                        </p>
+                        <p class="text-gray-700 leading-relaxed">
+                            With over 50,000 students and world-renowned faculty, we continue to push boundaries and redefine what it means to be a modern, connected university in the digital age.
+                        </p>
+                    </div>
+                    <div class="slide-in-right">
+                        <div class="bg-gradient-to-br from-blue-400 to-purple-600 rounded-3xl p-8 text-white">
+                            <div class="grid grid-cols-2 gap-6">
+                                <div class="text-center">
+                                    <div class="text-4xl font-bold mb-2">50K+</div>
+                                    <div class="text-blue-100">Active Students</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-4xl font-bold mb-2">2K+</div>
+                                    <div class="text-blue-100">Expert Faculty</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-4xl font-bold mb-2">100+</div>
+                                    <div class="text-blue-100">Programs</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-4xl font-bold mb-2">25+</div>
+                                    <div class="text-blue-100">Years Excellence</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mission & Vision Section -->
+        <section id="mission" class="py-20 bg-gradient-to-br from-blue-500 to-purple-600">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h2 class="text-5xl font-bold text-white mb-8">Mission & Vision</h2>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-12">
+                    <div class="section-fade-in bg-white bg-opacity-10 rounded-3xl p-8 backdrop-blur-sm">
+                        <div class="text-center mb-6">
+                            <i class="fas fa-bullseye text-6xl text-white mb-4"></i>
+                            <h3 class="text-3xl font-bold text-white">Our Mission</h3>
+                        </div>
+                        <p class="text-white text-lg leading-relaxed">
+                            To provide world-class education that empowers individuals to become innovative leaders, critical thinkers, and responsible global citizens. We strive to create an inclusive learning environment that fosters creativity, collaboration, and lifelong learning through cutting-edge technology and personalized educational experiences.
+                        </p>
+                    </div>
+                    
+                    <div class="section-fade-in bg-white bg-opacity-10 rounded-3xl p-8 backdrop-blur-sm">
+                        <div class="text-center mb-6">
+                            <i class="fas fa-eye text-6xl text-white mb-4"></i>
+                            <h3 class="text-3xl font-bold text-white">Our Vision</h3>
+                        </div>
+                        <p class="text-white text-lg leading-relaxed">
+                            To be the leading university in Africa and a globally recognized institution that transforms lives through innovative education, groundbreaking research, and meaningful community engagement. We envision a future where education knows no boundaries and every learner has access to opportunities that unlock their full potential.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Values Section -->
+        <section id="values" class="py-20 bg-white">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h2 class="text-5xl font-bold gradient-text mb-8">Our Core Values</h2>
+                    <p class="text-xl text-gray-700 max-w-3xl mx-auto">
+                        These fundamental principles guide everything we do and shape the character of our institution.
+                    </p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="section-fade-in text-center p-6 rounded-3xl bg-gradient-to-br from-red-100 to-red-200 hover:shadow-xl transition-all duration-300">
+                        <div class="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-6 static-icon">
+                            <i class="fas fa-lightbulb text-white text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Innovation</h3>
+                        <p class="text-gray-700">
+                            Embracing creativity and pioneering new approaches to education and research that push boundaries and create positive change.
+                        </p>
+                    </div>
+                    
+                    <div class="section-fade-in text-center p-6 rounded-3xl bg-gradient-to-br from-blue-100 to-blue-200 hover:shadow-xl transition-all duration-300">
+                        <div class="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-6 static-icon">
+                            <i class="fas fa-star text-white text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Excellence</h3>
+                        <p class="text-gray-700">
+                            Striving for the highest standards in all our endeavors, from teaching and research to student support and community service.
+                        </p>
+                    </div>
+                    
+                    <div class="section-fade-in text-center p-6 rounded-3xl bg-gradient-to-br from-green-100 to-green-200 hover:shadow-xl transition-all duration-300">
+                        <div class="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 static-icon">
+                            <i class="fas fa-handshake text-white text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Integrity</h3>
+                        <p class="text-gray-700">
+                            Maintaining the highest ethical standards, transparency, and honesty in all our interactions and decision-making processes.
+                        </p>
+                    </div>
+                    
+                    <div class="section-fade-in text-center p-6 rounded-3xl bg-gradient-to-br from-purple-100 to-purple-200 hover:shadow-xl transition-all duration-300">
+                        <div class="w-20 h-20 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-6 static-icon">
+                            <i class="fas fa-users text-white text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Community</h3>
+                        <p class="text-gray-700">
+                            Building inclusive, supportive environments where diverse perspectives are valued and everyone can thrive and contribute.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-20 bg-gradient-to-br from-green-500 to-blue-600">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h2 class="text-5xl font-bold text-white mb-8">Get In Touch</h2>
+                    <p class="text-xl text-white max-w-3xl mx-auto">
+                        Ready to join our community? We're here to help you every step of the way.
+                    </p>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="section-fade-in bg-white bg-opacity-10 rounded-3xl p-8 backdrop-blur-sm text-center">
+                        <i class="fas fa-map-marker-alt text-5xl text-white mb-6"></i>
+                        <h3 class="text-2xl font-bold text-white mb-4">Visit Us</h3>
+                        <p class="text-white">
+                            University of Johannesburg<br>
+                            Cnr Kingsway & University Road<br>
+                            Auckland Park, 2006<br>
+                            Johannesburg, South Africa
+                        </p>
+                    </div>
+                    
+                    <div class="section-fade-in bg-white bg-opacity-10 rounded-3xl p-8 backdrop-blur-sm text-center">
+                        <i class="fas fa-phone text-5xl text-white mb-6"></i>
+                        <h3 class="text-2xl font-bold text-white mb-4">Call Us</h3>
+                        <p class="text-white">
+                            Main: +27 11 559 4555<br>
+                            Student Support: +27 11 559 2000<br>
+                            International: +27 11 559 3000<br>
+                            Emergency: +27 11 559 1111
+                        </p>
+                    </div>
+                    
+                    <div class="section-fade-in bg-white bg-opacity-10 rounded-3xl p-8 backdrop-blur-sm text-center">
+                        <i class="fas fa-envelope text-5xl text-white mb-6"></i>
+                        <h3 class="text-2xl font-bold text-white mb-4">Email Us</h3>
+                        <p class="text-white">
+                            General: info@uj.ac.za<br>
+                            Admissions: admissions@uj.ac.za<br>
+                            Support: support@uj.ac.za<br>
+                            International: international@uj.ac.za
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-12">
+                    <div class="flex justify-center space-x-6">
+                        <a href="#" class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-300">
+                            <i class="fab fa-facebook text-white text-2xl"></i>
+                        </a>
+                        <a href="#" class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-300">
+                            <i class="fab fa-twitter text-white text-2xl"></i>
+                        </a>
+                        <a href="#" class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-300">
+                            <i class="fab fa-linkedin text-white text-2xl"></i>
+                        </a>
+                        <a href="#" class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-300">
+                            <i class="fab fa-instagram text-white text-2xl"></i>
+                        </a>
+                        <a href="#" class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-300">
+                            <i class="fab fa-youtube text-white text-2xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Privacy Policy Section -->
+        <section id="privacy" class="py-20 bg-white">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h2 class="text-5xl font-bold gradient-text mb-8">Privacy Policy</h2>
+                    <p class="text-xl text-gray-700 max-w-3xl mx-auto">
+                        Your privacy and data security are our top priorities. Here's how we protect and handle your information.
+                    </p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-12">
+                    <div class="section-fade-in">
+                        <h3 class="text-3xl font-bold text-gray-900 mb-6">Data Collection & Use</h3>
+                        <div class="space-y-4 text-gray-700">
+                            <p><strong>Personal Information:</strong> We collect only necessary information to provide our services, including name, email, academic details, and learning preferences.</p>
+                            <p><strong>Usage Data:</strong> We track platform usage to improve user experience and provide personalized learning recommendations.</p>
+                            <p><strong>Communication:</strong> We use your contact information to send important updates, educational content, and support messages.</p>
+                            <p><strong>Analytics:</strong> Anonymous usage statistics help us enhance platform functionality and user experience.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="section-fade-in">
+                        <h3 class="text-3xl font-bold text-gray-900 mb-6">Data Protection</h3>
+                        <div class="space-y-4 text-gray-700">
+                            <p><strong>Encryption:</strong> All data is encrypted in transit and at rest using industry-standard protocols.</p>
+                            <p><strong>Access Control:</strong> Strict access controls ensure only authorized personnel can access your information.</p>
+                            <p><strong>Regular Audits:</strong> We conduct regular security audits and vulnerability assessments.</p>
+                            <p><strong>Compliance:</strong> We comply with POPIA, GDPR, and other applicable data protection regulations.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section-fade-in mt-12 bg-gray-50 rounded-3xl p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Your Rights</h3>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="text-center">
+                            <i class="fas fa-eye text-4xl text-blue-500 mb-4"></i>
+                            <h4 class="font-bold text-gray-900 mb-2">Access</h4>
+                            <p class="text-gray-700 text-sm">View and download your personal data at any time</p>
+                        </div>
+                        <div class="text-center">
+                            <i class="fas fa-edit text-4xl text-green-500 mb-4"></i>
+                            <h4 class="font-bold text-gray-900 mb-2">Correction</h4>
+                            <p class="text-gray-700 text-sm">Update or correct your information when needed</p>
+                        </div>
+                        <div class="text-center">
+                            <i class="fas fa-trash text-4xl text-red-500 mb-4"></i>
+                            <h4 class="font-bold text-gray-900 mb-2">Deletion</h4>
+                            <p class="text-gray-700 text-sm">Request deletion of your account and data</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="flex items-center justify-center space-x-3 mb-6">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                        <span class="text-white font-bold text-xl">UJ</span>
+                    </div>
+                    <span class="text-2xl font-bold">University of Johannesburg</span>
+                </div>
+                <p class="text-gray-400 mb-6">Empowering minds, building futures, transforming communities.</p>
+                <p class="text-gray-500 text-sm">© 2024 University of Johannesburg. All rights reserved. | Designed with passion for education.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Intersection Observer for fade-in animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.section-fade-in').forEach(el => {
+                observer.observe(el);
+            });
+
+            // Role card interactions
+            document.querySelectorAll('.role-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const button = this.querySelector('button');
+                    const originalText = button.textContent;
+                    
+                    // Animation effect
+                    this.style.transform = 'scale(0.95)';
+                    button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Loading...';
+                    
+                    setTimeout(() => {
+                        this.style.transform = 'translateY(-15px) scale(1.05)';
+                        button.textContent = originalText;
+                        
+                        // Simulate navigation
+                        const role = originalText.includes('Learning') ? 'Student' : 
+                                   originalText.includes('Teaching') ? 'Teacher' : 'Mentor';
+                        alert(`Welcome to the ${role} Portal! Redirecting to your dashboard...`);
+                    }, 2000);
+                });
+            });
+
+            // Main CTA button interaction
+            document.querySelector('.bg-red-500').addEventListener('click', function() {
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin mr-3"></i>Launching...';
+                this.disabled = true;
+                
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.disabled = false;
+                    alert('Welcome to UJ Community Engagement! Please select your role to continue your journey.');
+                }, 3000);
+            });
+
+            // Add parallax effect to floating shapes
+            window.addEventListener('mousemove', function(e) {
+                const shapes = document.querySelectorAll('.floating-shape');
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+                
+                shapes.forEach((shape, index) => {
+                    const speed = (index + 1) * 0.3;
+                    const xPos = (x - 0.5) * speed * 30;
+                    const yPos = (y - 0.5) * speed * 30;
+                    
+                    shape.style.transform += ` translate(${xPos}px, ${yPos}px)`;
+                });
+            });
+
+            // Add staggered animation to cards
+            const cards = document.querySelectorAll('.role-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.2}s`;
+                card.classList.add('bounce-in');
+            });
+
+            // Dynamic background color change on scroll
+            let lastScrollTop = 0;
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const sections = document.querySelectorAll('section');
+                
+                sections.forEach((section, index) => {
+                    const rect = section.getBoundingClientRect();
+                    if (rect.top <= 100 && rect.bottom >= 100) {
+                        document.body.style.setProperty('--scroll-index', index);
+                    }
+                });
+                
+                lastScrollTop = scrollTop;
+            });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'984e0a49a5dabc8b',t:'MTc1ODg0MDIwMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
