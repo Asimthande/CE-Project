@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentor Dashboard - UJ Community Engagement</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 107, 53, 0.15);
+        }
+        .orange-glow {
+            box-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
+        }
+        .pulse-orange {
+            animation: pulse-orange 2s infinite;
+        }
+        @keyframes pulse-orange {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 107, 53, 0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                        <span class="text-orange-500 font-bold text-lg">UJ</span>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold">Mentor Dashboard</h1>
+                        <p class="text-orange-100 text-sm">UJ Community Engagement</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-right">
+                        <p class="font-semibold">Dr. Michael Thompson</p>
+                        <p class="text-orange-100 text-sm">Senior Academic Mentor</p>
+                    </div>
+                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                        <span class="text-orange-500 font-bold">MT</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg p-6 shadow-md card-hover">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-users text-orange-600 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-gray-600 text-sm">Active Mentees</p>
+                        <p class="text-2xl font-bold text-gray-900">34</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg p-6 shadow-md card-hover">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-user-friends text-orange-600 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-gray-600 text-sm">Group Sessions</p>
+                        <p class="text-2xl font-bold text-gray-900">8</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg p-6 shadow-md card-hover">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-handshake text-orange-600 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-gray-600 text-sm">1-on-1 Sessions</p>
+                        <p class="text-2xl font-bold text-gray-900">15</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg p-6 shadow-md card-hover">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-folder-open text-orange-600 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-gray-600 text-sm">Resources Shared</p>
+                        <p class="text-2xl font-bold text-gray-900">42</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column - Main Actions -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Group Sessions -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold text-gray-900">Group Sessions</h2>
+                        <button class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                            <i class="fas fa-plus mr-2"></i>Schedule Group Session
+                        </button>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-900">Study Skills Workshop</h3>
+                                    <p class="text-gray-600 text-sm">12 participants • Room 204, Main Building</p>
+                                    <p class="text-orange-600 text-sm font-medium">
+                                        <i class="fas fa-calendar mr-1"></i>Today, 3:00 PM - 5:00 PM
+                                    </p>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium pulse-orange">Live</span>
+                                    <button class="text-orange-600 hover:text-orange-700">
+                                        <i class="fas fa-video"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-900">Career Guidance Session</h3>
+                                    <p class="text-gray-600 text-sm">8 participants • Virtual Meeting</p>
+                                    <p class="text-orange-600 text-sm font-medium">
+                                        <i class="fas fa-calendar mr-1"></i>Tomorrow, 2:00 PM - 3:30 PM
+                                    </p>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">Scheduled</span>
+                                    <button class="text-orange-600 hover:text-orange-700">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-900">Exam Preparation Group</h3>
+                                    <p class="text-gray-600 text-sm">15 participants • Library Conference Room</p>
+                                    <p class="text-orange-600 text-sm font-medium">
+                                        <i class="fas fa-calendar mr-1"></i>Friday, 10:00 AM - 12:00 PM
+                                    </p>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs font-medium">Upcoming</span>
+                                    <button class="text-orange-600 hover:text-orange-700">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- One-on-One Sessions -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold text-gray-900">One-on-One Sessions</h2>
+                        <button class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                            <i class="fas fa-plus mr-2"></i>Schedule 1-on-1
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
+                            <div class="flex items-center space-x-3 mb-3">
+                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <span class="text-blue-600 font-semibold text-sm">JS</span>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-900">Jessica Smith</h4>
+                                    <p class="text-gray-600 text-sm">Computer Science, 2nd Year</p>
+                                </div>
+                            </div>
+                            <div class="text-sm text-gray-600 mb-2">
+                                <i class="fas fa-clock mr-1 text-orange-500"></i>
+                                Today, 1:00 PM - 2:00 PM
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">In Progress</span>
+                                <button class="text-orange-600 hover:text-orange-700 text-sm">
+                                    <i class="fas fa-video mr-1"></i>Join
+                                </button>
+                            </div>
+                        </div>
+                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
+                            <div class="flex items-center space-x-3 mb-3">
+                                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                    <span class="text-green-600 font-semibold text-sm">MJ</span>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-900">Mark Johnson</h4>
+                                    <p class="text-gray-600 text-sm">Business Studies, 3rd Year</p>
+                                </div>
+                            </div>
+                            <div class="text-sm text-gray-600 mb-2">
+                                <i class="fas fa-clock mr-1 text-orange-500"></i>
+                                Tomorrow, 11:00 AM - 12:00 PM
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">Scheduled</span>
+                                <button class="text-orange-600 hover:text-orange-700 text-sm">
+                                    <i class="fas fa-edit mr-1"></i>Edit
+                                </button>
+                            </div>
+                        </div>
+                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
+                            <div class="flex items-center space-x-3 mb-3">
+                                <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                                    <span class="text-purple-600 font-semibold text-sm">AL</span>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-900">Anna Lee</h4>
+                                    <p class="text-gray-600 text-sm">Psychology, 1st Year</p>
+                                </div>
+                            </div>
+                            <div class="text-sm text-gray-600 mb-2">
+                                <i class="fas fa-clock mr-1 text-orange-500"></i>
+                                Friday, 3:00 PM - 4:00 PM
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs font-medium">Upcoming</span>
+                                <button class="text-orange-600 hover:text-orange-700 text-sm">
+                                    <i class="fas fa-edit mr-1"></i>Edit
+                                </button>
+                            </div>
+                        </div>
+                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
+                            <div class="flex items-center space-x-3 mb-3">
+                                <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                                    <span class="text-red-600 font-semibold text-sm">DW</span>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-900">David Wilson</h4>
+                                    <p class="text-gray-600 text-sm">Engineering, 4th Year</p>
+                                </div>
+                            </div>
+                            <div class="text-sm text-gray-600 mb-2">
+                                <i class="fas fa-clock mr-1 text-orange-500"></i>
+                                Next Monday, 9:00 AM - 10:00 AM
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-xs font-medium">Confirmed</span>
+                                <button class="text-orange-600 hover:text-orange-700 text-sm">
+                                    <i class="fas fa-edit mr-1"></i>Edit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resources Management -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold text-gray-900">Mentoring Resources</h2>
+                        <button class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                            <i class="fas fa-upload mr-2"></i>Upload Resource
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-file-pdf text-red-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-900">Study Techniques Guide</h4>
+                                    <p class="text-gray-600 text-sm">Downloaded 156 times</p>
+                                    <p class="text-orange-600 text-xs">Shared with all mentees</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-file-word text-blue-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-900">Career Planning Template</h4>
+                                    <p class="text-gray-600 text-sm">Downloaded 89 times</p>
+                                    <p class="text-orange-600 text-xs">Shared with 3rd & 4th years</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-file-excel text-green-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-900">Goal Setting Worksheet</h4>
+                                    <p class="text-gray-600 text-sm">Downloaded 203 times</p>
+                                    <p class="text-orange-600 text-xs">Shared with all mentees</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-file-powerpoint text-purple-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-900">Time Management Slides</h4>
+                                    <p class="text-gray-600 text-sm">Downloaded 134 times</p>
+                                    <p class="text-orange-600 text-xs">Shared with 1st & 2nd years</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Sidebar -->
+            <div class="space-y-6">
+                <!-- Today's Schedule -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Today's Schedule</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-3 p-3 bg-orange-50 rounded-lg border-l-4 border-orange-500">
+                            <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
+                            <div class="flex-1">
+                                <p class="font-medium text-gray-900">Jessica Smith</p>
+                                <p class="text-gray-600 text-sm">1:00 PM - 2:00 PM</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 p-3 bg-green-50 rounded-lg border-l-4 border-green-500">
+                            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <div class="flex-1">
+                                <p class="font-medium text-gray-900">Study Skills Workshop</p>
+                                <p class="text-gray-600 text-sm">3:00 PM - 5:00 PM</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Recent Activity</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-download text-blue-600 text-xs"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-gray-900 text-sm">Mark Johnson downloaded "Career Planning Template"</p>
+                                <p class="text-gray-500 text-xs">2 hours ago</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-check text-green-600 text-xs"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-gray-900 text-sm">Completed session with Anna Lee</p>
+                                <p class="text-gray-500 text-xs">Yesterday, 3:00 PM</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-upload text-purple-600 text-xs"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-gray-900 text-sm">Uploaded "Time Management Slides"</p>
+                                <p class="text-gray-500 text-xs">2 days ago</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Quick Actions</h3>
+                    <div class="space-y-3">
+                        <button class="w-full text-left p-3 rounded-lg border border-gray-200 hover:border-orange-300 hover:bg-orange-50 transition-colors">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-calendar-plus text-orange-600"></i>
+                                <span class="text-gray-900">Schedule Emergency Session</span>
+                            </div>
+                        </button>
+                        <button class="w-full text-left p-3 rounded-lg border border-gray-200 hover:border-orange-300 hover:bg-orange-50 transition-colors">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-envelope text-orange-600"></i>
+                                <span class="text-gray-900">Send Group Message</span>
+                            </div>
+                        </button>
+                        <button class="w-full text-left p-3 rounded-lg border border-gray-200 hover:border-orange-300 hover:bg-orange-50 transition-colors">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-chart-line text-orange-600"></i>
+                                <span class="text-gray-900">View Progress Reports</span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effects to cards
+            document.querySelectorAll('.card-hover').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.classList.add('orange-glow');
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.classList.remove('orange-glow');
+                });
+            });
+
+            // Handle session status updates
+            document.querySelectorAll('button').forEach(button => {
+                if (button.textContent.includes('Join')) {
+                    button.addEventListener('click', function() {
+                        const statusSpan = this.closest('.border').querySelector('.bg-yellow-100');
+                        if (statusSpan) {
+                            statusSpan.textContent = 'Active';
+                            statusSpan.className = 'bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium pulse-orange';
+                            this.innerHTML = '<i class="fas fa-video mr-1"></i>Active';
+                            this.classList.add('bg-green-100', 'text-green-800');
+                            this.classList.remove('text-orange-600', 'hover:text-orange-700');
+                        }
+                    });
+                }
+            });
+
+            // Handle quick action buttons
+            document.querySelectorAll('.space-y-3 button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const originalBg = this.style.backgroundColor;
+                    this.style.backgroundColor = '#fed7aa';
+                    this.style.borderColor = '#f97316';
+                    
+                    setTimeout(() => {
+                        this.style.backgroundColor = originalBg;
+                        this.style.borderColor = '';
+                    }, 1000);
+                });
+            });
+
+            // Simulate real-time updates
+            setInterval(() => {
+                const liveElements = document.querySelectorAll('.pulse-orange');
+                liveElements.forEach(element => {
+                    element.style.animation = 'none';
+                    setTimeout(() => {
+                        element.style.animation = 'pulse-orange 2s infinite';
+                    }, 10);
+                });
+            }, 5000);
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'984de6104557ae03',t:'MTc1ODgzODcyMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
