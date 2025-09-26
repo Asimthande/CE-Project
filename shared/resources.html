@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        .file-preview {
+            transition: all 0.3s ease;
+        }
+        .file-preview:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .upload-zone {
+            border: 2px dashed #cbd5e1;
+            transition: all 0.3s ease;
+        }
+        .upload-zone.dragover {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2"><i class="fas fa-folder-open text-blue-600 mr-3"></i>File Manager</h1>
+            <p class="text-gray-600">Upload files, add links, and manage your resources</p>
+        </div>
+
+        <!-- Upload Section -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4"><i class="fas fa-cloud-upload-alt text-green-600 mr-2"></i>Upload Resources</h2>
+            
+            <div class="mb-6">
+                <div class="flex gap-2 mb-4">
+                    <button onclick="switchUploadMode('file')" id="fileModeBtn" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg font-medium transition-colors">
+                        <i class="fas fa-file mr-2"></i>Upload Files
+                    </button>
+                    <button onclick="switchUploadMode('link')" id="linkModeBtn" class="flex-1 bg-gray-200 text-gray-700 py-2 px-4 rounded-lg font-medium transition-colors hover:bg-gray-300">
+                        <i class="fas fa-link mr-2"></i>Add Links
+                    </button>
+                </div>
+
+                <!-- File Upload Mode -->
+                <div id="fileUploadMode">
+                    <div class="bg-gray-50 rounded-lg p-6 mb-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Teacher Name *</label>
+                                <input type="text" id="fileTeacherName" required placeholder="e.g., Dr. Sarah Johnson" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Subject *</label>
+                                <select id="fileSubject" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">Select subject...</option>
+                                    <option value="mathematics">Mathematics</option>
+                                    <option value="physics">Physics</option>
+                                    <option value="chemistry">Chemistry</option>
+                                    <option value="biology">Biology</option>
+                                    <option value="computer-science">Computer Science</option>
+                                    <option value="english">English Language & Literature</option>
+                                    <option value="history">History</option>
+                                    <option value="geography">Geography</option>
+                                    <option value="economics">Economics</option>
+                                    <option value="psychology">Psychology</option>
+                                    <option value="philosophy">Philosophy</option>
+                                    <option value="art">Art & Design</option>
+                                    <option value="music">Music</option>
+                                    <option value="languages">Foreign Languages</option>
+                                    <option value="business">Business Studies</option>
+                                    <option value="engineering">Engineering</option>
+                                    <option value="medicine">Medicine & Health Sciences</option>
+                                    <option value="law">Law</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Description *</label>
+                            <textarea id="fileDescription" required rows="3" placeholder="Describe what these files contain, learning objectives, and any prerequisites..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div id="uploadZone" class="upload-zone rounded-lg p-8 text-center mb-4">
+                        <div class="mb-4">
+                            <i class="fas fa-cloud-upload-alt text-6xl text-gray-400"></i>
+                        </div>
+                        <p class="text-lg text-gray-600 mb-2">Drag and drop files here, or</p>
+                        <input type="file" id="fileInput" multiple class="hidden">
+                        <button onclick="selectFiles()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+                            Choose Files
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Link Upload Mode -->
+                <div id="linkUploadMode" class="hidden">
+                    <div class="bg-gray-50 rounded-lg p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Teacher Name *</label>
+                                <input type="text" id="linkTeacherName" required placeholder="e.g., Dr. Sarah Johnson" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Subject *</label>
+                                <select id="linkSubject" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">Select subject...</option>
+                                    <option value="mathematics">Mathematics</option>
+                                    <option value="physics">Physics</option>
+                                    <option value="chemistry">Chemistry</option>
+                                    <option value="biology">Biology</option>
+                                    <option value="computer-science">Computer Science</option>
+                                    <option value="english">English Language & Literature</option>
+                                    <option value="history">History</option>
+                                    <option value="geography">Geography</option>
+                                    <option value="economics">Economics</option>
+                                    <option value="psychology">Psychology</option>
+                                    <option value="philosophy">Philosophy</option>
+                                    <option value="art">Art & Design</option>
+                                    <option value="music">Music</option>
+                                    <option value="languages">Foreign Languages</option>
+                                    <option value="business">Business Studies</option>
+                                    <option value="engineering">Engineering</option>
+                                    <option value="medicine">Medicine & Health Sciences</option>
+                                    <option value="law">Law</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Resource Name *</label>
+                            <input type="text" id="resourceTitle" required placeholder="e.g., Advanced Calculus Tutorial - Derivatives" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Resource URL *</label>
+                            <input type="url" id="resourceUrl" required placeholder="https://youtube.com/watch?v=... or any other link" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Description *</label>
+                            <textarea id="resourceDescription" required rows="3" placeholder="Describe what this resource covers, learning objectives, and any prerequisites..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+                        </div>
+                        <button onclick="addLinkResource()" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg font-medium transition-colors">
+                            <i class="fas fa-plus mr-2"></i>Add Resource
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="uploadProgress" class="hidden mb-4">
+                <div class="bg-gray-200 rounded-full h-2">
+                    <div id="progressBar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+                <p id="progressText" class="text-sm text-gray-600 mt-1">Uploading...</p>
+            </div>
+        </div>
+
+        <!-- File Preview Section -->
+        <div id="previewSection" class="bg-white rounded-xl shadow-lg p-6 mb-8 hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-semibold text-gray-800"><i class="fas fa-eye text-blue-600 mr-2"></i>Resource Preview</h2>
+                <button onclick="closePreview()" class="text-gray-500 hover:text-gray-700 text-xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div id="previewContent" class="border border-gray-200 rounded-lg p-4 min-h-[400px] bg-gray-50">
+                <!-- Preview content will be displayed here -->
+            </div>
+            
+            <div id="previewInfo" class="mt-4 p-3 bg-blue-50 rounded-lg">
+                <!-- Resource info will be displayed here -->
+            </div>
+        </div>
+
+        <!-- File List Section -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-semibold text-gray-800"><i class="fas fa-file-alt text-purple-600 mr-2"></i>Your Resources</h2>
+                <div class="flex gap-2">
+                    <button onclick="toggleView('grid')" id="gridBtn" class="p-2 rounded-lg bg-blue-100 text-blue-600">
+                        <i class="fas fa-th"></i>
+                    </button>
+                    <button onclick="toggleView('list')" id="listBtn" class="p-2 rounded-lg text-gray-400 hover:bg-gray-100">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="fileList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Resources will be displayed here -->
+            </div>
+
+            <div id="emptyState" class="text-center py-12">
+                <i class="fas fa-folder-open text-6xl text-gray-300 mb-4"></i>
+                <p class="text-gray-500 text-lg">No resources added yet</p>
+                <p class="text-gray-400">Upload files or add links to get started</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4">
+            <h3 class="text-xl font-semibold mb-4"><i class="fas fa-edit text-yellow-600 mr-2"></i>Edit Resource</h3>
+            <input type="text" id="editResourceName" class="w-full p-3 border border-gray-300 rounded-lg mb-4" placeholder="Resource name">
+            <textarea id="editResourceDescription" class="w-full p-3 border border-gray-300 rounded-lg mb-4" rows="3" placeholder="Description (optional)"></textarea>
+            <div class="flex gap-3">
+                <button onclick="saveEdit()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-colors">
+                    Save Changes
+                </button>
+                <button onclick="closeEditModal()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded-lg font-medium transition-colors">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let resources = [];
+        let currentView = 'grid';
+        let editingResourceId = null;
+        let currentUploadMode = 'file';
+
+        // File input handling
+        document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+        
+        // Drag and drop handling
+        const uploadZone = document.getElementById('uploadZone');
+        uploadZone.addEventListener('dragover', handleDragOver);
+        uploadZone.addEventListener('dragleave', handleDragLeave);
+        uploadZone.addEventListener('drop', handleDrop);
+
+        function switchUploadMode(mode) {
+            currentUploadMode = mode;
+            const fileModeBtn = document.getElementById('fileModeBtn');
+            const linkModeBtn = document.getElementById('linkModeBtn');
+            const fileUploadMode = document.getElementById('fileUploadMode');
+            const linkUploadMode = document.getElementById('linkUploadMode');
+
+            if (mode === 'file') {
+                fileModeBtn.className = 'flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg font-medium transition-colors';
+                linkModeBtn.className = 'flex-1 bg-gray-200 text-gray-700 py-2 px-4 rounded-lg font-medium transition-colors hover:bg-gray-300';
+                fileUploadMode.classList.remove('hidden');
+                linkUploadMode.classList.add('hidden');
+            } else {
+                fileModeBtn.className = 'flex-1 bg-gray-200 text-gray-700 py-2 px-4 rounded-lg font-medium transition-colors hover:bg-gray-300';
+                linkModeBtn.className = 'flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg font-medium transition-colors';
+                fileUploadMode.classList.add('hidden');
+                linkUploadMode.classList.remove('hidden');
+            }
+        }
+
+        function addLinkResource() {
+            const teacherName = document.getElementById('linkTeacherName').value.trim();
+            const subject = document.getElementById('linkSubject').value;
+            const title = document.getElementById('resourceTitle').value.trim();
+            const url = document.getElementById('resourceUrl').value.trim();
+            const description = document.getElementById('resourceDescription').value.trim();
+
+            if (!teacherName) {
+                alert('Please enter the teacher name');
+                return;
+            }
+
+            if (!subject) {
+                alert('Please select a subject');
+                return;
+            }
+
+            if (!title) {
+                alert('Please enter a resource name');
+                return;
+            }
+
+            if (!url) {
+                alert('Please enter a valid URL');
+                return;
+            }
+
+            if (!description) {
+                alert('Please enter a description');
+                return;
+            }
+
+            // Validate URL
+            try {
+                new URL(url);
+            } catch (e) {
+                alert('Please enter a valid URL');
+                return;
+            }
+
+            const resourceObj = {
+                id: Date.now(),
+                name: title,
+                url: url,
+                description: description,
+                teacherName: teacherName,
+                subject: subject,
+                subjectDisplay: getSubjectDisplayName(subject),
+                type: 'link',
+                linkType: getLinkType(url),
+                uploadDate: new Date().toLocaleDateString(),
+                isLink: true
+            };
+
+            resources.push(resourceObj);
+            
+            // Clear form
+            document.getElementById('linkTeacherName').value = '';
+            document.getElementById('linkSubject').value = '';
+            document.getElementById('resourceUrl').value = '';
+            document.getElementById('resourceTitle').value = '';
+            document.getElementById('resourceDescription').value = '';
+
+            renderResources();
+            alert('Link resource added successfully!');
+        }
+
+        function getSubjectDisplayName(value) {
+            const subjects = {
+                'mathematics': 'Mathematics',
+                'physics': 'Physics',
+                'chemistry': 'Chemistry',
+                'biology': 'Biology',
+                'computer-science': 'Computer Science',
+                'english': 'English',
+                'history': 'History',
+                'geography': 'Geography',
+                'economics': 'Economics',
+                'psychology': 'Psychology',
+                'philosophy': 'Philosophy',
+                'art': 'Art & Design',
+                'music': 'Music',
+                'languages': 'Languages',
+                'business': 'Business',
+                'engineering': 'Engineering',
+                'medicine': 'Medicine',
+                'law': 'Law',
+                'other': 'Other'
+            };
+            return subjects[value] || value;
+        }
+
+        function extractTitleFromUrl(url) {
+            try {
+                const urlObj = new URL(url);
+                if (urlObj.hostname.includes('youtube.com') || urlObj.hostname.includes('youtu.be')) {
+                    return 'YouTube Video';
+                } else if (urlObj.hostname.includes('vimeo.com')) {
+                    return 'Vimeo Video';
+                } else if (urlObj.hostname.includes('docs.google.com')) {
+                    return 'Google Docs';
+                } else if (urlObj.hostname.includes('drive.google.com')) {
+                    return 'Google Drive File';
+                } else {
+                    return urlObj.hostname.replace('www.', '') + ' Resource';
+                }
+            } catch (e) {
+                return 'Web Resource';
+            }
+        }
+
+        function getLinkType(url) {
+            const urlLower = url.toLowerCase();
+            if (urlLower.includes('youtube.com') || urlLower.includes('youtu.be')) {
+                return 'youtube';
+            } else if (urlLower.includes('vimeo.com')) {
+                return 'vimeo';
+            } else if (urlLower.includes('docs.google.com')) {
+                return 'google-docs';
+            } else if (urlLower.includes('drive.google.com')) {
+                return 'google-drive';
+            } else if (urlLower.includes('github.com')) {
+                return 'github';
+            } else {
+                return 'website';
+            }
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            
+            const teacherName = document.getElementById('fileTeacherName').value.trim();
+            const subject = document.getElementById('fileSubject').value;
+            const description = document.getElementById('fileDescription').value.trim();
+
+            if (!teacherName || !subject || !description) {
+                alert('Please fill in teacher name, subject, and description before dropping files');
+                return;
+            }
+            
+            const droppedFiles = Array.from(e.dataTransfer.files);
+            processFiles(droppedFiles);
+        }
+
+        function selectFiles() {
+            const teacherName = document.getElementById('fileTeacherName').value.trim();
+            const subject = document.getElementById('fileSubject').value;
+            const description = document.getElementById('fileDescription').value.trim();
+
+            if (!teacherName) {
+                alert('Please enter the teacher name before selecting files');
+                return;
+            }
+
+            if (!subject) {
+                alert('Please select a subject before selecting files');
+                return;
+            }
+
+            if (!description) {
+                alert('Please enter a description before selecting files');
+                return;
+            }
+
+            document.getElementById('fileInput').click();
+        }
+
+        function handleFileSelect(e) {
+            const selectedFiles = Array.from(e.target.files);
+            processFiles(selectedFiles);
+        }
+
+        function processFiles(fileList) {
+            if (fileList.length === 0) return;
+
+            const teacherName = document.getElementById('fileTeacherName').value.trim();
+            const subject = document.getElementById('fileSubject').value;
+            const description = document.getElementById('fileDescription').value.trim();
+
+            if (!teacherName || !subject || !description) {
+                alert('Please fill in all required fields before uploading files');
+                return;
+            }
+
+            showProgress();
+            
+            fileList.forEach((file, index) => {
+                setTimeout(() => {
+                    const resourceObj = {
+                        id: Date.now() + index,
+                        name: file.name,
+                        size: file.size,
+                        type: file.type,
+                        uploadDate: new Date().toLocaleDateString(),
+                        file: file,
+                        teacherName: teacherName,
+                        subject: subject,
+                        subjectDisplay: getSubjectDisplayName(subject),
+                        description: description,
+                        isLink: false
+                    };
+                    
+                    resources.push(resourceObj);
+                    updateProgress((index + 1) / fileList.length * 100);
+                    
+                    if (index === fileList.length - 1) {
+                        setTimeout(() => {
+                            hideProgress();
+                            renderResources();
+                            document.getElementById('fileInput').value = '';
+                            // Clear form fields
+                            document.getElementById('fileTeacherName').value = '';
+                            document.getElementById('fileSubject').value = '';
+                            document.getElementById('fileDescription').value = '';
+                        }, 500);
+                    }
+                }, index * 200);
+            });
+        }
+
+        function showProgress() {
+            document.getElementById('uploadProgress').classList.remove('hidden');
+        }
+
+        function hideProgress() {
+            document.getElementById('uploadProgress').classList.add('hidden');
+            document.getElementById('progressBar').style.width = '0%';
+        }
+
+        function updateProgress(percent) {
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('progressText').textContent = `Uploading... ${Math.round(percent)}%`;
+        }
+
+        function renderResources() {
+            const fileList = document.getElementById('fileList');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (resources.length === 0) {
+                fileList.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            
+            emptyState.classList.add('hidden');
+            
+            const gridClass = currentView === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1';
+            fileList.className = `grid ${gridClass} gap-4`;
+            
+            fileList.innerHTML = resources.map(resource => `
+                <div class="file-preview bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">${getResourceIcon(resource)}</span>
+                            <div>
+                                <h3 class="font-medium text-gray-800 truncate max-w-[200px]" title="${resource.name}">${resource.name}</h3>
+                                <p class="text-sm text-gray-500">${resource.isLink ? 'Link Resource' : formatFileSize(resource.size)}</p>
+                                ${resource.teacherName ? `<p class="text-xs text-blue-600 font-medium">By ${resource.teacherName}</p>` : ''}
+                                ${resource.subjectDisplay ? `<span class="inline-block text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full mt-1">${resource.subjectDisplay}</span>` : ''}
+                                ${resource.description ? `<p class="text-xs text-gray-400 mt-1">${resource.description}</p>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-xs text-gray-400 mb-3">
+                        Added: ${resource.uploadDate}
+                    </div>
+                    
+                    <div class="flex gap-2">
+                        <button onclick="viewResource(${resource.id})" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-700 py-2 px-3 rounded text-sm font-medium transition-colors">
+                            <i class="fas fa-eye mr-1"></i> ${resource.isLink ? 'Open' : 'View'}
+                        </button>
+                        <button onclick="editResource(${resource.id})" class="flex-1 bg-yellow-100 hover:bg-yellow-200 text-yellow-700 py-2 px-3 rounded text-sm font-medium transition-colors">
+                            <i class="fas fa-edit mr-1"></i> Edit
+                        </button>
+                        <button onclick="deleteResource(${resource.id})" class="flex-1 bg-red-100 hover:bg-red-200 text-red-700 py-2 px-3 rounded text-sm font-medium transition-colors">
+                            <i class="fas fa-trash mr-1"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getResourceIcon(resource) {
+            if (resource.isLink) {
+                switch (resource.linkType) {
+                    case 'youtube':
+                        return '<i class="fab fa-youtube text-red-600"></i>';
+                    case 'vimeo':
+                        return '<i class="fab fa-vimeo text-blue-500"></i>';
+                    case 'google-docs':
+                        return '<i class="fab fa-google text-blue-600"></i>';
+                    case 'google-drive':
+                        return '<i class="fab fa-google-drive text-green-600"></i>';
+                    case 'github':
+                        return '<i class="fab fa-github text-gray-800"></i>';
+                    default:
+                        return '<i class="fas fa-external-link-alt text-blue-600"></i>';
+                }
+            } else {
+                // File icons
+                if (resource.type.startsWith('image/')) return '<i class="fas fa-image text-green-600"></i>';
+                if (resource.type.startsWith('video/')) return '<i class="fas fa-video text-red-600"></i>';
+                if (resource.type.startsWith('audio/')) return '<i class="fas fa-music text-purple-600"></i>';
+                if (resource.type.includes('pdf')) return '<i class="fas fa-file-pdf text-red-500"></i>';
+                if (resource.type.includes('word') || resource.type.includes('document')) return '<i class="fas fa-file-word text-blue-600"></i>';
+                if (resource.type.includes('excel') || resource.type.includes('spreadsheet')) return '<i class="fas fa-file-excel text-green-600"></i>';
+                if (resource.type.includes('powerpoint') || resource.type.includes('presentation')) return '<i class="fas fa-file-powerpoint text-orange-600"></i>';
+                if (resource.type.includes('zip') || resource.type.includes('rar')) return '<i class="fas fa-file-archive text-yellow-600"></i>';
+                if (resource.type.startsWith('text/')) return '<i class="fas fa-file-alt text-gray-600"></i>';
+                return '<i class="fas fa-file text-gray-500"></i>';
+            }
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function toggleView(view) {
+            currentView = view;
+            
+            document.getElementById('gridBtn').className = view === 'grid' 
+                ? 'p-2 rounded-lg bg-blue-100 text-blue-600'
+                : 'p-2 rounded-lg text-gray-400 hover:bg-gray-100';
+                
+            document.getElementById('listBtn').className = view === 'list'
+                ? 'p-2 rounded-lg bg-blue-100 text-blue-600'
+                : 'p-2 rounded-lg text-gray-400 hover:bg-gray-100';
+                
+            renderResources();
+        }
+
+        function viewResource(id) {
+            const resource = resources.find(r => r.id === id);
+            if (!resource) return;
+            
+            if (resource.isLink) {
+                // Open link in new tab
+                window.open(resource.url, '_blank', 'noopener,noreferrer');
+                return;
+            }
+
+            // Handle file preview (existing code)
+            const previewSection = document.getElementById('previewSection');
+            const previewContent = document.getElementById('previewContent');
+            const previewInfo = document.getElementById('previewInfo');
+            
+            previewSection.classList.remove('hidden');
+            previewSection.scrollIntoView({ behavior: 'smooth' });
+            
+            previewInfo.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <span class="text-xl mr-3">${getResourceIcon(resource)}</span>
+                        <div>
+                            <h4 class="font-semibold text-gray-800">${resource.name}</h4>
+                            <p class="text-sm text-gray-600">Size: ${formatFileSize(resource.size)} • Type: ${resource.type} • Uploaded: ${resource.uploadDate}</p>
+                        </div>
+                    </div>
+                    <button onclick="downloadFile(${resource.id})" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        <i class="fas fa-download mr-1"></i> Download
+                    </button>
+                </div>
+            `;
+            
+            // Display preview based on file type
+            if (resource.type.startsWith('image/')) {
+                const url = URL.createObjectURL(resource.file);
+                previewContent.innerHTML = `
+                    <div class="flex justify-center items-center h-full">
+                        <img src="${url}" alt="${resource.name}" class="max-w-full max-h-96 object-contain rounded-lg shadow-md">
+                    </div>
+                `;
+            } else if (resource.type === 'application/pdf') {
+                const url = URL.createObjectURL(resource.file);
+                previewContent.innerHTML = `
+                    <div class="h-96">
+                        <iframe src="${url}" class="w-full h-full border-0 rounded-lg"></iframe>
+                    </div>
+                `;
+            } else if (resource.type.startsWith('text/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewContent.innerHTML = `
+                        <div class="bg-white p-4 rounded-lg h-96 overflow-auto">
+                            <pre class="text-sm text-gray-800 whitespace-pre-wrap font-mono">${e.target.result}</pre>
+                        </div>
+                    `;
+                };
+                reader.readAsText(resource.file);
+            } else if (resource.type.startsWith('video/')) {
+                const url = URL.createObjectURL(resource.file);
+                previewContent.innerHTML = `
+                    <div class="flex justify-center items-center h-full">
+                        <video controls class="max-w-full max-h-96 rounded-lg shadow-md">
+                            <source src="${url}" type="${resource.type}">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                `;
+            } else if (resource.type.startsWith('audio/')) {
+                const url = URL.createObjectURL(resource.file);
+                previewContent.innerHTML = `
+                    <div class="flex flex-col justify-center items-center h-full">
+                        <i class="fas fa-music text-6xl text-purple-400 mb-4"></i>
+                        <audio controls class="w-full max-w-md">
+                            <source src="${url}" type="${resource.type}">
+                            Your browser does not support the audio tag.
+                        </audio>
+                    </div>
+                `;
+            } else {
+                previewContent.innerHTML = `
+                    <div class="flex flex-col justify-center items-center h-full text-gray-500">
+                        <i class="fas fa-file text-6xl mb-4"></i>
+                        <p class="text-lg font-medium">Preview not available</p>
+                        <p class="text-sm">This file type cannot be previewed in the browser</p>
+                        <button onclick="downloadFile(${resource.id})" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                            <i class="fas fa-download mr-1"></i> Download to view
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function closePreview() {
+            document.getElementById('previewSection').classList.add('hidden');
+        }
+
+        function downloadFile(id) {
+            const resource = resources.find(r => r.id === id);
+            if (!resource || resource.isLink) return;
+            
+            const url = URL.createObjectURL(resource.file);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = resource.name;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function editResource(id) {
+            const resource = resources.find(r => r.id === id);
+            if (!resource) return;
+            
+            editingResourceId = id;
+            document.getElementById('editResourceName').value = resource.name;
+            document.getElementById('editResourceDescription').value = resource.description || '';
+            document.getElementById('editModal').classList.remove('hidden');
+            document.getElementById('editModal').classList.add('flex');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.add('hidden');
+            document.getElementById('editModal').classList.remove('flex');
+            editingResourceId = null;
+        }
+
+        function saveEdit() {
+            if (!editingResourceId) return;
+            
+            const newName = document.getElementById('editResourceName').value.trim();
+            const newDescription = document.getElementById('editResourceDescription').value.trim();
+            
+            if (!newName) {
+                alert('Please enter a valid resource name');
+                return;
+            }
+            
+            const resource = resources.find(r => r.id === editingResourceId);
+            if (resource) {
+                resource.name = newName;
+                resource.description = newDescription;
+                renderResources();
+            }
+            
+            closeEditModal();
+        }
+
+        function deleteResource(id) {
+            if (confirm('Are you sure you want to delete this resource?')) {
+                resources = resources.filter(r => r.id !== id);
+                renderResources();
+            }
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('editModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEditModal();
+            }
+        });
+
+        // Initial render
+        renderResources();
+
+        // Add some sample link resources
+        setTimeout(() => {
+            resources.push({
+                id: 1001,
+                name: 'Advanced Calculus Tutorial',
+                url: 'https://youtube.com/watch?v=example',
+                description: 'Comprehensive video tutorial on calculus concepts including derivatives, integrals, and limits',
+                teacherName: 'Dr. Sarah Johnson',
+                subject: 'mathematics',
+                subjectDisplay: 'Mathematics',
+                type: 'link',
+                linkType: 'youtube',
+                uploadDate: new Date().toLocaleDateString(),
+                isLink: true
+            });
+            
+            resources.push({
+                id: 1002,
+                name: 'Physics Lab Materials',
+                url: 'https://drive.google.com/folder/example',
+                description: 'Complete set of physics laboratory materials and experiment guides',
+                teacherName: 'Prof. Michael Chen',
+                subject: 'physics',
+                subjectDisplay: 'Physics',
+                type: 'link',
+                linkType: 'google-drive',
+                uploadDate: new Date().toLocaleDateString(),
+                isLink: true
+            });
+            
+            renderResources();
+        }, 1000);
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'984e82be75e87410',t:'MTc1ODg0NTEzNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

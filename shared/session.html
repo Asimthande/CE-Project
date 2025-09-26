@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session Profile - Live Learning</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        .video-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .chat-message {
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .participant-item {
+            transition: all 0.3s ease;
+        }
+        .participant-item:hover {
+            transform: translateX(5px);
+        }
+        .file-item {
+            transition: all 0.3s ease;
+        }
+        .file-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Session Setup Modal -->
+    <div id="sessionSetupModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-chalkboard-teacher text-blue-600 mr-3"></i>Create New Session
+            </h2>
+            
+            <form id="sessionForm" onsubmit="createSession(event)" class="space-y-6">
+                <!-- Session Name -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Session Name *</label>
+                    <input type="text" id="sessionName" required 
+                           placeholder="e.g., Advanced Calculus - Derivatives and Limits"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+
+                <!-- Teacher Name -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Teacher Name *</label>
+                    <input type="text" id="teacherName" required 
+                           placeholder="e.g., Dr. Sarah Johnson"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+
+                <!-- Subject Selection -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Subject *</label>
+                    <select id="sessionSubject" required 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">Select a subject...</option>
+                        <option value="mathematics">Mathematics</option>
+                        <option value="physics">Physics</option>
+                        <option value="chemistry">Chemistry</option>
+                        <option value="biology">Biology</option>
+                        <option value="computer-science">Computer Science</option>
+                        <option value="english">English Language & Literature</option>
+                        <option value="history">History</option>
+                        <option value="geography">Geography</option>
+                        <option value="economics">Economics</option>
+                        <option value="psychology">Psychology</option>
+                        <option value="philosophy">Philosophy</option>
+                        <option value="art">Art & Design</option>
+                        <option value="music">Music</option>
+                        <option value="languages">Foreign Languages</option>
+                        <option value="business">Business Studies</option>
+                        <option value="engineering">Engineering</option>
+                        <option value="medicine">Medicine & Health Sciences</option>
+                        <option value="law">Law</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <!-- Session Description -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Session Description *</label>
+                    <textarea id="sessionDescription" required rows="4"
+                              placeholder="Describe what will be covered in this session, learning objectives, and any prerequisites..."
+                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"></textarea>
+                </div>
+
+                <!-- Session Duration -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Expected Duration</label>
+                        <select id="sessionDuration" 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="30">30 minutes</option>
+                            <option value="45">45 minutes</option>
+                            <option value="60" selected>1 hour</option>
+                            <option value="90">1.5 hours</option>
+                            <option value="120">2 hours</option>
+                            <option value="180">3 hours</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Max Participants</label>
+                        <select id="maxParticipants" 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="10">10 students</option>
+                            <option value="20" selected>20 students</option>
+                            <option value="30">30 students</option>
+                            <option value="50">50 students</option>
+                            <option value="100">100 students</option>
+                            <option value="unlimited">Unlimited</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Session Settings -->
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <h3 class="font-medium text-gray-800 mb-3">Session Settings</h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center">
+                            <input type="checkbox" id="requireApproval" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            <span class="ml-2 text-sm text-gray-700">Require approval for participants to join</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="allowRecording" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            <span class="ml-2 text-sm text-gray-700">Allow session recording</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="enableChat" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            <span class="ml-2 text-sm text-gray-700">Enable live chat</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="enableFileSharing" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            <span class="ml-2 text-sm text-gray-700">Enable file sharing</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex gap-4 pt-4">
+                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-medium transition-colors">
+                        <i class="fas fa-play mr-2"></i>Start Session
+                    </button>
+                    <button type="button" onclick="cancelSessionSetup()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-6 rounded-lg font-medium transition-colors">
+                        <i class="fas fa-times mr-2"></i>Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <div id="sessionHeader" class="bg-white shadow-sm border-b hidden">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fas fa-chalkboard-teacher text-2xl text-blue-600 mr-3"></i>
+                    <div>
+                        <h1 id="displaySessionName" class="text-xl font-bold text-gray-800">Session Name</h1>
+                        <p id="displayTeacherName" class="text-sm text-gray-600">Hosted by Teacher</p>
+                        <div class="flex items-center gap-4 mt-1">
+                            <span id="displaySubject" class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium">Subject</span>
+                            <span id="displayDuration" class="text-xs text-gray-500">Duration: 1 hour</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center text-green-600">
+                        <i class="fas fa-circle text-xs mr-2"></i>
+                        <span class="text-sm font-medium">Live</span>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        <i class="fas fa-users mr-1"></i>
+                        <span id="participantCount">0</span> participants
+                    </div>
+                    <button onclick="endSession()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        <i class="fas fa-sign-out-alt mr-1"></i> End Session
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="sessionContent" class="max-w-7xl mx-auto px-4 py-6 hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Main Video Area -->
+            <div class="lg:col-span-3">
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <!-- Video Container -->
+                    <div class="video-container aspect-video relative">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="text-center text-white">
+                                <i class="fas fa-video text-6xl mb-4 opacity-50"></i>
+                                <p class="text-lg font-medium">Video Stream</p>
+                                <p class="text-sm opacity-75">Camera and screen sharing active</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Video Controls -->
+                        <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+                            <div class="flex items-center gap-3 bg-black bg-opacity-50 rounded-full px-4 py-2">
+                                <button id="muteBtn" onclick="toggleMute()" class="text-white hover:text-blue-300 transition-colors">
+                                    <i class="fas fa-microphone text-lg"></i>
+                                </button>
+                                <button id="videoBtn" onclick="toggleVideo()" class="text-white hover:text-blue-300 transition-colors">
+                                    <i class="fas fa-video text-lg"></i>
+                                </button>
+                                <button onclick="shareScreen()" class="text-white hover:text-blue-300 transition-colors">
+                                    <i class="fas fa-desktop text-lg"></i>
+                                </button>
+                                <button onclick="toggleRecording()" class="text-white hover:text-red-300 transition-colors">
+                                    <i class="fas fa-record-vinyl text-lg"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Section -->
+                    <div class="p-4 border-t">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-semibold text-gray-800">
+                                <i class="fas fa-comments text-blue-600 mr-2"></i>Live Chat
+                            </h3>
+                            <button onclick="clearChat()" class="text-gray-500 hover:text-gray-700 text-sm">
+                                <i class="fas fa-trash mr-1"></i>Clear
+                            </button>
+                        </div>
+                        
+                        <div id="chatMessages" class="h-48 overflow-y-auto bg-gray-50 rounded-lg p-3 mb-4 space-y-2">
+                            <div class="chat-message">
+                                <div class="flex items-start gap-2">
+                                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold">SJ</div>
+                                    <div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="font-medium text-sm text-gray-800">Dr. Sarah Johnson</span>
+                                            <span class="text-xs text-gray-500">2:30 PM</span>
+                                        </div>
+                                        <p class="text-sm text-gray-700">Welcome everyone! Let's start with today's topic on calculus.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chat-message">
+                                <div class="flex items-start gap-2">
+                                    <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold">AM</div>
+                                    <div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="font-medium text-sm text-gray-800">Alex Miller</span>
+                                            <span class="text-xs text-gray-500">2:31 PM</span>
+                                        </div>
+                                        <p class="text-sm text-gray-700">Thank you! I'm excited to learn about derivatives today.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-2">
+                            <input type="text" id="chatInput" placeholder="Type your message..." class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <button onclick="sendMessage()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-6">
+                <!-- Participants Panel -->
+                <div class="bg-white rounded-xl shadow-lg p-4">
+                    <h3 class="font-semibold text-gray-800 mb-4">
+                        <i class="fas fa-users text-purple-600 mr-2"></i>Participants
+                    </h3>
+                    
+                    <!-- Pending Requests -->
+                    <div class="mb-4">
+                        <h4 class="text-sm font-medium text-gray-600 mb-2">Pending Requests (3)</h4>
+                        <div class="space-y-2">
+                            <div class="participant-item flex items-center justify-between p-2 bg-yellow-50 rounded-lg">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center text-white text-xs font-bold">JD</div>
+                                    <span class="text-sm font-medium">John Doe</span>
+                                </div>
+                                <div class="flex gap-1">
+                                    <button onclick="acceptParticipant('john')" class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button onclick="rejectParticipant('john')" class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="participant-item flex items-center justify-between p-2 bg-yellow-50 rounded-lg">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white text-xs font-bold">EM</div>
+                                    <span class="text-sm font-medium">Emma Wilson</span>
+                                </div>
+                                <div class="flex gap-1">
+                                    <button onclick="acceptParticipant('emma')" class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button onclick="rejectParticipant('emma')" class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Active Participants -->
+                    <div>
+                        <h4 class="text-sm font-medium text-gray-600 mb-2">Active Participants (9)</h4>
+                        <div class="space-y-2 max-h-48 overflow-y-auto">
+                            <div class="participant-item flex items-center justify-between p-2 bg-green-50 rounded-lg">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold">SJ</div>
+                                    <div>
+                                        <span class="text-sm font-medium">Dr. Sarah Johnson</span>
+                                        <div class="text-xs text-gray-500">Host</div>
+                                    </div>
+                                </div>
+                                <i class="fas fa-crown text-yellow-500"></i>
+                            </div>
+                            <div class="participant-item flex items-center justify-between p-2 bg-green-50 rounded-lg">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold">AM</div>
+                                    <div>
+                                        <span class="text-sm font-medium">Alex Miller</span>
+                                        <div class="text-xs text-gray-500">Student</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <i class="fas fa-microphone text-green-500 text-xs"></i>
+                                    <i class="fas fa-video text-green-500 text-xs"></i>
+                                </div>
+                            </div>
+                            <div class="participant-item flex items-center justify-between p-2 bg-green-50 rounded-lg">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold">LB</div>
+                                    <div>
+                                        <span class="text-sm font-medium">Lisa Brown</span>
+                                        <div class="text-xs text-gray-500">Mentor</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <i class="fas fa-microphone-slash text-red-500 text-xs"></i>
+                                    <i class="fas fa-video text-green-500 text-xs"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- File Upload & Resources -->
+                <div class="bg-white rounded-xl shadow-lg p-4">
+                    <h3 class="font-semibold text-gray-800 mb-4">
+                        <i class="fas fa-folder text-orange-600 mr-2"></i>Session Files
+                    </h3>
+                    
+                    <!-- Upload Area -->
+                    <div class="mb-4">
+                        <div id="uploadZone" class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-blue-400 transition-colors cursor-pointer">
+                            <i class="fas fa-cloud-upload-alt text-2xl text-gray-400 mb-2"></i>
+                            <p class="text-sm text-gray-600">Drop files or click to upload</p>
+                            <input type="file" id="fileInput" multiple class="hidden">
+                        </div>
+                    </div>
+
+                    <!-- Uploaded Files -->
+                    <div class="space-y-2 max-h-48 overflow-y-auto">
+                        <div class="file-item flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-file-pdf text-red-500"></i>
+                                <div>
+                                    <span class="text-sm font-medium">Calculus_Notes.pdf</span>
+                                    <div class="text-xs text-gray-500">2.3 MB</div>
+                                </div>
+                            </div>
+                            <button onclick="downloadFile('calculus')" class="text-blue-600 hover:text-blue-800">
+                                <i class="fas fa-download text-sm"></i>
+                            </button>
+                        </div>
+                        <div class="file-item flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-file-powerpoint text-orange-500"></i>
+                                <div>
+                                    <span class="text-sm font-medium">Derivatives_Slides.pptx</span>
+                                    <div class="text-xs text-gray-500">5.1 MB</div>
+                                </div>
+                            </div>
+                            <button onclick="downloadFile('slides')" class="text-blue-600 hover:text-blue-800">
+                                <i class="fas fa-download text-sm"></i>
+                            </button>
+                        </div>
+                        <div class="file-item flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-file-excel text-green-500"></i>
+                                <div>
+                                    <span class="text-sm font-medium">Practice_Problems.xlsx</span>
+                                    <div class="text-xs text-gray-500">1.8 MB</div>
+                                </div>
+                            </div>
+                            <button onclick="downloadFile('problems')" class="text-blue-600 hover:text-blue-800">
+                                <i class="fas fa-download text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-xl shadow-lg p-4">
+                    <h3 class="font-semibold text-gray-800 mb-4">
+                        <i class="fas fa-bolt text-yellow-600 mr-2"></i>Quick Actions
+                    </h3>
+                    <div class="space-y-2">
+                        <button onclick="shareWhiteboard()" class="w-full bg-blue-100 hover:bg-blue-200 text-blue-700 py-2 px-3 rounded-lg text-sm font-medium transition-colors">
+                            <i class="fas fa-chalkboard mr-2"></i>Share Whiteboard
+                        </button>
+                        <button onclick="startPoll()" class="w-full bg-green-100 hover:bg-green-200 text-green-700 py-2 px-3 rounded-lg text-sm font-medium transition-colors">
+                            <i class="fas fa-poll mr-2"></i>Start Poll
+                        </button>
+                        <button onclick="breakoutRooms()" class="w-full bg-purple-100 hover:bg-purple-200 text-purple-700 py-2 px-3 rounded-lg text-sm font-medium transition-colors">
+                            <i class="fas fa-users mr-2"></i>Breakout Rooms
+                        </button>
+                        <button onclick="recordSession()" class="w-full bg-red-100 hover:bg-red-200 text-red-700 py-2 px-3 rounded-lg text-sm font-medium transition-colors">
+                            <i class="fas fa-record-vinyl mr-2"></i>Record Session
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isMuted = false;
+        let isVideoOn = true;
+        let isRecording = false;
+        let participants = [];
+        let sessionFiles = [];
+        let sessionData = {};
+
+        // Session Setup Functions
+        function createSession(event) {
+            event.preventDefault();
+            
+            // Get form data
+            const sessionName = document.getElementById('sessionName').value;
+            const teacherName = document.getElementById('teacherName').value;
+            const sessionSubject = document.getElementById('sessionSubject').value;
+            const sessionDescription = document.getElementById('sessionDescription').value;
+            const sessionDuration = document.getElementById('sessionDuration').value;
+            const maxParticipants = document.getElementById('maxParticipants').value;
+            
+            // Get settings
+            const requireApproval = document.getElementById('requireApproval').checked;
+            const allowRecording = document.getElementById('allowRecording').checked;
+            const enableChat = document.getElementById('enableChat').checked;
+            const enableFileSharing = document.getElementById('enableFileSharing').checked;
+
+            // Store session data
+            sessionData = {
+                name: sessionName,
+                teacher: teacherName,
+                subject: sessionSubject,
+                description: sessionDescription,
+                duration: sessionDuration,
+                maxParticipants: maxParticipants,
+                settings: {
+                    requireApproval,
+                    allowRecording,
+                    enableChat,
+                    enableFileSharing
+                }
+            };
+
+            // Update display
+            document.getElementById('displaySessionName').textContent = sessionName;
+            document.getElementById('displayTeacherName').textContent = `Hosted by ${teacherName}`;
+            document.getElementById('displaySubject').textContent = getSubjectDisplayName(sessionSubject);
+            document.getElementById('displayDuration').textContent = `Duration: ${getDurationText(sessionDuration)}`;
+
+            // Hide modal and show session
+            document.getElementById('sessionSetupModal').classList.add('hidden');
+            document.getElementById('sessionHeader').classList.remove('hidden');
+            document.getElementById('sessionContent').classList.remove('hidden');
+
+            // Initialize session
+            initializeSession();
+        }
+
+        function cancelSessionSetup() {
+            if (confirm('Are you sure you want to cancel? All entered information will be lost.')) {
+                // Reset form
+                document.getElementById('sessionForm').reset();
+            }
+        }
+
+        function getSubjectDisplayName(value) {
+            const subjects = {
+                'mathematics': 'Mathematics',
+                'physics': 'Physics',
+                'chemistry': 'Chemistry',
+                'biology': 'Biology',
+                'computer-science': 'Computer Science',
+                'english': 'English',
+                'history': 'History',
+                'geography': 'Geography',
+                'economics': 'Economics',
+                'psychology': 'Psychology',
+                'philosophy': 'Philosophy',
+                'art': 'Art & Design',
+                'music': 'Music',
+                'languages': 'Languages',
+                'business': 'Business',
+                'engineering': 'Engineering',
+                'medicine': 'Medicine',
+                'law': 'Law',
+                'other': 'Other'
+            };
+            return subjects[value] || value;
+        }
+
+        function getDurationText(minutes) {
+            if (minutes < 60) {
+                return `${minutes} minutes`;
+            } else if (minutes === 60) {
+                return '1 hour';
+            } else if (minutes < 120) {
+                return `${minutes / 60} hours`;
+            } else {
+                return `${minutes / 60} hours`;
+            }
+        }
+
+        function initializeSession() {
+            // Add welcome message to chat
+            const chatMessages = document.getElementById('chatMessages');
+            const welcomeMessage = document.createElement('div');
+            welcomeMessage.className = 'chat-message';
+            welcomeMessage.innerHTML = `
+                <div class="flex items-start gap-2">
+                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold">${sessionData.teacher.split(' ').map(n => n[0]).join('')}</div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-medium text-sm text-gray-800">${sessionData.teacher}</span>
+                            <span class="text-xs text-gray-500">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                        </div>
+                        <p class="text-sm text-gray-700">Welcome to "${sessionData.name}"! ${sessionData.description}</p>
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(welcomeMessage);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('uploadZone').addEventListener('click', () => {
+                document.getElementById('fileInput').click();
+            });
+            
+            document.getElementById('fileInput').addEventListener('change', handleFileUpload);
+        });
+
+        // Video Controls
+        function toggleMute() {
+            isMuted = !isMuted;
+            const muteBtn = document.getElementById('muteBtn');
+            if (isMuted) {
+                muteBtn.innerHTML = '<i class="fas fa-microphone-slash text-lg"></i>';
+                muteBtn.classList.add('text-red-400');
+            } else {
+                muteBtn.innerHTML = '<i class="fas fa-microphone text-lg"></i>';
+                muteBtn.classList.remove('text-red-400');
+            }
+        }
+
+        function toggleVideo() {
+            isVideoOn = !isVideoOn;
+            const videoBtn = document.getElementById('videoBtn');
+            if (!isVideoOn) {
+                videoBtn.innerHTML = '<i class="fas fa-video-slash text-lg"></i>';
+                videoBtn.classList.add('text-red-400');
+            } else {
+                videoBtn.innerHTML = '<i class="fas fa-video text-lg"></i>';
+                videoBtn.classList.remove('text-red-400');
+            }
+        }
+
+        function shareScreen() {
+            alert('Screen sharing started! Participants can now see your screen.');
+        }
+
+        function toggleRecording() {
+            isRecording = !isRecording;
+            if (isRecording) {
+                alert('Session recording started!');
+            } else {
+                alert('Session recording stopped!');
+            }
+        }
+
+        // Chat Functions
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const chatMessages = document.getElementById('chatMessages');
+            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message';
+            messageDiv.innerHTML = `
+                <div class="flex items-start gap-2">
+                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold">${sessionData.teacher ? sessionData.teacher.split(' ').map(n => n[0]).join('') : 'YOU'}</div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-medium text-sm text-gray-800">${sessionData.teacher || 'You'}</span>
+                            <span class="text-xs text-gray-500">${time}</span>
+                        </div>
+                        <p class="text-sm text-gray-700">${message}</p>
+                    </div>
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            input.value = '';
+        }
+
+        function clearChat() {
+            if (confirm('Are you sure you want to clear the chat?')) {
+                document.getElementById('chatMessages').innerHTML = '';
+            }
+        }
+
+        // Participant Management
+        function acceptParticipant(id) {
+            alert(`Participant accepted! They can now join the session.`);
+            // Update participant count
+            const currentCount = parseInt(document.getElementById('participantCount').textContent);
+            document.getElementById('participantCount').textContent = currentCount + 1;
+        }
+
+        function rejectParticipant(id) {
+            if (confirm('Are you sure you want to reject this participant?')) {
+                alert('Participant request rejected.');
+            }
+        }
+
+        // File Management
+        function handleFileUpload(event) {
+            const files = Array.from(event.target.files);
+            files.forEach(file => {
+                sessionFiles.push({
+                    name: file.name,
+                    size: file.size,
+                    type: file.type,
+                    file: file
+                });
+                
+                alert(`File "${file.name}" uploaded successfully!`);
+            });
+        }
+
+        function downloadFile(fileId) {
+            alert(`Downloading file... In a real application, this would start the download.`);
+        }
+
+        // Quick Actions
+        function shareWhiteboard() {
+            alert('Whiteboard shared! Participants can now see and interact with the whiteboard.');
+        }
+
+        function startPoll() {
+            const question = prompt('Enter your poll question:');
+            if (question) {
+                alert(`Poll started: "${question}"`);
+            }
+        }
+
+        function breakoutRooms() {
+            alert('Breakout rooms created! Participants are being assigned to smaller groups.');
+        }
+
+        function recordSession() {
+            if (confirm('Start recording this session?')) {
+                alert('Session recording started! All participants have been notified.');
+            }
+        }
+
+        function endSession() {
+            if (confirm('Are you sure you want to end this session? All participants will be disconnected.')) {
+                alert('Session ended. Thank you for using our platform!');
+                // Reset to setup modal
+                document.getElementById('sessionSetupModal').classList.remove('hidden');
+                document.getElementById('sessionHeader').classList.add('hidden');
+                document.getElementById('sessionContent').classList.add('hidden');
+                document.getElementById('sessionForm').reset();
+            }
+        }
+
+        // Enter key for chat
+        document.getElementById('chatInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Simulate incoming messages (only when session is active)
+        setInterval(() => {
+            if (!document.getElementById('sessionContent').classList.contains('hidden') && Math.random() > 0.98) {
+                const names = ['Alex Miller', 'Lisa Brown', 'Mike Johnson', 'Emma Wilson'];
+                const messages = [
+                    'Great explanation!',
+                    'Can you repeat that last part?',
+                    'I have a question about this topic.',
+                    'Thank you for the clarification.',
+                    'This is very helpful!'
+                ];
+                
+                const name = names[Math.floor(Math.random() * names.length)];
+                const message = messages[Math.floor(Math.random() * messages.length)];
+                const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                const chatMessages = document.getElementById('chatMessages');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'chat-message';
+                messageDiv.innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold">${name.split(' ').map(n => n[0]).join('')}</div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-medium text-sm text-gray-800">${name}</span>
+                                <span class="text-xs text-gray-500">${time}</span>
+                            </div>
+                            <p class="text-sm text-gray-700">${message}</p>
+                        </div>
+                    </div>
+                `;
+                
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }, 5000);
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'984e7a1c440b9863',t:'MTc1ODg0NDc4NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
