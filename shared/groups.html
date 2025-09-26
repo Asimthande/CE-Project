@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Groups Platform - UJ Community</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        
+        .rainbow-bg {
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #f5576c, #4facfe, #00f2fe);
+            background-size: 400% 400%;
+            animation: rainbowShift 8s ease-in-out infinite;
+        }
+        
+        @keyframes rainbowShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .floating-shape {
+            position: absolute;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+        }
+        
+        .group-card {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(0) scale(1);
+        }
+        
+        .group-card:hover {
+            transform: translateY(-10px) scale(1.02);
+        }
+        
+        .slide-in {
+            animation: slideInUp 0.8s ease-out;
+        }
+        
+        @keyframes slideInUp {
+            0% { transform: translateY(100px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        
+        .bounce-in {
+            animation: bounceIn 0.6s ease-out;
+        }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .progress-bar {
+            transition: width 0.5s ease;
+        }
+        
+        .pulse-glow {
+            animation: pulseGlow 2s infinite;
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(59, 130, 246, 0.6); }
+        }
+        
+        .subject-mathematics { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .subject-science { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .subject-english { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .subject-history { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .subject-geography { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .subject-biology { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+        
+        .notification {
+            animation: slideInRight 0.5s ease-out;
+        }
+        
+        @keyframes slideInRight {
+            0% { transform: translateX(100%); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="min-h-screen overflow-x-hidden">
+    <!-- Dynamic Background -->
+    <div class="fixed inset-0 rainbow-bg"></div>
+    
+    <!-- Floating Elements -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden">
+        <div class="floating-shape top-20 left-10 w-20 h-20 bg-white bg-opacity-10 rounded-full"></div>
+        <div class="floating-shape top-40 right-20 w-16 h-16 bg-white bg-opacity-15 transform rotate-45" style="clip-path: polygon(50% 0%, 0% 100%, 100% 100%);"></div>
+        <div class="floating-shape bottom-32 left-1/4 w-24 h-24 bg-white bg-opacity-5 rounded-lg transform rotate-12"></div>
+        <div class="floating-shape top-1/2 right-1/3 w-12 h-12 bg-white bg-opacity-20 rounded-full"></div>
+        <div class="floating-shape bottom-20 right-10 w-18 h-18 bg-white bg-opacity-10 transform rotate-45" style="clip-path: polygon(30% 0%, 0% 100%, 100% 70%);"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="relative z-20 py-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center">
+                        <span class="text-blue-600 font-bold text-xl">UJ</span>
+                    </div>
+                    <span class="text-white font-bold text-xl">Study Groups Platform</span>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <div class="text-white">
+                        <i class="fas fa-user-circle mr-2"></i>
+                        <span>Grade 10 Student</span>
+                    </div>
+                    <button id="myGroupsBtn" class="text-white hover:text-blue-200 transition-colors duration-300">
+                        <i class="fas fa-bookmark mr-2"></i>My Groups
+                    </button>
+                    <button id="createGroupBtn" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-xl transition-all duration-300">
+                        <i class="fas fa-plus mr-2"></i>Create Group
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="relative z-10 min-h-screen">
+        <!-- Study Groups Screen -->
+        <div id="groupsScreen" class="py-12">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12 slide-in">
+                    <h1 class="text-6xl font-bold text-white mb-6">Study Groups</h1>
+                    <p class="text-2xl text-white max-w-3xl mx-auto">
+                        Join study groups from different schools and subjects to collaborate and learn together!
+                    </p>
+                </div>
+
+                <!-- Filter Options -->
+                <div class="bg-white bg-opacity-95 rounded-3xl p-6 mb-8 shadow-2xl slide-in">
+                    <div class="grid md:grid-cols-4 gap-6">
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-2">
+                                <i class="fas fa-school mr-2 text-blue-500"></i>Filter by School
+                            </label>
+                            <select id="schoolFilter" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-colors">
+                                <option value="all">All Schools</option>
+                                <option value="johannesburg-high">Johannesburg High School</option>
+                                <option value="cape-town-college">Cape Town College</option>
+                                <option value="durban-academy">Durban Academy</option>
+                                <option value="pretoria-prep">Pretoria Preparatory</option>
+                                <option value="stellenbosch-secondary">Stellenbosch Secondary</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-2">
+                                <i class="fas fa-book mr-2 text-green-500"></i>Filter by Subject
+                            </label>
+                            <select id="subjectFilter" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-green-500 focus:outline-none transition-colors">
+                                <option value="all">All Subjects</option>
+                                <option value="mathematics">Mathematics</option>
+                                <option value="science">Physical Science</option>
+                                <option value="english">English</option>
+                                <option value="history">History</option>
+                                <option value="geography">Geography</option>
+                                <option value="biology">Life Sciences</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-2">
+                                <i class="fas fa-graduation-cap mr-2 text-purple-500"></i>Filter by Grade
+                            </label>
+                            <select id="gradeFilter" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition-colors">
+                                <option value="all">All Grades</option>
+                                <option value="8">Grade 8</option>
+                                <option value="9">Grade 9</option>
+                                <option value="10" selected>Grade 10</option>
+                                <option value="11">Grade 11</option>
+                                <option value="12">Grade 12</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-2">
+                                <i class="fas fa-search mr-2 text-orange-500"></i>Search Groups
+                            </label>
+                            <input type="text" id="searchInput" placeholder="Search by name..." class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-orange-500 focus:outline-none transition-colors">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Study Groups Grid -->
+                <div id="groupsGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Groups will be populated by JavaScript -->
+                </div>
+
+                <!-- Join Request Modal -->
+                <div id="joinModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div class="bg-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl bounce-in">
+                        <div class="text-center mb-6">
+                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-users text-blue-600 text-2xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-2">Join Study Group</h3>
+                            <p id="modalGroupName" class="text-gray-600 font-semibold">Mathematics Study Group</p>
+                            <p id="modalGroupDetails" class="text-sm text-gray-500">Johannesburg High School • Grade 10</p>
+                        </div>
+                        
+                        <form id="joinRequestForm">
+                            <div class="mb-4">
+                                <label class="block text-gray-700 font-semibold mb-2">
+                                    <i class="fas fa-comment mr-2"></i>Why do you want to join this group?
+                                </label>
+                                <textarea id="joinReason" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:outline-none resize-none transition-colors" rows="4" placeholder="Tell the group admin why you'd like to join..." required></textarea>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label class="block text-gray-700 font-semibold mb-2">
+                                    <i class="fas fa-target mr-2"></i>Your Study Goals
+                                </label>
+                                <input type="text" id="studyGoals" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-colors" placeholder="e.g., Improve algebra skills, prepare for exams..." required>
+                            </div>
+                            
+                            <div class="flex space-x-4">
+                                <button type="button" id="cancelJoin" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-3 px-6 rounded-xl transition-all duration-300">
+                                    Cancel
+                                </button>
+                                <button type="submit" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 pulse-glow">
+                                    Send Request
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Group Details Modal -->
+                <div id="detailsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div class="bg-white rounded-3xl p-8 max-w-2xl w-full mx-4 shadow-2xl bounce-in max-h-[90vh] overflow-y-auto">
+                        <div class="text-center mb-6">
+                            <div id="detailsIcon" class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-calculator text-blue-600 text-3xl"></i>
+                            </div>
+                            <h3 id="detailsGroupName" class="text-3xl font-bold text-gray-900 mb-2">Advanced Mathematics Study Circle</h3>
+                            <p id="detailsGroupSchool" class="text-gray-600 font-semibold">Johannesburg High School</p>
+                            <div class="flex justify-center items-center space-x-4 mt-2">
+                                <span id="detailsSubject" class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold">Mathematics</span>
+                                <span id="detailsGrade" class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-semibold">Grade 10</span>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-900 mb-2">
+                                    <i class="fas fa-info-circle mr-2 text-blue-500"></i>About This Group
+                                </h4>
+                                <p id="detailsDescription" class="text-gray-700 leading-relaxed">Focused on advanced algebra and geometry. We meet twice a week for problem-solving sessions.</p>
+                            </div>
+                            
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-gray-50 rounded-xl p-4">
+                                    <h5 class="font-semibold text-gray-900 mb-2">
+                                        <i class="fas fa-clock mr-2 text-green-500"></i>Meeting Schedule
+                                    </h5>
+                                    <p id="detailsMeetingTime" class="text-gray-700">Tuesdays & Thursdays, 3:30 PM</p>
+                                </div>
+                                
+                                <div class="bg-gray-50 rounded-xl p-4">
+                                    <h5 class="font-semibold text-gray-900 mb-2">
+                                        <i class="fas fa-user-tie mr-2 text-purple-500"></i>Group Admin
+                                    </h5>
+                                    <p id="detailsAdmin" class="text-gray-700">Sarah Johnson</p>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h5 class="font-semibold text-gray-900 mb-3">
+                                    <i class="fas fa-users mr-2 text-orange-500"></i>Group Capacity
+                                </h5>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span id="detailsMembers" class="text-gray-700">12 of 15 members</span>
+                                    <span id="detailsPercentage" class="text-sm text-gray-500">80% full</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-3">
+                                    <div id="detailsProgressBar" class="bg-blue-500 h-3 rounded-full transition-all duration-500" style="width: 80%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex space-x-4 mt-8">
+                            <button id="closeDetails" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-3 px-6 rounded-xl transition-all duration-300">
+                                Close
+                            </button>
+                            <button id="joinFromDetails" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 pulse-glow">
+                                Request to Join
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let currentSelectedGroup = null;
+
+            // Sample study groups data
+            const studyGroups = [
+                {
+                    id: 1,
+                    name: "Advanced Mathematics Study Circle",
+                    school: "johannesburg-high",
+                    schoolName: "Johannesburg High School",
+                    subject: "mathematics",
+                    subjectName: "Mathematics",
+                    grade: "10",
+                    members: 12,
+                    maxMembers: 15,
+                    admin: "Sarah Johnson",
+                    description: "Focused on advanced algebra and geometry. We meet twice a week for intensive problem-solving sessions and exam preparation. Perfect for students who want to excel in mathematics.",
+                    meetingTime: "Tuesdays & Thursdays, 3:30 PM",
+                    status: "active"
+                },
+                {
+                    id: 2,
+                    name: "Chemistry Lab Partners",
+                    school: "cape-town-college",
+                    schoolName: "Cape Town College",
+                    subject: "science",
+                    subjectName: "Physical Science",
+                    grade: "11",
+                    members: 8,
+                    maxMembers: 12,
+                    admin: "Michael Chen",
+                    description: "Practice chemistry experiments and prepare for practical exams together. We have access to a well-equipped lab and focus on hands-on learning experiences.",
+                    meetingTime: "Wednesdays, 4:00 PM",
+                    status: "active"
+                },
+                {
+                    id: 3,
+                    name: "English Literature Discussion",
+                    school: "durban-academy",
+                    schoolName: "Durban Academy",
+                    subject: "english",
+                    subjectName: "English",
+                    grade: "10",
+                    members: 15,
+                    maxMembers: 20,
+                    admin: "Emma Williams",
+                    description: "Analyze poems, novels, and essays together. Great for improving comprehension and writing skills. We discuss various literary works and practice creative writing.",
+                    meetingTime: "Mondays, 3:00 PM",
+                    status: "active"
+                },
+                {
+                    id: 4,
+                    name: "South African History Club",
+                    school: "pretoria-prep",
+                    schoolName: "Pretoria Preparatory",
+                    subject: "history",
+                    subjectName: "History",
+                    grade: "9",
+                    members: 10,
+                    maxMembers: 15,
+                    admin: "David Mthembu",
+                    description: "Explore South African history from apartheid to democracy. Interactive discussions, documentaries, and group projects to understand our nation's past.",
+                    meetingTime: "Fridays, 2:30 PM",
+                    status: "active"
+                },
+                {
+                    id: 5,
+                    name: "Geography Mapping Group",
+                    school: "stellenbosch-secondary",
+                    schoolName: "Stellenbosch Secondary",
+                    subject: "geography",
+                    subjectName: "Geography",
+                    grade: "10",
+                    members: 7,
+                    maxMembers: 10,
+                    admin: "Lisa van der Merwe",
+                    description: "Learn map reading, climate patterns, and physical geography through hands-on activities. We use modern GIS tools and traditional mapping techniques.",
+                    meetingTime: "Thursdays, 3:45 PM",
+                    status: "active"
+                },
+                {
+                    id: 6,
+                    name: "Biology Research Team",
+                    school: "johannesburg-high",
+                    schoolName: "Johannesburg High School",
+                    subject: "biology",
+                    subjectName: "Life Sciences",
+                    grade: "11",
+                    members: 9,
+                    maxMembers: 12,
+                    admin: "Dr. Priya Patel",
+                    description: "Conduct biology experiments and prepare for university-level science courses. Focus on genetics, ecology, and human anatomy with practical lab work.",
+                    meetingTime: "Saturdays, 10:00 AM",
+                    status: "active"
+                },
+                {
+                    id: 7,
+                    name: "Math Olympiad Prep",
+                    school: "cape-town-college",
+                    schoolName: "Cape Town College",
+                    subject: "mathematics",
+                    subjectName: "Mathematics",
+                    grade: "12",
+                    members: 6,
+                    maxMembers: 8,
+                    admin: "Alex Rodriguez",
+                    description: "Intensive preparation for mathematics competitions and olympiads. Solve challenging problems and develop advanced problem-solving strategies.",
+                    meetingTime: "Sundays, 2:00 PM",
+                    status: "active"
+                },
+                {
+                    id: 8,
+                    name: "Physics Problem Solvers",
+                    school: "durban-academy",
+                    schoolName: "Durban Academy",
+                    subject: "science",
+                    subjectName: "Physical Science",
+                    grade: "10",
+                    members: 11,
+                    maxMembers: 15,
+                    admin: "James Thompson",
+                    description: "Tackle challenging physics problems and understand complex concepts together. Focus on mechanics, electricity, and waves with practical demonstrations.",
+                    meetingTime: "Tuesdays, 4:30 PM",
+                    status: "active"
+                },
+                {
+                    id: 9,
+                    name: "Creative Writing Workshop",
+                    school: "stellenbosch-secondary",
+                    schoolName: "Stellenbosch Secondary",
+                    subject: "english",
+                    subjectName: "English",
+                    grade: "11",
+                    members: 12,
+                    maxMembers: 16,
+                    admin: "Rachel Green",
+                    description: "Develop creative writing skills through poetry, short stories, and essays. Share your work and get constructive feedback from peers.",
+                    meetingTime: "Wednesdays, 3:15 PM",
+                    status: "active"
+                },
+                {
+                    id: 10,
+                    name: "World History Explorers",
+                    school: "pretoria-prep",
+                    schoolName: "Pretoria Preparatory",
+                    subject: "history",
+                    subjectName: "History",
+                    grade: "12",
+                    members: 14,
+                    maxMembers: 18,
+                    admin: "Professor Mark Stevens",
+                    description: "Journey through world history from ancient civilizations to modern times. Engaging discussions about historical events and their impact on today's world.",
+                    meetingTime: "Thursdays, 4:00 PM",
+                    status: "active"
+                }
+            ];
+
+            // Filter event listeners
+            document.getElementById('schoolFilter').addEventListener('change', filterGroups);
+            document.getElementById('subjectFilter').addEventListener('change', filterGroups);
+            document.getElementById('gradeFilter').addEventListener('change', filterGroups);
+            document.getElementById('searchInput').addEventListener('input', filterGroups);
+
+            // Modal event listeners
+            document.getElementById('cancelJoin').addEventListener('click', function() {
+                document.getElementById('joinModal').classList.add('hidden');
+            });
+
+            document.getElementById('closeDetails').addEventListener('click', function() {
+                document.getElementById('detailsModal').classList.add('hidden');
+            });
+
+            document.getElementById('joinFromDetails').addEventListener('click', function() {
+                document.getElementById('detailsModal').classList.add('hidden');
+                openJoinModal(currentSelectedGroup);
+            });
+
+            document.getElementById('joinRequestForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                submitJoinRequest();
+            });
+
+            // Initialize groups display
+            displayGroups(studyGroups);
+
+            function displayGroups(groups) {
+                const grid = document.getElementById('groupsGrid');
+                grid.innerHTML = '';
+
+                if (groups.length === 0) {
+                    grid.innerHTML = `
+                        <div class="col-span-full text-center py-12">
+                            <div class="w-24 h-24 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-search text-white text-3xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white mb-2">No Groups Found</h3>
+                            <p class="text-white opacity-80">Try adjusting your filters to find more study groups.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                groups.forEach((group, index) => {
+                    const subjectIcons = {
+                        mathematics: 'calculator',
+                        science: 'flask',
+                        english: 'book',
+                        history: 'landmark',
+                        geography: 'globe-africa',
+                        biology: 'dna'
+                    };
+
+                    const subjectColors = {
+                        mathematics: 'purple',
+                        science: 'pink',
+                        english: 'blue',
+                        history: 'green',
+                        geography: 'yellow',
+                        biology: 'teal'
+                    };
+
+                    const color = subjectColors[group.subject] || 'blue';
+                    const icon = subjectIcons[group.subject] || 'book';
+                    const isFull = group.members >= group.maxMembers;
+                    const percentage = Math.round((group.members / group.maxMembers) * 100);
+
+                    const groupCard = document.createElement('div');
+                    groupCard.className = 'group-card bg-white rounded-3xl p-6 shadow-2xl cursor-pointer slide-in';
+                    groupCard.style.animationDelay = `${index * 0.1}s`;
+                    groupCard.innerHTML = `
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-${color}-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-${icon} text-${color}-600 text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-2 hover:text-${color}-600 transition-colors">${group.name}</h3>
+                            <p class="text-sm text-gray-600 mb-3">
+                                <i class="fas fa-school mr-1"></i>${group.schoolName}
+                            </p>
+                            <p class="text-gray-700 mb-4 text-sm leading-relaxed line-clamp-3">${group.description}</p>
+                            
+                            <div class="space-y-3 mb-4">
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="bg-${color}-100 text-${color}-800 px-2 py-1 rounded-full font-semibold">
+                                        <i class="fas fa-book mr-1"></i>${group.subjectName}
+                                    </span>
+                                    <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full font-semibold">
+                                        <i class="fas fa-graduation-cap mr-1"></i>Grade ${group.grade}
+                                    </span>
+                                </div>
+                                
+                                <div class="text-xs text-gray-600 space-y-1">
+                                    <div class="flex items-center justify-center">
+                                        <i class="fas fa-clock mr-1 text-${color}-500"></i>
+                                        <span>${group.meetingTime}</span>
+                                    </div>
+                                    <div class="flex items-center justify-center">
+                                        <i class="fas fa-user-tie mr-1 text-${color}-500"></i>
+                                        <span>${group.admin}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <div class="flex items-center justify-between text-xs text-gray-600 mb-2">
+                                    <span><i class="fas fa-users mr-1"></i>${group.members}/${group.maxMembers} members</span>
+                                    <span>${percentage}% full</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-${color}-500 h-2 rounded-full transition-all duration-500" style="width: ${percentage}%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex space-x-2">
+                                <button class="view-details-btn flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 px-3 rounded-xl transition-all duration-300 text-sm" 
+                                        data-group-id="${group.id}">
+                                    <i class="fas fa-info-circle mr-1"></i>Details
+                                </button>
+                                <button class="join-group-btn flex-1 ${isFull ? 'bg-gray-400 cursor-not-allowed' : `bg-${color}-500 hover:bg-${color}-600`} text-white font-semibold py-2 px-3 rounded-xl transition-all duration-300 text-sm" 
+                                        data-group-id="${group.id}" ${isFull ? 'disabled' : ''}>
+                                    ${isFull ? 'Full' : 'Join'}
+                                </button>
+                            </div>
+                        </div>
+                    `;
+
+                    // Add event listeners
+                    const viewBtn = groupCard.querySelector('.view-details-btn');
+                    const joinBtn = groupCard.querySelector('.join-group-btn');
+
+                    viewBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        openDetailsModal(group);
+                    });
+
+                    if (!isFull) {
+                        joinBtn.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            openJoinModal(group);
+                        });
+                    }
+
+                    grid.appendChild(groupCard);
+                });
+            }
+
+            function filterGroups() {
+                const schoolFilter = document.getElementById('schoolFilter').value;
+                const subjectFilter = document.getElementById('subjectFilter').value;
+                const gradeFilter = document.getElementById('gradeFilter').value;
+                const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+                const filteredGroups = studyGroups.filter(group => {
+                    const matchesSchool = schoolFilter === 'all' || group.school === schoolFilter;
+                    const matchesSubject = subjectFilter === 'all' || group.subject === subjectFilter;
+                    const matchesGrade = gradeFilter === 'all' || group.grade === gradeFilter;
+                    const matchesSearch = searchTerm === '' || 
+                        group.name.toLowerCase().includes(searchTerm) ||
+                        group.description.toLowerCase().includes(searchTerm) ||
+                        group.admin.toLowerCase().includes(searchTerm);
+                    
+                    return matchesSchool && matchesSubject && matchesGrade && matchesSearch;
+                });
+
+                displayGroups(filteredGroups);
+            }
+
+            function openDetailsModal(group) {
+                currentSelectedGroup = group;
+                
+                const subjectIcons = {
+                    mathematics: 'calculator',
+                    science: 'flask',
+                    english: 'book',
+                    history: 'landmark',
+                    geography: 'globe-africa',
+                    biology: 'dna'
+                };
+
+                const subjectColors = {
+                    mathematics: 'purple',
+                    science: 'pink',
+                    english: 'blue',
+                    history: 'green',
+                    geography: 'yellow',
+                    biology: 'teal'
+                };
+
+                const color = subjectColors[group.subject] || 'blue';
+                const icon = subjectIcons[group.subject] || 'book';
+                const percentage = Math.round((group.members / group.maxMembers) * 100);
+
+                // Update modal content
+                document.getElementById('detailsIcon').innerHTML = `<i class="fas fa-${icon} text-${color}-600 text-3xl"></i>`;
+                document.getElementById('detailsIcon').className = `w-20 h-20 bg-${color}-100 rounded-full flex items-center justify-center mx-auto mb-4`;
+                document.getElementById('detailsGroupName').textContent = group.name;
+                document.getElementById('detailsGroupSchool').textContent = group.schoolName;
+                document.getElementById('detailsSubject').textContent = group.subjectName;
+                document.getElementById('detailsSubject').className = `bg-${color}-100 text-${color}-800 px-3 py-1 rounded-full text-sm font-semibold`;
+                document.getElementById('detailsGrade').textContent = `Grade ${group.grade}`;
+                document.getElementById('detailsDescription').textContent = group.description;
+                document.getElementById('detailsMeetingTime').textContent = group.meetingTime;
+                document.getElementById('detailsAdmin').textContent = group.admin;
+                document.getElementById('detailsMembers').textContent = `${group.members} of ${group.maxMembers} members`;
+                document.getElementById('detailsPercentage').textContent = `${percentage}% full`;
+                document.getElementById('detailsProgressBar').style.width = `${percentage}%`;
+                document.getElementById('detailsProgressBar').className = `bg-${color}-500 h-3 rounded-full transition-all duration-500`;
+
+                // Update join button
+                const joinBtn = document.getElementById('joinFromDetails');
+                const isFull = group.members >= group.maxMembers;
+                if (isFull) {
+                    joinBtn.textContent = 'Group Full';
+                    joinBtn.className = 'flex-1 bg-gray-400 cursor-not-allowed text-white font-bold py-3 px-6 rounded-xl';
+                    joinBtn.disabled = true;
+                } else {
+                    joinBtn.textContent = 'Request to Join';
+                    joinBtn.className = `flex-1 bg-${color}-500 hover:bg-${color}-600 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 pulse-glow`;
+                    joinBtn.disabled = false;
+                }
+
+                document.getElementById('detailsModal').classList.remove('hidden');
+            }
+
+            function openJoinModal(group) {
+                currentSelectedGroup = group;
+                document.getElementById('modalGroupName').textContent = group.name;
+                document.getElementById('modalGroupDetails').textContent = `${group.schoolName} • Grade ${group.grade}`;
+                document.getElementById('joinModal').classList.remove('hidden');
+                
+                // Clear form
+                document.getElementById('joinReason').value = '';
+                document.getElementById('studyGoals').value = '';
+            }
+
+            function submitJoinRequest() {
+                const reason = document.getElementById('joinReason').value;
+                const goals = document.getElementById('studyGoals').value;
+
+                if (!reason.trim() || !goals.trim()) {
+                    showNotification('Please fill in all fields.', 'error');
+                    return;
+                }
+
+                // Simulate sending request
+                document.getElementById('joinModal').classList.add('hidden');
+                
+                // Show success notification
+                showNotification(`Join request sent to "${currentSelectedGroup.name}"! The group admin will review your request.`, 'success');
+
+                currentSelectedGroup = null;
+            }
+
+            function showNotification(message, type = 'success') {
+                const notification = document.createElement('div');
+                const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
+                const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+                
+                notification.className = `notification fixed top-4 right-4 ${bgColor} text-white px-6 py-4 rounded-xl shadow-lg z-50 max-w-sm`;
+                notification.innerHTML = `
+                    <div class="flex items-start">
+                        <i class="fas ${icon} mr-3 mt-1"></i>
+                        <span class="text-sm">${message}</span>
+                    </div>
+                `;
+                
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.style.animation = 'slideInRight 0.5s ease-out reverse';
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 500);
+                }, 4000);
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'984e7819b00d0038',t:'MTc1ODg0NDcwMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
