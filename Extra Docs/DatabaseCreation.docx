@@ -1,577 +1,147 @@
+-- Create Database
+CREATE DATABASE SchoolManagement;
 
+-- Connect to the database
+\c SchoolManagement;
 
--- =============================================
--- Enable necessary extensions
--- =============================================
-CREATE EXTENSION IF NOT EXISTS "pgcrypto"; -- For password encryption
-
--- =============================================
--- Create ENUM types for data consistency
--- =============================================
-CREATE TYPE user_role AS ENUM ('super_admin', 'admin', 'moderator');
-CREATE TYPE resource_type AS ENUM ('pdf', 'video', 'audio', 'document', 'presentation', 'image');
-CREATE TYPE quiz_type AS ENUM ('multiple_choice', 'true_false', 'essay', 'mixed');
-CREATE TYPE session_status AS ENUM ('scheduled', 'active', 'completed', 'cancelled');
-CREATE TYPE province_type AS ENUM (
-    'Eastern Cape', 'Free State', 'Gauteng', 'KwaZulu-Natal', 
-    'Limpopo', 'Mpumalanga', 'North West', 'Northern Cape', 'Western Cape'
-);
-
--- =============================================
--- Create core tables in proper dependency order
--- =============================================
-
--- Schools table (independent)
+-- Create Tables with proper constraints and relationships
 CREATE TABLE Schools (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    province province_type NOT NULL,
+    province VARCHAR(100) NOT NULL,
     district VARCHAR(100) NOT NULL,
-    address TEXT,
-    phone VARCHAR(20),
-    email VARCHAR(255),
-    principal_name VARCHAR(255),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    
-    CONSTRAINT chk_school_email CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'),
-    CONSTRAINT chk_school_phone CHECK (phone ~ '^\+?[0-9\s\-\(\)]{10,}$')
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Subjects table
-CREATE TABLE Subjects (
+CREATE TABLE Groups (
     id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL UNIQUE,
-    code VARCHAR(20) UNIQUE NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    number INTEGER NOT NULL CHECK (number > 0),
     description TEXT,
-    curriculum VARCHAR(100),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    
-    CONSTRAINT uk_subject_code UNIQUE (code)
+    school BIGINT NOT NULL REFERENCES Schools(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(school, number)
 );
 
--- Admin table
+CREATE TABLE Students (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    surname VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    grade INTEGER NOT NULL CHECK (grade >= 1 AND grade <= 12),
+    id_num VARCHAR(20) UNIQUE NOT NULL,
+    province VARCHAR(100) NOT NULL,
+    address TEXT NOT NULL, -- Added address field
+    password VARCHAR(255) NOT NULL,
+    group_id BIGINT REFERENCES Groups(id) ON DELETE SET NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE Mentors (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    surname VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    id_num VARCHAR(20) UNIQUE NOT NULL,
+    province VARCHAR(100) NOT NULL,
+    address TEXT NOT NULL, -- Added address field
+    password VARCHAR(255) NOT NULL,
+    incentives DECIMAL(10,2) DEFAULT 0.00 CHECK (incentives >= 0),
+    group_id BIGINT REFERENCES Groups(id) ON DELETE SET NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE Teachers (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    surname VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    id_num VARCHAR(20) UNIQUE NOT NULL,
+    province VARCHAR(100) NOT NULL,
+    address TEXT NOT NULL, -- Added address field
+    password VARCHAR(255) NOT NULL,
+    salary DECIMAL(10,2) NOT NULL CHECK (salary >= 0),
+    group_id BIGINT REFERENCES Groups(id) ON DELETE SET NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE Admin (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     surname VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    role user_role NOT NULL DEFAULT 'admin',
-    phone VARCHAR(20),
-    is_active BOOLEAN DEFAULT TRUE,
-    last_login TIMESTAMP WITH TIME ZONE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    
-    CONSTRAINT chk_admin_email CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'),
-    CONSTRAINT chk_admin_name CHECK (name ~ '^[A-Za-z\s\-]{2,100}$'),
-    CONSTRAINT chk_admin_surname CHECK (surname ~ '^[A-Za-z\s\-]{2,100}$')
+    role VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Groups table (depends on Schools)
-CREATE TABLE Groups (
+-- Subject table needed for resources and sessions
+CREATE TABLE Subjects (
     id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    number INTEGER NOT NULL CHECK (number > 0),
+    name VARCHAR(255) NOT NULL UNIQUE,
     description TEXT,
-    school_id BIGINT NOT NULL,
-    academic_year INTEGER NOT NULL CHECK (academic_year >= 2000 AND academic_year <= 2100),
-    grade_level INTEGER CHECK (grade_level >= 1 AND grade_level <= 12),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    
-    FOREIGN KEY (school_id) REFERENCES Schools(id) ON DELETE CASCADE,
-    UNIQUE(name, school_id, academic_year),
-    CONSTRAINT chk_group_number_range CHECK (number BETWEEN 1 AND 1000)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Base People table for common attributes (Teachers, Students, Mentors)
-CREATE TABLE People (
-    id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    surname VARCHAR(255) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    id_num VARCHAR(13) UNIQUE NOT NULL, -- South African ID format
-    province province_type NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    phone VARCHAR(20),
-    date_of_birth DATE,
-    gender VARCHAR(10) CHECK (gender IN ('Male', 'Female', 'Other')),
-    address TEXT,
-    school_id BIGINT,
-    is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    
-    FOREIGN KEY (school_id) REFERENCES Schools(id) ON DELETE SET NULL,
-    CONSTRAINT chk_id_num_format CHECK (id_num ~ '^[0-9]{13}$'), -- SA ID number format
-    CONSTRAINT chk_email_format CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'),
-    CONSTRAINT chk_name_format CHECK (name ~ '^[A-Za-z\s\-]{2,100}$'),
-    CONSTRAINT chk_surname_format CHECK (surname ~ '^[A-Za-z\s\-]{2,100}$'),
-    CONSTRAINT chk_dob_reasonable CHECK (date_of_birth >= '1900-01-01' AND date_of_birth <= CURRENT_DATE - INTERVAL '5 years')
-);
-
--- Students table (inherits from People)
-CREATE TABLE Students (
-    id BIGINT PRIMARY KEY,
-    grade INTEGER NOT NULL CHECK (grade >= 1 AND grade <= 12),
-    group_id BIGINT,
-    enrollment_date DATE NOT NULL DEFAULT CURRENT_DATE,
-    emergency_contact_name VARCHAR(255),
-    emergency_contact_phone VARCHAR(20),
-    
-    FOREIGN KEY (id) REFERENCES People(id) ON DELETE CASCADE,
-    FOREIGN KEY (group_id) REFERENCES Groups(id) ON DELETE SET NULL,
-    CONSTRAINT chk_enrollment_date CHECK (enrollment_date >= '2000-01-01')
-) INHERITS (People);
-
--- Teachers table (inherits from People)
-CREATE TABLE Teachers (
-    id BIGINT PRIMARY KEY,
-    salary DECIMAL(10,2) NOT NULL CHECK (salary >= 0),
-    qualification VARCHAR(255),
-    specialization VARCHAR(255),
-    employment_date DATE NOT NULL DEFAULT CURRENT_DATE,
-    subject_id BIGINT,
-    
-    FOREIGN KEY (id) REFERENCES People(id) ON DELETE CASCADE,
-    FOREIGN KEY (subject_id) REFERENCES Subjects(id) ON DELETE SET NULL,
-    CONSTRAINT chk_employment_date CHECK (employment_date >= '2000-01-01')
-) INHERITS (People);
-
--- Mentors table (inherits from People)
-CREATE TABLE Mentors (
-    id BIGINT PRIMARY KEY,
-    incentives DECIMAL(10,2) NOT NULL CHECK (incentives >= 0),
-    expertise_area VARCHAR(255),
-    years_of_experience INTEGER CHECK (years_of_experience >= 0),
-    availability TEXT,
-    
-    FOREIGN KEY (id) REFERENCES People(id) ON DELETE CASCADE
-) INHERITS (People);
-
--- Sessions table
-CREATE TABLE sessions (
-    id BIGSERIAL PRIMARY KEY,
-    hoster_id BIGINT NOT NULL, -- Can be Teacher or Mentor
-    hoster_type VARCHAR(8) NOT NULL CHECK (hoster_type IN ('teacher', 'mentor')),
-    capacity INTEGER NOT NULL CHECK (capacity > 0 AND capacity <= 1000),
-    name VARCHAR(255) NOT NULL,
-    subject_id BIGINT NOT NULL,
-    description TEXT,
-    duration INTEGER NOT NULL CHECK (duration > 0 AND duration <= 480), -- minutes (8 hours max)
-    start_time TIMESTAMP WITH TIME ZONE NOT NULL,
-    end_time TIMESTAMP WITH TIME ZONE NOT NULL,
-    status session_status DEFAULT 'scheduled',
-    meeting_link VARCHAR(500),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    
-    FOREIGN KEY (subject_id) REFERENCES Subjects(id) ON DELETE CASCADE,
-    CONSTRAINT chk_end_time_after_start CHECK (end_time > start_time),
-    CONSTRAINT chk_duration_match CHECK (EXTRACT(EPOCH FROM (end_time - start_time))/60 = duration)
-);
-
--- Resources table
 CREATE TABLE resources (
     id BIGSERIAL PRIMARY KEY,
-    uploader_id BIGINT NOT NULL, -- References Admin/Teacher who uploaded
-    uploader_type VARCHAR(8) NOT NULL CHECK (uploader_type IN ('admin', 'teacher')),
-    subject_id BIGINT NOT NULL,
-    type resource_type NOT NULL,
+    upload_by BIGINT NOT NULL, -- References either Teacher or Mentor
+    subject BIGINT NOT NULL REFERENCES Subjects(id) ON DELETE CASCADE,
+    type VARCHAR(50) NOT NULL,
     name VARCHAR(255) NOT NULL,
     description TEXT,
-    file_path VARCHAR(500) NOT NULL,
-    file_size BIGINT CHECK (file_size >= 0),
-    downloads_count INTEGER DEFAULT 0 CHECK (downloads_count >= 0),
-    is_public BOOLEAN DEFAULT FALSE,
-    uploaded_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    
-    FOREIGN KEY (subject_id) REFERENCES Subjects(id) ON DELETE CASCADE
+    file_path VARCHAR(500), -- Recommended: store file path or URL
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Quizzes table
+CREATE TABLE sessions (
+    id BIGSERIAL PRIMARY KEY,
+    hoster BIGINT NOT NULL, -- References either Teacher or Mentor
+    capacity INTEGER NOT NULL CHECK (capacity > 0),
+    name VARCHAR(255) NOT NULL,
+    subject BIGINT NOT NULL REFERENCES Subjects(id) ON DELETE CASCADE,
+    description TEXT,
+    duration INTEGER NOT NULL CHECK (duration > 0), -- in minutes
+    start_time TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE quizzes (
     id BIGSERIAL PRIMARY KEY,
-    uploader_id BIGINT NOT NULL, -- References Admin/Teacher who uploaded
-    uploader_type VARCHAR(8) NOT NULL CHECK (uploader_type IN ('admin', 'teacher')),
-    subject_id BIGINT NOT NULL,
-    type quiz_type NOT NULL,
+    upload_by BIGINT NOT NULL, -- References either Teacher or Mentor
+    subject BIGINT NOT NULL REFERENCES Subjects(id) ON DELETE CASCADE,
+    type VARCHAR(50) NOT NULL,
     name VARCHAR(255) NOT NULL,
     description TEXT,
-    total_questions INTEGER NOT NULL CHECK (total_questions > 0),
-    time_limit INTEGER CHECK (time_limit > 0), -- in minutes
-    passing_score INTEGER CHECK (passing_score >= 0 AND passing_score <= 100),
-    max_attempts INTEGER DEFAULT 1 CHECK (max_attempts > 0),
-    is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    
-    FOREIGN KEY (subject_id) REFERENCES Subjects(id) ON DELETE CASCADE
+    file_path VARCHAR(500), -- Recommended: store file path or URL
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- =============================================
--- Junction tables for many-to-many relationships
--- =============================================
-
--- Students and Sessions enrollment
-CREATE TABLE student_sessions (
-    id BIGSERIAL PRIMARY KEY,
-    student_id BIGINT NOT NULL,
-    session_id BIGINT NOT NULL,
-    enrolled_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    attendance_status VARCHAR(10) DEFAULT 'absent' CHECK (attendance_status IN ('present', 'absent', 'late')),
-    notes TEXT,
-    
-    FOREIGN KEY (student_id) REFERENCES Students(id) ON DELETE CASCADE,
-    FOREIGN KEY (session_id) REFERENCES sessions(id) ON DELETE CASCADE,
-    UNIQUE(student_id, session_id)
+-- Junction table for session participants (Students)
+CREATE TABLE session_participants (
+    session_id BIGINT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,
+    student_id BIGINT NOT NULL REFERENCES Students(id) ON DELETE CASCADE,
+    enrolled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (session_id, student_id)
 );
 
--- Students and Quizzes attempts
-CREATE TABLE student_quizzes (
-    id BIGSERIAL PRIMARY KEY,
-    student_id BIGINT NOT NULL,
-    quiz_id BIGINT NOT NULL,
-    attempt_number INTEGER NOT NULL CHECK (attempt_number > 0),
-    score DECIMAL(5,2) CHECK (score >= 0 AND score <= 100),
-    total_questions INTEGER NOT NULL,
-    correct_answers INTEGER CHECK (correct_answers >= 0),
-    started_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    completed_at TIMESTAMP WITH TIME ZONE,
-    time_taken INTEGER, -- in seconds
-    
-    FOREIGN KEY (student_id) REFERENCES Students(id) ON DELETE CASCADE,
-    FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE,
-    UNIQUE(student_id, quiz_id, attempt_number),
-    CONSTRAINT chk_completion_time CHECK (completed_at IS NULL OR completed_at >= started_at)
-);
-
--- Teachers and Subjects (a teacher can teach multiple subjects)
-CREATE TABLE teacher_subjects (
-    id BIGSERIAL PRIMARY KEY,
-    teacher_id BIGINT NOT NULL,
-    subject_id BIGINT NOT NULL,
-    is_primary BOOLEAN DEFAULT FALSE,
-    assigned_date DATE DEFAULT CURRENT_DATE,
-    
-    FOREIGN KEY (teacher_id) REFERENCES Teachers(id) ON DELETE CASCADE,
-    FOREIGN KEY (subject_id) REFERENCES Subjects(id) ON DELETE CASCADE,
-    UNIQUE(teacher_id, subject_id)
-);
-
--- Students and Groups (a student can be in multiple groups over time)
-CREATE TABLE student_groups (
-    id BIGSERIAL PRIMARY KEY,
-    student_id BIGINT NOT NULL,
-    group_id BIGINT NOT NULL,
-    academic_year INTEGER NOT NULL CHECK (academic_year >= 2000 AND academic_year <= 2100),
-    enrollment_date DATE DEFAULT CURRENT_DATE,
-    
-    FOREIGN KEY (student_id) REFERENCES Students(id) ON DELETE CASCADE,
-    FOREIGN KEY (group_id) REFERENCES Groups(id) ON DELETE CASCADE,
-    UNIQUE(student_id, group_id, academic_year)
-);
-
--- =============================================
--- Create indexes for performance
--- =============================================
-
--- People indexes
-CREATE INDEX idx_people_email ON People(email);
-CREATE INDEX idx_people_id_num ON People(id_num);
-CREATE INDEX idx_people_school ON People(school_id);
-CREATE INDEX idx_people_active ON People(is_active) WHERE is_active = TRUE;
-
--- Students indexes
-CREATE INDEX idx_students_grade ON Students(grade);
+-- Indexes for better performance
+CREATE INDEX idx_students_email ON Students(email);
 CREATE INDEX idx_students_group ON Students(group_id);
-CREATE INDEX idx_students_enrollment ON Students(enrollment_date);
+CREATE INDEX idx_teachers_email ON Teachers(email);
+CREATE INDEX idx_mentors_email ON Mentors(email);
+CREATE INDEX idx_admin_email ON Admin(email);
+CREATE INDEX idx_resources_subject ON resources(subject);
+CREATE INDEX idx_resources_upload ON resources(upload_by);
+CREATE INDEX idx_sessions_hoster ON sessions(hoster);
+CREATE INDEX idx_sessions_subject ON sessions(subject);
+CREATE INDEX idx_sessions_time ON sessions(start_time);
+CREATE INDEX idx_quizzes_subject ON quizzes(subject);
+CREATE INDEX idx_quizzes_upload ON quizzes(upload_by);
 
--- Teachers indexes
-CREATE INDEX idx_teachers_salary ON Teachers(salary);
-CREATE INDEX idx_teachers_subject ON Teachers(subject_id);
-
--- Sessions indexes
-CREATE INDEX idx_sessions_start_time ON sessions(start_time);
-CREATE INDEX idx_sessions_subject ON sessions(subject_id);
-CREATE INDEX idx_sessions_status ON sessions(status);
-CREATE INDEX idx_sessions_hoster ON sessions(hoster_id, hoster_type);
-
--- Resources indexes
-CREATE INDEX idx_resources_subject ON resources(subject_id);
-CREATE INDEX idx_resources_type ON resources(type);
-CREATE INDEX idx_resources_uploader ON resources(uploader_id, uploader_type);
-
--- Quizzes indexes
-CREATE INDEX idx_quizzes_subject ON quizzes(subject_id);
-CREATE INDEX idx_quizzes_type ON quizzes(type);
-CREATE INDEX idx_quizzes_active ON quizzes(is_active) WHERE is_active = TRUE;
-
--- Junction tables indexes
-CREATE INDEX idx_student_sessions_student ON student_sessions(student_id);
-CREATE INDEX idx_student_sessions_session ON student_sessions(session_id);
-CREATE INDEX idx_student_quizzes_student ON student_quizzes(student_id);
-CREATE INDEX idx_student_quizzes_quiz ON student_quizzes(quiz_id);
-CREATE INDEX idx_teacher_subjects_teacher ON teacher_subjects(teacher_id);
-CREATE INDEX idx_teacher_subjects_subject ON teacher_subjects(subject_id);
-
--- =============================================
--- Create functions and triggers for data integrity
--- =============================================
-
--- Function to update updated_at timestamp
-CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = CURRENT_TIMESTAMP;
-    RETURN NEW;
-END;
-$$ language 'plpgsql';
-
--- Function to validate session hoster
-CREATE OR REPLACE FUNCTION validate_session_hoster()
-RETURNS TRIGGER AS $$
-BEGIN
-    IF NEW.hoster_type = 'teacher' THEN
-        IF NOT EXISTS (SELECT 1 FROM Teachers WHERE id = NEW.hoster_id) THEN
-            RAISE EXCEPTION 'Teacher with id % does not exist', NEW.hoster_id;
-        END IF;
-    ELSIF NEW.hoster_type = 'mentor' THEN
-        IF NOT EXISTS (SELECT 1 FROM Mentors WHERE id = NEW.hoster_id) THEN
-            RAISE EXCEPTION 'Mentor with id % does not exist', NEW.hoster_id;
-        END IF;
-    END IF;
-    RETURN NEW;
-END;
-$$ language 'plpgsql';
-
--- Function to validate resource/quiz uploader
-CREATE OR REPLACE FUNCTION validate_uploader()
-RETURNS TRIGGER AS $$
-BEGIN
-    IF NEW.uploader_type = 'admin' THEN
-        IF NOT EXISTS (SELECT 1 FROM Admin WHERE id = NEW.uploader_id) THEN
-            RAISE EXCEPTION 'Admin with id % does not exist', NEW.uploader_id;
-        END IF;
-    ELSIF NEW.uploader_type = 'teacher' THEN
-        IF NOT EXISTS (SELECT 1 FROM Teachers WHERE id = NEW.uploader_id) THEN
-            RAISE EXCEPTION 'Teacher with id % does not exist', NEW.uploader_id;
-        END IF;
-    END IF;
-    RETURN NEW;
-END;
-$$ language 'plpgsql';
-
--- Function to automatically set end_time based on duration
-CREATE OR REPLACE FUNCTION set_session_end_time()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.end_time = NEW.start_time + (NEW.duration * INTERVAL '1 minute');
-    RETURN NEW;
-END;
-$$ language 'plpgsql';
-
--- Function to encrypt passwords (basic example)
-CREATE OR REPLACE FUNCTION encrypt_password()
-RETURNS TRIGGER AS $$
-BEGIN
-    -- In production, use proper hashing like bcrypt
-    -- This is a basic example using pgcrypto
-    IF NEW.password IS NOT NULL AND NEW.password !~ '^\$2[ayb]\$.{56}$' THEN
-        NEW.password = crypt(NEW.password, gen_salt('bf'));
-    END IF;
-    RETURN NEW;
-END;
-$$ language 'plpgsql';
-
--- Apply triggers
-CREATE TRIGGER update_people_updated_at 
-    BEFORE UPDATE ON People 
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER update_admin_updated_at 
-    BEFORE UPDATE ON Admin 
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER validate_session_hoster_trigger
-    BEFORE INSERT OR UPDATE ON sessions
-    FOR EACH ROW EXECUTE FUNCTION validate_session_hoster();
-
-CREATE TRIGGER validate_resource_uploader_trigger
-    BEFORE INSERT OR UPDATE ON resources
-    FOR EACH ROW EXECUTE FUNCTION validate_uploader();
-
-CREATE TRIGGER validate_quiz_uploader_trigger
-    BEFORE INSERT OR UPDATE ON quizzes
-    FOR EACH ROW EXECUTE FUNCTION validate_uploader();
-
-CREATE TRIGGER set_session_end_time_trigger
-    BEFORE INSERT OR UPDATE ON sessions
-    FOR EACH ROW EXECUTE FUNCTION set_session_end_time();
-
-CREATE TRIGGER encrypt_people_password
-    BEFORE INSERT OR UPDATE ON People
-    FOR EACH ROW EXECUTE FUNCTION encrypt_password();
-
-CREATE TRIGGER encrypt_admin_password
-    BEFORE INSERT OR UPDATE ON Admin
-    FOR EACH ROW EXECUTE FUNCTION encrypt_password();
-
--- =============================================
--- Insert sample data for testing
--- =============================================
-
--- Insert sample schools
-INSERT INTO Schools (name, province, district, address, phone, email, principal_name) VALUES
-('Springfield High School', 'Gauteng', 'Johannesburg Central', '123 Education St, Springfield', '+27111234567', 'info@springfieldhigh.edu.za', 'Dr. Sarah Johnson'),
-('Cape Town Secondary', 'Western Cape', 'Cape Town Metro', '456 Learning Ave, Cape Town', '+27876543210', 'admin@ctsecondary.co.za', 'Mr. James Wilson');
-
--- Insert sample subjects
-INSERT INTO Subjects (name, code, description, curriculum) VALUES
-('Mathematics', 'MATH01', 'Advanced mathematics including calculus and algebra', 'CAPS'),
-('Physical Sciences', 'PHSC01', 'Physics and chemistry fundamentals', 'CAPS'),
-('English Home Language', 'ENG01', 'English language and literature', 'CAPS'),
-('Life Sciences', 'LISC01', 'Biology and environmental studies', 'CAPS'),
-('Geography', 'GEOG01', 'Physical and human geography', 'CAPS');
-
--- Insert sample admin
-INSERT INTO Admin (name, surname, email, password, role, phone) VALUES
-('John', 'Smith', 'john.smith@schoolsystem.edu.za', 'admin123', 'super_admin', '+27811234567'),
-('Mary', 'Brown', 'mary.brown@schoolsystem.edu.za', 'admin456', 'admin', '+27817654321');
-
--- Insert sample people (to be used as teachers/students/mentors)
-INSERT INTO People (name, surname, email, id_num, province, password, phone, school_id) VALUES
--- Teachers
-('David', 'Wilson', 'david.wilson@springfieldhigh.edu.za', '8001015000089', 'Gauteng', 'teacher123', '+27811234568', 1),
-('Susan', 'Miller', 'susan.miller@springfieldhigh.edu.za', '8503054000076', 'Gauteng', 'teacher456', '+27811234569', 1),
--- Students
-('Alice', 'Johnson', 'alice.johnson@student.edu.za', '0506103000021', 'Gauteng', 'student123', '+27811234570', 1),
-('Bob', 'Davis', 'bob.davis@student.edu.za', '0607154000032', 'Gauteng', 'student456', '+27811234571', 1),
--- Mentors
-('Robert', 'Taylor', 'robert.taylor@mentor.edu.za', '7502016000054', 'Gauteng', 'mentor123', '+27811234572', 1);
-
--- Insert into specific role tables
-INSERT INTO Teachers (id, salary, qualification, specialization, subject_id) 
-SELECT id, 45000.00, 'BSc Mathematics', 'Mathematics', 1 FROM People WHERE email = 'david.wilson@springfieldhigh.edu.za';
-
-INSERT INTO Teachers (id, salary, qualification, specialization, subject_id) 
-SELECT id, 42000.00, 'BSc Biology', 'Life Sciences', 4 FROM People WHERE email = 'susan.miller@springfieldhigh.edu.za';
-
-INSERT INTO Students (id, grade, enrollment_date) 
-SELECT id, 10, '2023-01-15' FROM People WHERE email = 'alice.johnson@student.edu.za';
-
-INSERT INTO Students (id, grade, enrollment_date) 
-SELECT id, 11, '2023-01-15' FROM People WHERE email = 'bob.davis@student.edu.za';
-
-INSERT INTO Mentors (id, incentives, expertise_area, years_of_experience) 
-SELECT id, 15000.00, 'Career Guidance', 5 FROM People WHERE email = 'robert.taylor@mentor.edu.za';
-
--- Insert sample groups
-INSERT INTO Groups (name, number, description, school_id, academic_year, grade_level) VALUES
-('Grade 10A', 1, 'Grade 10 Advanced Class', 1, 2024, 10),
-('Grade 11B', 2, 'Grade 11 Standard Class', 1, 2024, 11);
-
--- =============================================
--- Create views for common queries
--- =============================================
-
--- View for student details with group information
-CREATE VIEW student_details AS
-SELECT 
-    s.id, s.name, s.surname, s.email, s.grade, s.id_num, s.province,
-    g.name as group_name, sc.name as school_name,
-    s.enrollment_date, s.is_active
-FROM Students s
-LEFT JOIN Groups g ON s.group_id = g.id
-LEFT JOIN Schools sc ON s.school_id = sc.id;
-
--- View for teacher details with subject information
-CREATE VIEW teacher_details AS
-SELECT 
-    t.id, t.name, t.surname, t.email, t.id_num, t.province,
-    t.salary, t.qualification, t.specialization,
-    s.name as subject_name, sc.name as school_name,
-    t.employment_date, t.is_active
-FROM Teachers t
-LEFT JOIN Subjects s ON t.subject_id = s.id
-LEFT JOIN Schools sc ON t.school_id = sc.id;
-
--- View for session details with hoster information
-CREATE VIEW session_details AS
-SELECT 
-    ses.id, ses.name, ses.description, ses.capacity, ses.duration,
-    ses.start_time, ses.end_time, ses.status,
-    sub.name as subject_name,
-    CASE 
-        WHEN ses.hoster_type = 'teacher' THEN t.name || ' ' || t.surname
-        WHEN ses.hoster_type = 'mentor' THEN m.name || ' ' || m.surname
-    END as hoster_name,
-    ses.hoster_type,
-    COUNT(ss.student_id) as enrolled_students
-FROM sessions ses
-LEFT JOIN Subjects sub ON ses.subject_id = sub.id
-LEFT JOIN Teachers t ON ses.hoster_type = 'teacher' AND ses.hoster_id = t.id
-LEFT JOIN Mentors m ON ses.hoster_type = 'mentor' AND ses.hoster_id = m.id
-LEFT JOIN student_sessions ss ON ses.id = ss.session_id
-GROUP BY ses.id, sub.name, t.name, t.surname, m.name, m.surname;
-
--- =============================================
--- Grant permissions (example - adjust as needed)
--- =============================================
-
--- Create application user role
-CREATE ROLE school_app LOGIN PASSWORD 'securepassword';
-GRANT CONNECT ON DATABASE SchoolManagement TO school_app;
-GRANT USAGE ON SCHEMA public TO school_app;
-GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO school_app;
-GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO school_app;
-
--- =============================================
--- Database comments for documentation
--- =============================================
-
-COMMENT ON DATABASE SchoolManagement IS 'Comprehensive School Management System Database';
-COMMENT ON TABLE Schools IS 'Stores information about educational institutions';
-COMMENT ON TABLE People IS 'Base table for all person types in the system';
-COMMENT ON TABLE Students IS 'Extends People table with student-specific attributes';
-COMMENT ON TABLE Teachers IS 'Extends People table with teacher-specific attributes';
-COMMENT ON TABLE Mentors IS 'Extends People table with mentor-specific attributes';
-
--- =============================================
--- Final verification queries
--- =============================================
-
--- Verify table creation
-SELECT 
-    table_name, 
-    COUNT(*) as column_count 
-FROM information_schema.columns 
-WHERE table_schema = 'public' 
-GROUP BY table_name 
-ORDER BY table_name;
-
--- Verify constraints
-SELECT 
-    tc.table_name, 
-    tc.constraint_name, 
-    tc.constraint_type 
-FROM information_schema.table_constraints tc 
-WHERE tc.table_schema = 'public' 
-ORDER BY tc.table_name, tc.constraint_type;
-
--- Test data insertion verification
-SELECT 'Schools' as table_name, COUNT(*) as record_count FROM Schools
-UNION ALL
-SELECT 'Subjects', COUNT(*) FROM Subjects
-UNION ALL
-SELECT 'Admin', COUNT(*) FROM Admin
-UNION ALL
-SELECT 'People', COUNT(*) FROM People
-UNION ALL
-SELECT 'Teachers', COUNT(*) FROM Teachers
-UNION ALL
-SELECT 'Students', COUNT(*) FROM Students
-UNION ALL
-SELECT 'Mentors', COUNT(*) FROM Mentors;
-
--- Display the completed database structure
-SELECT 'SchoolManagement database created successfully with full integrity constraints!' as status;
+-- Recommendations (optional but helpful):
+-- 1. Consider adding a 'user_type' field to resources, sessions, and quizzes to distinguish between Teacher/Mentor uploads
+-- 2. Add a 'status' field to sessions (scheduled, ongoing, completed, cancelled)
+-- 3. Consider adding file size and MIME type fields to resources and quizzes
+-- 4. Add a 'max_participants' field to sessions for better capacity management
