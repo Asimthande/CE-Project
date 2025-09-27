@@ -1,0 +1,244 @@
+School Management System Database Documentation
+Database Overview
+The School Management System is a comprehensive database designed to manage educational institutions, including students, teachers, mentors, administrative staff, educational resources, sessions, and assessments.
+
+Table Specifications
+1. Schools Table
+Purpose: Stores basic school information including location details
+
+id: Unique identifier (BIGSERIAL, Primary Key)
+
+name: Official school name (VARCHAR(255), NOT NULL)
+
+province: Province location (VARCHAR(100), NOT NULL)
+
+district: District within province (VARCHAR(100), NOT NULL)
+
+created_at: Record creation timestamp
+
+2. Groups Table
+Purpose: Manages class/group information within schools
+
+id: Unique group identifier (BIGSERIAL, Primary Key)
+
+name: Group/class name (VARCHAR(255), NOT NULL)
+
+number: Internal sorting number (INTEGER, NOT NULL)
+
+description: Group details (TEXT)
+
+school: Foreign key to Schools table
+
+created_at: Creation timestamp
+
+3. Subjects Table
+Purpose: Master list of all subjects taught
+
+id: Unique subject identifier (BIGSERIAL, Primary Key)
+
+name: Subject name (VARCHAR(255), NOT NULL, UNIQUE)
+
+description: Subject details (TEXT)
+
+created_at: Creation timestamp
+
+4. Students Table
+Purpose: Comprehensive student information management
+
+id: Unique student identifier (BIGSERIAL, Primary Key)
+
+name: First name (VARCHAR(255), NOT NULL)
+
+surname: Last name (VARCHAR(255), NOT NULL)
+
+email: Unique email (VARCHAR(255), UNIQUE, NOT NULL)
+
+grade: Grade level 1-12 (INTEGER, CHECK constraint)
+
+id_num: Identification number (VARCHAR(20), UNIQUE, NOT NULL)
+
+province: Residence province (VARCHAR(100), NOT NULL)
+
+address: Physical address (TEXT, NOT NULL)
+
+password: Hashed password (VARCHAR(255), NOT NULL)
+
+group_id: Foreign key to Groups table
+
+created_at: Creation timestamp
+
+5. Teachers Table
+Purpose: Teacher profiles and employment information
+
+id: Unique teacher identifier (BIGSERIAL, Primary Key)
+
+name: First name (VARCHAR(255), NOT NULL)
+
+surname: Last name (VARCHAR(255), NOT NULL)
+
+email: Unique email (VARCHAR(255), UNIQUE, NOT NULL)
+
+id_num: Identification number (VARCHAR(20), UNIQUE, NOT NULL)
+
+province: Residence province (VARCHAR(100), NOT NULL)
+
+address: Physical address (TEXT, NOT NULL)
+
+password: Hashed password (VARCHAR(255), NOT NULL)
+
+salary: Monthly salary (DECIMAL(10,2), NOT NULL)
+
+group_id: Foreign key to Groups table
+
+created_at: Creation timestamp
+
+6. Mentors Table
+Purpose: Mentor profiles and incentive management
+
+id: Unique mentor identifier (BIGSERIAL, Primary Key)
+
+name: First name (VARCHAR(255), NOT NULL)
+
+surname: Last name (VARCHAR(255), NOT NULL)
+
+email: Unique email (VARCHAR(255), UNIQUE, NOT NULL)
+
+id_num: Identification number (VARCHAR(20), UNIQUE, NOT NULL)
+
+province: Residence province (VARCHAR(100), NOT NULL)
+
+address: Physical address (TEXT, NOT NULL)
+
+password: Hashed password (VARCHAR(255), NOT NULL)
+
+incentives: Performance incentives (DECIMAL(10,2))
+
+group_id: Foreign key to Groups table
+
+created_at: Creation timestamp
+
+7. Admin Table
+Purpose: System administrator accounts
+
+id: Unique admin identifier (BIGSERIAL, Primary Key)
+
+name: First name (VARCHAR(255), NOT NULL)
+
+surname: Last name (VARCHAR(255), NOT NULL)
+
+email: Unique email (VARCHAR(255), UNIQUE, NOT NULL)
+
+password: Hashed password (VARCHAR(255), NOT NULL)
+
+role: Administrative role (VARCHAR(50), NOT NULL)
+
+created_at: Creation timestamp
+
+8. Resources Table
+Purpose: Educational resources management
+
+id: Unique resource identifier (BIGSERIAL, Primary Key)
+
+upload_by: Uploader ID (BIGINT, NOT NULL)
+
+subject: Foreign key to Subjects table
+
+type: Resource type (VARCHAR(50), NOT NULL)
+
+name: Resource name (VARCHAR(255), NOT NULL)
+
+description: Resource details (TEXT)
+
+file_path: Storage path (VARCHAR(500))
+
+created_at: Upload timestamp
+
+updated_at: Last modification timestamp
+
+9. Sessions Table
+Purpose: Teaching/tutoring session management
+
+id: Unique session identifier (BIGSERIAL, Primary Key)
+
+hoster: Session host ID (BIGINT, NOT NULL)
+
+capacity: Maximum participants (INTEGER, CHECK constraint)
+
+name: Session title (VARCHAR(255), NOT NULL)
+
+subject: Foreign key to Subjects table
+
+description: Session details (TEXT)
+
+duration: Duration in minutes (INTEGER, CHECK constraint)
+
+start_time: Scheduled start (TIMESTAMP, NOT NULL)
+
+created_at: Creation timestamp
+
+10. Quizzes Table
+Purpose: Assessment and quiz management
+
+id: Unique quiz identifier (BIGSERIAL, Primary Key)
+
+upload_by: Uploader ID (BIGINT, NOT NULL)
+
+subject: Foreign key to Subjects table
+
+type: Quiz type (VARCHAR(50), NOT NULL)
+
+name: Quiz name (VARCHAR(255), NOT NULL)
+
+description: Quiz details (TEXT)
+
+file_path: Storage path (VARCHAR(500))
+
+created_at: Upload timestamp
+
+11. Session Participants Table
+Purpose: Manages student enrollment in sessions
+
+session_id: Foreign key to Sessions table
+
+student_id: Foreign key to Students table
+
+enrolled_at: Enrollment timestamp
+
+Primary Key: Composite key (session_id, student_id)
+
+Business Rules and Constraints
+Data Integrity Constraints
+Grade Validation: Students must be in grades 1-12
+
+Salary/Incentives: Non-negative monetary values
+
+Session Capacity: Positive integer values
+
+Unique Identifiers: Email and ID numbers must be unique
+
+Temporal Constraints: Start times must be future-dated
+
+Relationship Rules
+Cascade Deletion: Schools deletion cascades to related groups
+
+Set Null on Delete: Group deletion sets group_id to NULL in related tables
+
+Many-to-Many: Session participants managed through junction table
+
+Security Features
+Password hashing for all user types
+
+Unique email constraints prevent duplicate accounts
+
+Role-based access control through Admin table
+
+Audit trails via created_at timestamps
+
+Performance Optimization
+Indexes on frequently queried columns (email, foreign keys)
+
+Proper data types for efficient storage
+
+Normalized structure to reduce data redundancy
+
+This database design ensures data integrity, supports efficient queries, and provides a solid foundation for a comprehensive school management system.
