@@ -1,8 +1,71 @@
 Students
+
+    id:1-100000000000000
+    name:string
+    surname:string
+    email:string
+    grade:1-12
+    id_num:string
+    province:string
+    password:string
 Mentors
+    id:1-100000000000000
+    name:string
+    surname:string
+    email:string
+    id_num:string
+    province:string
+    password:string
+    incentives:currency
 Teachers
+    id:1-100000000000000
+    name:string
+    surname:string
+    email:string
+    id_num:string
+    province:string
+    password:string
+    salary:currency
 Admin
+    id:1-100000000000000
+    name:string
+    surname:string
+    email:string
+    password:string
+    role:string
 resources
+    id:1-100000000000000
+    Upload:1-100000000000000
+    subject:1-100000000000000
+    type:string
+    name:string
+    description: string
 sessions
+    id:1-100000000000000
+    hoster:1-100000000000000
+    capacity:int
+    name:string
+    subject:1-100000000000000
+    description:string
+    duration:int
+    start_time:datetime
 quizzes
+    id:1-100000000000000
+    Upload:1-100000000000000
+    subject:1-100000000000000
+    type:string
+    name:string
+    description:string
 Groups
+    id:1-100000000000000
+    name:string
+    number:int
+    description:string
+    school:1-100000000000000
+Schools     
+    id:1-100000000000000
+    name:string
+    province:string
+    district:string
+
+    
