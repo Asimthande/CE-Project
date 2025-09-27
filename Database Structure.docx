@@ -1,5 +1,7 @@
-Students
+DB Name: SchoolManagement
+PostGres
 
+Students
     id:1-100000000000000
     name:string
     surname:string
@@ -67,5 +69,3 @@ Schools
     name:string
     province:string
     district:string
-
-    
