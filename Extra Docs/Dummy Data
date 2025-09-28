@@ -1,0 +1,403 @@
+-- =============================================
+-- School Management Database Schema
+-- Created for Educational Management System
+-- =============================================
+
+-- Create Database
+CREATE DATABASE SchoolManagement;
+
+-- Connect to the database
+\c SchoolManagement;
+
+-- =============================================
+-- Table: Schools
+-- Purpose: Store school information
+-- =============================================
+CREATE TABLE Schools (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    province VARCHAR(100) NOT NULL,
+    district VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+COMMENT ON TABLE Schools IS 'Stores basic school information including location details';
+COMMENT ON COLUMN Schools.id IS 'Unique identifier for each school (auto-increment)';
+COMMENT ON COLUMN Schools.name IS 'Official name of the school';
+COMMENT ON COLUMN Schools.province IS 'Province where the school is located';
+COMMENT ON COLUMN Schools.district IS 'District within the province';
+COMMENT ON COLUMN Schools.created_at IS 'Timestamp when school record was created';
+
+-- =============================================
+-- Table: Groups
+-- Purpose: Store class/group information within schools
+-- =============================================
+CREATE TABLE Groups (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    number INTEGER NOT NULL CHECK (number > 0),
+    description TEXT,
+    school BIGINT NOT NULL REFERENCES Schools(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(school, number)
+);
+
+COMMENT ON TABLE Groups IS 'Represents classes or groups within each school';
+COMMENT ON COLUMN Groups.id IS 'Unique identifier for each group';
+COMMENT ON COLUMN Groups.name IS 'Name of the group/class (e.g., Grade 10A)';
+COMMENT ON COLUMN Groups.number IS 'Group number for internal sorting';
+COMMENT ON COLUMN Groups.description IS 'Detailed description of the group';
+COMMENT ON COLUMN Groups.school IS 'Foreign key referencing the parent school';
+COMMENT ON COLUMN Groups.created_at IS 'Timestamp when group was created';
+
+-- =============================================
+-- Table: Subjects
+-- Purpose: Store subject/course information
+-- =============================================
+CREATE TABLE Subjects (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+COMMENT ON TABLE Subjects IS 'Master list of all subjects taught in the system';
+COMMENT ON COLUMN Subjects.id IS 'Unique identifier for each subject';
+COMMENT ON COLUMN Subjects.name IS 'Name of the subject (e.g., Mathematics, Science)';
+COMMENT ON COLUMN Subjects.description IS 'Detailed description of the subject content';
+COMMENT ON COLUMN Subjects.created_at IS 'Timestamp when subject was added';
+
+-- =============================================
+-- Table: Students
+-- Purpose: Store student information and profiles
+-- =============================================
+CREATE TABLE Students (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    surname VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    grade INTEGER NOT NULL CHECK (grade >= 1 AND grade <= 12),
+    id_num VARCHAR(20) UNIQUE NOT NULL,
+    province VARCHAR(100) NOT NULL,
+    address TEXT NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    group_id BIGINT REFERENCES Groups(id) ON DELETE SET NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+COMMENT ON TABLE Students IS 'Stores comprehensive student information and profiles';
+COMMENT ON COLUMN Students.id IS 'Unique identifier for each student';
+COMMENT ON COLUMN Students.name IS 'First name of the student';
+COMMENT ON COLUMN Students.surname IS 'Last name of the student';
+COMMENT ON COLUMN Students.email IS 'Unique email address for login and communication';
+COMMENT ON COLUMN Students.grade IS 'Current grade level (1-12)';
+COMMENT ON COLUMN Students.id_num IS 'Unique identification number';
+COMMENT ON COLUMN Students.province IS 'Province of residence';
+COMMENT ON COLUMN Students.address IS 'Complete physical address';
+COMMENT ON COLUMN Students.password IS 'Hashed password for system access';
+COMMENT ON COLUMN Students.group_id IS 'Foreign key linking student to their class/group';
+
+-- =============================================
+-- Table: Teachers
+-- Purpose: Store teacher information and employment details
+-- =============================================
+CREATE TABLE Teachers (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    surname VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    id_num VARCHAR(20) UNIQUE NOT NULL,
+    province VARCHAR(100) NOT NULL,
+    address TEXT NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    salary DECIMAL(10,2) NOT NULL CHECK (salary >= 0),
+    group_id BIGINT REFERENCES Groups(id) ON DELETE SET NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+COMMENT ON TABLE Teachers IS 'Stores teacher profiles and employment information';
+COMMENT ON COLUMN Teachers.id IS 'Unique identifier for each teacher';
+COMMENT ON COLUMN Teachers.name IS 'First name of the teacher';
+COMMENT ON COLUMN Teachers.surname IS 'Last name of the teacher';
+COMMENT ON COLUMN Teachers.email IS 'Unique email address for login';
+COMMENT ON COLUMN Teachers.id_num IS 'Unique identification number';
+COMMENT ON COLUMN Teachers.province IS 'Province of residence';
+COMMENT ON COLUMN Teachers.address IS 'Complete physical address';
+COMMENT ON COLUMN Teachers.password IS 'Hashed password for system access';
+COMMENT ON COLUMN Teachers.salary IS 'Monthly salary amount';
+COMMENT ON COLUMN Teachers.group_id IS 'Foreign key linking teacher to primary class/group';
+
+-- =============================================
+-- Table: Mentors
+-- Purpose: Store mentor information and incentive data
+-- =============================================
+CREATE TABLE Mentors (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    surname VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    id_num VARCHAR(20) UNIQUE NOT NULL,
+    province VARCHAR(100) NOT NULL,
+    address TEXT NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    incentives DECIMAL(10,2) DEFAULT 0.00 CHECK (incentives >= 0),
+    group_id BIGINT REFERENCES Groups(id) ON DELETE SET NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+COMMENT ON TABLE Mentors IS 'Stores mentor profiles and incentive information';
+COMMENT ON COLUMN Mentors.id IS 'Unique identifier for each mentor';
+COMMENT ON COLUMN Mentors.name IS 'First name of the mentor';
+COMMENT ON COLUMN Mentors.surname IS 'Last name of the mentor';
+COMMENT ON COLUMN Mentors.email IS 'Unique email address for login';
+COMMENT ON COLUMN Mentors.id_num IS 'Unique identification number';
+COMMENT ON COLUMN Mentors.province IS 'Province of residence';
+COMMENT ON COLUMN Mentors.address IS 'Complete physical address';
+COMMENT ON COLUMN Mentors.password IS 'Hashed password for system access';
+COMMENT ON COLUMN Mentors.incentives IS 'Performance-based incentive amount';
+COMMENT ON COLUMN Mentors.group_id IS 'Foreign key linking mentor to assigned class/group';
+
+-- =============================================
+-- Table: Admin
+-- Purpose: Store administrator accounts and roles
+-- =============================================
+CREATE TABLE Admin (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    surname VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+COMMENT ON TABLE Admin IS 'Stores system administrator accounts and permissions';
+COMMENT ON COLUMN Admin.id IS 'Unique identifier for each admin user';
+COMMENT ON COLUMN Admin.name IS 'First name of the administrator';
+COMMENT ON COLUMN Admin.surname IS 'Last name of the administrator';
+COMMENT ON COLUMN Admin.email IS 'Unique email address for login';
+COMMENT ON COLUMN Admin.password IS 'Hashed password for system access';
+COMMENT ON COLUMN Admin.role IS 'Administrative role (e.g., SuperAdmin, Support)';
+COMMENT ON COLUMN Admin.created_at IS 'Timestamp when admin account was created';
+
+-- =============================================
+-- Table: resources
+-- Purpose: Store educational resources uploaded by teachers/mentors
+-- =============================================
+CREATE TABLE resources (
+    id BIGSERIAL PRIMARY KEY,
+    upload_by BIGINT NOT NULL,
+    subject BIGINT NOT NULL REFERENCES Subjects(id) ON DELETE CASCADE,
+    type VARCHAR(50) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    file_path VARCHAR(500),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+COMMENT ON TABLE resources IS 'Stores educational resources and learning materials';
+COMMENT ON COLUMN resources.id IS 'Unique identifier for each resource';
+COMMENT ON COLUMN resources.upload_by IS 'ID of teacher/mentor who uploaded the resource';
+COMMENT ON COLUMN resources.subject IS 'Foreign key linking to subject';
+COMMENT ON COLUMN resources.type IS 'Type of resource (PDF, Video, Presentation, etc.)';
+COMMENT ON COLUMN resources.name IS 'Display name of the resource';
+COMMENT ON COLUMN resources.description IS 'Detailed description of resource content';
+COMMENT ON COLUMN resources.file_path IS 'File system path or URL to the resource';
+COMMENT ON COLUMN resources.created_at IS 'Timestamp when resource was uploaded';
+COMMENT ON COLUMN resources.updated_at IS 'Timestamp when resource was last modified';
+
+-- =============================================
+-- Table: sessions
+-- Purpose: Store tutoring/teaching session information
+-- =============================================
+CREATE TABLE sessions (
+    id BIGSERIAL PRIMARY KEY,
+    hoster BIGINT NOT NULL,
+    capacity INTEGER NOT NULL CHECK (capacity > 0),
+    name VARCHAR(255) NOT NULL,
+    subject BIGINT NOT NULL REFERENCES Subjects(id) ON DELETE CASCADE,
+    description TEXT,
+    duration INTEGER NOT NULL CHECK (duration > 0),
+    start_time TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+COMMENT ON TABLE sessions IS 'Stores information about teaching/tutoring sessions';
+COMMENT ON COLUMN sessions.id IS 'Unique identifier for each session';
+COMMENT ON COLUMN sessions.hoster IS 'ID of teacher/mentor hosting the session';
+COMMENT ON COLUMN sessions.capacity IS 'Maximum number of participants allowed';
+COMMENT ON COLUMN sessions.name IS 'Title/name of the session';
+COMMENT ON COLUMN sessions.subject IS 'Foreign key linking to subject being taught';
+COMMENT ON COLUMN sessions.description IS 'Detailed description of session content';
+COMMENT ON COLUMN sessions.duration IS 'Duration of session in minutes';
+COMMENT ON COLUMN sessions.start_time IS 'Scheduled start date and time';
+COMMENT ON COLUMN sessions.created_at IS 'Timestamp when session was created';
+
+-- =============================================
+-- Table: quizzes
+-- Purpose: Store quiz and assessment materials
+-- =============================================
+CREATE TABLE quizzes (
+    id BIGSERIAL PRIMARY KEY,
+    upload_by BIGINT NOT NULL,
+    subject BIGINT NOT NULL REFERENCES Subjects(id) ON DELETE CASCADE,
+    type VARCHAR(50) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    file_path VARCHAR(500),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+COMMENT ON TABLE quizzes IS 'Stores quiz materials and assessments';
+COMMENT ON COLUMN quizzes.id IS 'Unique identifier for each quiz';
+COMMENT ON COLUMN quizzes.upload_by IS 'ID of teacher/mentor who uploaded the quiz';
+COMMENT ON COLUMN quizzes.subject IS 'Foreign key linking to subject';
+COMMENT ON COLUMN quizzes.type IS 'Type of quiz (Multiple Choice, Essay, Practical, etc.)';
+COMMENT ON COLUMN quizzes.name IS 'Display name of the quiz';
+COMMENT ON COLUMN quizzes.description IS 'Detailed description of quiz content';
+COMMENT ON COLUMN quizzes.file_path IS 'File system path or URL to the quiz';
+COMMENT ON COLUMN quizzes.created_at IS 'Timestamp when quiz was uploaded';
+
+-- =============================================
+-- Table: session_participants
+-- Purpose: Manage many-to-many relationship between sessions and students
+-- =============================================
+CREATE TABLE session_participants (
+    session_id BIGINT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,
+    student_id BIGINT NOT NULL REFERENCES Students(id) ON DELETE CASCADE,
+    enrolled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (session_id, student_id)
+);
+
+COMMENT ON TABLE session_participants IS 'Junction table linking students to sessions';
+COMMENT ON COLUMN session_participants.session_id IS 'Foreign key referencing session';
+COMMENT ON COLUMN session_participants.student_id IS 'Foreign key referencing student';
+COMMENT ON COLUMN session_participants.enrolled_at IS 'Timestamp when student enrolled';
+
+-- =============================================
+-- Indexes for Performance Optimization
+-- =============================================
+CREATE INDEX idx_students_email ON Students(email);
+CREATE INDEX idx_students_group ON Students(group_id);
+CREATE INDEX idx_teachers_email ON Teachers(email);
+CREATE INDEX idx_mentors_email ON Mentors(email);
+CREATE INDEX idx_admin_email ON Admin(email);
+CREATE INDEX idx_resources_subject ON resources(subject);
+CREATE INDEX idx_resources_upload ON resources(upload_by);
+CREATE INDEX idx_sessions_hoster ON sessions(hoster);
+CREATE INDEX idx_sessions_subject ON sessions(subject);
+CREATE INDEX idx_sessions_time ON sessions(start_time);
+CREATE INDEX idx_quizzes_subject ON quizzes(subject);
+CREATE INDEX idx_quizzes_upload ON quizzes(upload_by);
+CREATE INDEX idx_session_participants_session ON session_participants(session_id);
+CREATE INDEX idx_session_participants_student ON session_participants(student_id);
+
+-- =============================================
+-- INSERT DUMMY DATA
+-- =============================================
+
+-- Insert Schools
+INSERT INTO Schools (name, province, district) VALUES
+('Springfield High School', 'Gauteng', 'Johannesburg Central'),
+('Cape Town Academy', 'Western Cape', 'Cape Town Metro'),
+('Durban Preparatory', 'KwaZulu-Natal', 'Durban Coastal');
+
+-- Insert Subjects
+INSERT INTO Subjects (name, description) VALUES
+('Mathematics', 'Advanced mathematics including algebra, geometry, and calculus'),
+('Physical Sciences', 'Physics and chemistry fundamentals'),
+('English Language', 'English literature and language studies'),
+('Life Sciences', 'Biology and environmental studies'),
+('History', 'World and South African history'),
+('Computer Science', 'Programming and computer fundamentals');
+
+-- Insert Groups
+INSERT INTO Groups (name, number, description, school) VALUES
+('Grade 10A', 101, 'Grade 10 Advanced Stream', 1),
+('Grade 10B', 102, 'Grade 10 Standard Stream', 1),
+('Grade 11 Science', 201, 'Grade 11 Science Focus', 2),
+('Grade 12 Commerce', 301, 'Grade 12 Commerce Stream', 3);
+
+-- Insert Students
+INSERT INTO Students (name, surname, email, grade, id_num, province, address, password, group_id) VALUES
+('John', 'Smith', 'john.smith@student.com', 10, 'STU001', 'Gauteng', '123 Main St, Johannesburg', 'hashed_password_1', 1),
+('Sarah', 'Johnson', 'sarah.johnson@student.com', 10, 'STU002', 'Gauteng', '456 Oak Ave, Sandton', 'hashed_password_2', 1),
+('Mike', 'Williams', 'mike.williams@student.com', 11, 'STU003', 'Western Cape', '789 Beach Rd, Cape Town', 'hashed_password_3', 3),
+('Lisa', 'Brown', 'lisa.brown@student.com', 12, 'STU004', 'KwaZulu-Natal', '321 Coastal Dr, Durban', 'hashed_password_4', 4),
+('David', 'Wilson', 'david.wilson@student.com', 10, 'STU005', 'Gauteng', '654 Park St, Johannesburg', 'hashed_password_5', 2);
+
+-- Insert Teachers
+INSERT INTO Teachers (name, surname, email, id_num, province, address, password, salary, group_id) VALUES
+('Professor', 'Adams', 'prof.adams@school.com', 'TCH001', 'Gauteng', '111 Education St, Johannesburg', 'hashed_password_t1', 45000.00, 1),
+('Dr', 'Roberts', 'dr.roberts@school.com', 'TCH002', 'Western Cape', '222 Science Ave, Cape Town', 'hashed_password_t2', 52000.00, 3),
+('Mrs', 'Davis', 'mrs.davis@school.com', 'TCH003', 'KwaZulu-Natal', '333 History Lane, Durban', 'hashed_password_t3', 48000.00, 4);
+
+-- Insert Mentors
+INSERT INTO Mentors (name, surname, email, id_num, province, address, password, incentives, group_id) VALUES
+('Mark', 'Thompson', 'mark.mentor@school.com', 'MEN001', 'Gauteng', '444 Guide St, Johannesburg', 'hashed_password_m1', 1500.00, 1),
+('Emily', 'Clark', 'emily.mentor@school.com', 'MEN002', 'Western Cape', '555 Support Rd, Cape Town', 'hashed_password_m2', 2200.00, 3);
+
+-- Insert Admin
+INSERT INTO Admin (name, surname, email, password, role) VALUES
+('Admin', 'Super', 'super.admin@school.com', 'hashed_admin_1', 'SuperAdmin'),
+('Support', 'Manager', 'support.manager@school.com', 'hashed_admin_2', 'SupportAdmin');
+
+-- Insert Resources
+INSERT INTO resources (upload_by, subject, type, name, description, file_path) VALUES
+(1, 1, 'PDF', 'Algebra Basics', 'Introduction to algebraic equations', '/resources/math/algebra_basics.pdf'),
+(2, 2, 'Video', 'Chemistry Lab Safety', 'Safety procedures for science labs', '/resources/science/lab_safety.mp4'),
+(3, 4, 'Presentation', 'Cell Biology', 'Structure and function of cells', '/resources/biology/cell_bio.pptx');
+
+-- Insert Sessions
+INSERT INTO sessions (hoster, capacity, name, subject, description, duration, start_time) VALUES
+(1, 25, 'Math Tutoring', 1, 'Weekly mathematics help session', 60, '2024-01-15 15:00:00'),
+(2, 15, 'Science Lab', 2, 'Practical chemistry experiments', 90, '2024-01-16 14:00:00'),
+(3, 20, 'History Review', 5, 'Exam preparation session', 120, '2024-01-17 16:00:00');
+
+-- Insert Quizzes
+INSERT INTO quizzes (upload_by, subject, type, name, description, file_path) VALUES
+(1, 1, 'Multiple Choice', 'Algebra Quiz 1', 'Basic algebra concepts assessment', '/quizzes/math/algebra_quiz1.pdf'),
+(2, 2, 'Practical', 'Chemistry Lab Quiz', 'Lab safety and procedures', '/quizzes/science/lab_quiz.pdf'),
+(3, 5, 'Essay', 'History Midterm', 'World history essay questions', '/quizzes/history/midterm.pdf');
+
+-- Insert Session Participants
+INSERT INTO session_participants (session_id, student_id) VALUES
+(1, 1), (1, 2), (1, 5),  -- Math session participants
+(2, 3), (2, 1),          -- Science session participants
+(3, 4), (3, 2);          -- History session participants
+
+-- =============================================
+-- Sample Queries for Demonstration
+-- =============================================
+
+-- Query 1: Get all students in Grade 10A with their group information
+SELECT s.name, s.surname, s.email, s.grade, g.name as group_name
+FROM Students s
+JOIN Groups g ON s.group_id = g.id
+WHERE g.name = 'Grade 10A';
+
+-- Query 2: Get all sessions with host information and subject
+SELECT s.name as session_name, s.start_time, sub.name as subject_name, 
+       CONCAT(t.name, ' ', t.surname) as host_name
+FROM sessions s
+JOIN Subjects sub ON s.subject = sub.id
+JOIN Teachers t ON s.hoster = t.id;
+
+-- Query 3: Get resources uploaded by teachers with subject information
+SELECT r.name as resource_name, r.type, sub.name as subject_name,
+       CONCAT(t.name, ' ', t.surname) as uploaded_by
+FROM resources r
+JOIN Subjects sub ON r.subject = sub.id
+JOIN Teachers t ON r.upload_by = t.id;
+
+-- Query 4: Get session participation count
+SELECT s.name as session_name, COUNT(sp.student_id) as participant_count
+FROM sessions s
+LEFT JOIN session_participants sp ON s.id = sp.session_id
+GROUP BY s.id, s.name;
+
+-- Query 5: Get teacher salary information by province
+SELECT province, COUNT(*) as teacher_count, AVG(salary) as average_salary
+FROM Teachers
+GROUP BY province;
