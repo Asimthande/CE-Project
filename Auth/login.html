@@ -6,6 +6,7 @@
     <title>School Management - Authentication</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="login.css">
     <script>
         tailwind.config = {
             theme: {
@@ -18,116 +19,16 @@
             }
         }
     </script>
-    <style>
-        body {
-            box-sizing: border-box;
-        }
-        .form-container {
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .slide-panel {
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .fade-in {
-            animation: fadeIn 0.8s ease-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .floating-label {
-            transition: all 0.3s ease;
-            pointer-events: none;
-        }
-        .floating-label.active {
-            transform: translateY(-20px) scale(0.8);
-            color: #3b82f6;
-        }
-        .input-field {
-            transition: all 0.3s ease;
-            z-index: 1;
-            position: relative;
-            background: transparent;
-        }
-        .input-field:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-        .password-strength {
-            height: 4px;
-            border-radius: 2px;
-            transition: all 0.3s ease;
-        }
-        .strength-weak { background: #ef4444; width: 25%; }
-        .strength-fair { background: #f59e0b; width: 50%; }
-        .strength-good { background: #10b981; width: 75%; }
-        .strength-strong { background: #059669; width: 100%; }
-        .google-btn {
-            background: linear-gradient(135deg, #4285f4 0%, #34a853 25%, #fbbc05 50%, #ea4335 75%);
-            transition: all 0.3s ease;
-        }
-        .google-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-        .form-toggle {
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-        }
-        .signup-gradient {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        .signin-gradient {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        }
-        .overlay-panel {
-            background: linear-gradient(135deg, rgba(30, 58, 138, 0.9) 0%, rgba(59, 130, 246, 0.9) 100%);
-        }
-        .input-container {
-            position: relative;
-            margin-bottom: 1.5rem;
-        }
-        .input-container input {
-            padding-top: 1.5rem;
-            padding-bottom: 0.5rem;
-        }
-        .input-container label {
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
-            transition: all 0.3s ease;
-            z-index: 0;
-        }
-        .select-container {
-            position: relative;
-        }
-        .select-container select {
-            padding-top: 1.5rem;
-            padding-bottom: 0.5rem;
-            appearance: none;
-            background: transparent;
-            z-index: 1;
-        }
-        .select-container label {
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
-            transition: all 0.3s ease;
-            z-index: 0;
-            pointer-events: none;
-        }
-        .select-icon {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            pointer-events: none;
-            z-index: 0;
-        }
-    </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
     <!-- Main Container -->
     <div class="relative w-full max-w-6xl h-auto min-h-[700px] bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <!-- Form Tabs (Visible on mobile/tablet) -->
+        <div class="form-tabs">
+            <button class="form-tab active" id="signupTab" onclick="toggleForm('signup')">Sign Up</button>
+            <button class="form-tab" id="signinTab" onclick="toggleForm('signin')">Sign In</button>
+        </div>
+
         <!-- Sliding Background Panel -->
         <div class="slide-panel absolute top-0 left-0 w-1/2 h-full signup-gradient z-10 transition-transform duration-600" id="slidePanel">
             <div class="overlay-panel h-full flex items-center justify-center p-8">
@@ -135,7 +36,7 @@
                     <h2 class="text-3xl font-bold mb-4">Create Student Account</h2>
                     <p class="text-lg mb-8 opacity-90">Join our educational platform as a student</p>
                     <button onclick="toggleForm('signin')" class="bg-white bg-opacity-20 border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-navy transition-all duration-300">
-                        Sign Up
+                        Sign In
                     </button>
                 </div>
             </div>
@@ -144,7 +45,7 @@
         <!-- Forms Container -->
         <div class="relative h-full flex">
             <!-- Sign Up Form -->
-            <div class="form-container w-1/2 p-8 flex items-center justify-center" id="signupForm">
+            <div class="form-container w-1/2 p-8 flex items-center justify-center active" id="signupForm">
                 <div class="w-full max-w-md fade-in">
                     <div class="text-center mb-8">
                         <div class="w-16 h-16 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -345,13 +246,22 @@
         // Current form state
         let currentForm = 'signup';
 
-        // Toggle between signup and signin forms
+        // Toggle between signup and signin forms with tabs
         function toggleForm(formType) {
+            const signupForm = document.getElementById('signupForm');
+            const signinForm = document.getElementById('signinForm');
+            const signupTab = document.getElementById('signupTab');
+            const signinTab = document.getElementById('signinTab');
             const slidePanel = document.getElementById('slidePanel');
             const overlayContent = document.getElementById('overlayContent');
             
             if (formType === 'signin' && currentForm === 'signup') {
                 // Switch to signin
+                signupForm.classList.remove('active');
+                signinForm.classList.add('active');
+                signupTab.classList.remove('active');
+                signinTab.classList.add('active');
+                
                 slidePanel.style.transform = 'translateX(100%)';
                 slidePanel.classList.remove('signup-gradient');
                 slidePanel.classList.add('signin-gradient');
@@ -361,7 +271,7 @@
                         <h2 class="text-3xl font-bold mb-4">New Student?</h2>
                         <p class="text-lg mb-8 opacity-90">Create an account and join our educational platform</p>
                         <button onclick="toggleForm('signup')" class="bg-white bg-opacity-20 border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-navy transition-all duration-300">
-                            Sign In
+                            Sign Up
                         </button>
                     `;
                 }, 300);
@@ -369,6 +279,11 @@
                 currentForm = 'signin';
             } else if (formType === 'signup' && currentForm === 'signin') {
                 // Switch to signup
+                signinForm.classList.remove('active');
+                signupForm.classList.add('active');
+                signinTab.classList.remove('active');
+                signupTab.classList.add('active');
+                
                 slidePanel.style.transform = 'translateX(0%)';
                 slidePanel.classList.remove('signin-gradient');
                 slidePanel.classList.add('signup-gradient');
@@ -378,7 +293,7 @@
                         <h2 class="text-3xl font-bold mb-4">Welcome Back!</h2>
                         <p class="text-lg mb-8 opacity-90">Sign in to access your account</p>
                         <button onclick="toggleForm('signin')" class="bg-white bg-opacity-20 border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-navy transition-all duration-300">
-                            Sign Up
+                            Sign In
                         </button>
                     `;
                 }, 300);
@@ -387,7 +302,7 @@
             }
         }
 
-        // Toggle password visibility - FIXED VERSION
+        // Toggle password visibility
         function togglePassword(fieldId) {
             const field = document.getElementById(fieldId);
             const toggle = document.getElementById(fieldId + 'Toggle');
@@ -451,7 +366,6 @@
         }
 
         // Simple bcrypt-like password verification (for demo purposes)
-        // In a real app, you'd use a proper bcrypt library
         async function verifyPassword(plainPassword, hashedPassword) {
             // If password is not hashed (plain text), do direct comparison
             if (!hashedPassword.startsWith('$2b$') && !hashedPassword.startsWith('$2a$') && !hashedPassword.startsWith('$2y$')) {
@@ -459,7 +373,6 @@
             }
             
             // For demo purposes, we'll assume any hashed password works
-            // In a real app, you'd use: return await bcrypt.compare(plainPassword, hashedPassword);
             return true;
         }
 
@@ -485,13 +398,11 @@
                 });
                 
                 if (!response.ok) {
-                    // Try to get error message from response
                     let errorMessage = 'Registration failed';
                     try {
                         const errorData = await response.json();
                         errorMessage = errorData.error || errorMessage;
                     } catch (e) {
-                        // If we can't parse JSON, use status text
                         errorMessage = response.statusText || errorMessage;
                     }
                     throw new Error(errorMessage);
@@ -502,7 +413,6 @@
             } catch (error) {
                 console.error('Registration error:', error);
                 
-                // Handle CORS and network errors specifically
                 if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
                     throw new Error('Network error: Cannot connect to server. Please check your internet connection and try again.');
                 }
@@ -514,7 +424,6 @@
         // Authenticate user across all user types
         async function authenticateUser(email, password) {
             try {
-                // Define all user types to check
                 const userTypes = [
                     { endpoint: '/students', role: 'student', dashboard: '/Student/student.html' },
                     { endpoint: '/mentors', role: 'mentor', dashboard: '/Mentor/mentor.html' },
@@ -529,13 +438,11 @@
                         if (response.ok) {
                             const users = await response.json();
                             
-                            // Find user with matching email (case insensitive)
                             const user = users.find(u => 
                                 u.email && u.email.toLowerCase() === email.toLowerCase()
                             );
                             
                             if (user) {
-                                // Verify password (handles both plain text and hashed)
                                 const isPasswordValid = await verifyPassword(password, user.password);
                                 
                                 if (isPasswordValid) {
@@ -545,14 +452,12 @@
                                         dashboard: userType.dashboard
                                     };
                                 } else {
-                                    // Continue to next user type if password doesn't match
                                     continue;
                                 }
                             }
                         }
                     } catch (error) {
                         console.error(`Error fetching from ${userType.endpoint}:`, error);
-                        // Continue to next user type if this one fails
                         continue;
                     }
                 }
@@ -561,7 +466,6 @@
             } catch (error) {
                 console.error('Authentication error:', error);
                 
-                // Handle CORS and network errors specifically
                 if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
                     throw new Error('Network error: Cannot connect to server. Please check your internet connection and try again.');
                 }
@@ -572,13 +476,11 @@
 
         // Redirect to appropriate dashboard
         function redirectToDashboard(userInfo) {
-            // Store user info in localStorage for the dashboard
             localStorage.setItem('currentUser', JSON.stringify({
                 ...userInfo.user,
                 role: userInfo.role
             }));
             
-            // Redirect to the appropriate dashboard
             window.location.href = userInfo.dashboard;
         }
 
@@ -591,7 +493,6 @@
                 const label = input.parentElement.querySelector('label');
                 if (!label) return;
                 
-                // Check if input already has value on page load
                 if (input.value !== '') {
                     label.classList.add('active');
                 }
@@ -622,7 +523,6 @@
                 const label = select.parentElement.querySelector('label');
                 if (!label) return;
                 
-                // Check if select already has value on page load
                 if (select.value !== '') {
                     label.classList.add('active');
                 }
@@ -664,7 +564,6 @@
             document.getElementById('signupFormElement').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
-                // Get form data
                 const formData = new FormData(this);
                 const studentData = {
                     firstName: formData.get('firstName'),
@@ -678,13 +577,11 @@
                     confirmPassword: formData.get('confirmPassword')
                 };
                 
-                // Validate passwords match
                 if (studentData.password !== studentData.confirmPassword) {
                     alert('Passwords do not match!');
                     return;
                 }
                 
-                // Submit button state
                 const submitBtn = this.querySelector('button[type="submit"]');
                 const originalText = submitBtn.innerHTML;
                 
@@ -692,22 +589,17 @@
                 submitBtn.disabled = true;
                 
                 try {
-                    // Register the student
                     const result = await registerStudent(studentData);
                     
-                    // Show success message
                     alert('Student account created successfully!');
                     
-                    // Automatically log the student in
                     const authResult = await authenticateUser(studentData.email, studentData.password);
                     
-                    // Redirect to student dashboard
                     redirectToDashboard(authResult);
                     
                 } catch (error) {
                     console.error('Registration failed:', error);
                     
-                    // Show user-friendly error message
                     let errorMessage = error.message;
                     if (errorMessage.includes('CORS') || errorMessage.includes('Network error')) {
                         errorMessage = 'Cannot connect to server. This might be a CORS issue. Please try again later or contact support.';
@@ -715,7 +607,6 @@
                     
                     alert(`Registration failed: ${errorMessage}`);
                     
-                    // Reset button
                     submitBtn.innerHTML = originalText;
                     submitBtn.disabled = false;
                 }
@@ -725,12 +616,10 @@
             document.getElementById('signinFormElement').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
-                // Get form data
                 const formData = new FormData(this);
                 const email = formData.get('loginEmail');
                 const password = formData.get('loginPassword');
                 
-                // Submit button state
                 const submitBtn = this.querySelector('button[type="submit"]');
                 const originalText = submitBtn.innerHTML;
                 
@@ -738,19 +627,15 @@
                 submitBtn.disabled = true;
                 
                 try {
-                    // Authenticate the user across all user types
                     const authResult = await authenticateUser(email, password);
                     
-                    // Show success message with role
                     alert(`Welcome back, ${authResult.user.name}! (${authResult.role})`);
                     
-                    // Redirect to appropriate dashboard
                     redirectToDashboard(authResult);
                     
                 } catch (error) {
                     console.error('Authentication failed:', error);
                     
-                    // Show user-friendly error message
                     let errorMessage = error.message;
                     if (errorMessage.includes('CORS') || errorMessage.includes('Network error')) {
                         errorMessage = 'Cannot connect to server. This might be a CORS issue. Please try again later or contact support.';
@@ -758,7 +643,6 @@
                     
                     alert(`Authentication failed: ${errorMessage}`);
                     
-                    // Reset button
                     submitBtn.innerHTML = originalText;
                     submitBtn.disabled = false;
                 }

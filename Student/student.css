@@ -1,0 +1,503 @@
+/* Student Portal Responsive Styles */
+
+/* Mobile Menu */
+.mobile-menu {
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 30;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.mobile-menu.active {
+    display: flex;
+}
+
+.mobile-menu a {
+    color: white;
+    font-size: 1.5rem;
+    margin: 1rem 0;
+    text-decoration: none;
+}
+
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 40;
+}
+
+/* Large screens (1200px and up) */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1140px;
+    }
+}
+
+/* Medium screens (992px to 1199px) */
+@media (max-width: 1199px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    
+    .documents-grid, .quizzes-grid, .resources-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    
+    .career-grid, .profile-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* Small screens (768px to 991px) */
+@media (max-width: 991px) {
+    .stats-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .documents-grid, .quizzes-grid, .resources-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .nav-buttons {
+        display: none !important;
+    }
+    
+    .menu-toggle {
+        display: block !important;
+    }
+    
+    .main-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .session-form-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .quiz-interface {
+        padding: 1rem !important;
+    }
+    
+    .resource-filters {
+        flex-wrap: wrap !important;
+        gap: 0.5rem !important;
+    }
+    
+    .career-path-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .profile-form-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* Extra small screens (576px to 767px) */
+@media (max-width: 767px) {
+    .hero-title {
+        font-size: 2rem !important;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem !important;
+    }
+    
+    .stats-card {
+        padding: 1rem !important;
+    }
+    
+    .stats-icon {
+        width: 2.5rem !important;
+        height: 2.5rem !important;
+    }
+    
+    .stats-icon i {
+        font-size: 1.25rem !important;
+    }
+    
+    .activity-item, .upcoming-item {
+        padding: 1rem !important;
+    }
+    
+    .document-card, .quiz-card, .resource-card {
+        padding: 1rem !important;
+    }
+    
+    .document-icon, .quiz-icon, .resource-icon {
+        width: 2.5rem !important;
+        height: 2.5rem !important;
+    }
+    
+    .document-icon i, .quiz-icon i, .resource-icon i {
+        font-size: 1.25rem !important;
+    }
+    
+    .quiz-options {
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+    }
+    
+    .quiz-options button {
+        width: 100% !important;
+    }
+    
+    .resource-filters button {
+        flex: 1 !important;
+        min-width: auto !important;
+    }
+    
+    .career-assessment-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .career-path-item {
+        flex-direction: column !important;
+        gap: 1rem !important;
+    }
+    
+    .profile-stats {
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+    }
+}
+
+/* Mobile screens (up to 575px) */
+@media (max-width: 575px) {
+    .container {
+        padding: 0.5rem !important;
+    }
+    
+    .hero-title {
+        font-size: 1.75rem !important;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.9rem !important;
+    }
+    
+    .stats-grid {
+        gap: 0.5rem !important;
+    }
+    
+    .stats-card {
+        padding: 0.75rem !important;
+        margin: 0.25rem 0 !important;
+    }
+    
+    .stats-number {
+        font-size: 1.5rem !important;
+    }
+    
+    .activity-item, .upcoming-item {
+        padding: 0.75rem !important;
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+        text-align: center !important;
+    }
+    
+    .activity-icon, .upcoming-icon {
+        align-self: center !important;
+    }
+    
+    .document-card, .quiz-card, .resource-card {
+        padding: 0.75rem !important;
+        margin: 0.25rem 0 !important;
+    }
+    
+    .document-title, .quiz-title, .resource-title {
+        font-size: 1rem !important;
+    }
+    
+    .document-meta, .quiz-meta, .resource-meta {
+        font-size: 0.8rem !important;
+    }
+    
+    .search-filters {
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+    }
+    
+    .search-filters input, .search-filters select {
+        width: 100% !important;
+    }
+    
+    .quiz-interface {
+        padding: 0.75rem !important;
+    }
+    
+    .question-text {
+        font-size: 1.1rem !important;
+    }
+    
+    .quiz-option {
+        padding: 0.75rem !important;
+        font-size: 0.9rem !important;
+    }
+    
+    .session-booking {
+        padding: 1rem !important;
+    }
+    
+    .resource-filters {
+        justify-content: center !important;
+    }
+    
+    .resource-filters button {
+        font-size: 0.8rem !important;
+        padding: 0.5rem 0.75rem !important;
+    }
+    
+    .career-item {
+        padding: 1rem !important;
+    }
+    
+    .career-tags {
+        flex-wrap: wrap !important;
+    }
+    
+    .profile-form {
+        padding: 1rem !important;
+    }
+    
+    .profile-stats-item {
+        padding: 0.75rem !important;
+    }
+    
+    .preferences-item {
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+        text-align: center !important;
+    }
+}
+
+/* Very small screens (up to 400px) */
+@media (max-width: 400px) {
+    .hero-title {
+        font-size: 1.5rem !important;
+    }
+    
+    .stats-card {
+        padding: 0.5rem !important;
+    }
+    
+    .stats-icon {
+        width: 2rem !important;
+        height: 2rem !important;
+    }
+    
+    .stats-icon i {
+        font-size: 1rem !important;
+    }
+    
+    .stats-number {
+        font-size: 1.25rem !important;
+    }
+    
+    .stats-label {
+        font-size: 0.7rem !important;
+    }
+    
+    .document-card, .quiz-card, .resource-card {
+        padding: 0.5rem !important;
+    }
+    
+    .document-icon, .quiz-icon, .resource-icon {
+        width: 2rem !important;
+        height: 2rem !important;
+    }
+    
+    .document-icon i, .quiz-icon i, .resource-icon i {
+        font-size: 1rem !important;
+    }
+    
+    .document-title, .quiz-title, .resource-title {
+        font-size: 0.9rem !important;
+    }
+    
+    .document-description, .quiz-description, .resource-description {
+        font-size: 0.8rem !important;
+    }
+    
+    .document-actions, .quiz-actions, .resource-actions {
+        flex-direction: column !important;
+        gap: 0.25rem !important;
+    }
+    
+    .document-actions button, .quiz-actions button, .resource-actions button {
+        width: 100% !important;
+        font-size: 0.8rem !important;
+        padding: 0.5rem !important;
+    }
+    
+    .quiz-option {
+        padding: 0.5rem !important;
+        font-size: 0.8rem !important;
+    }
+    
+    .quiz-navigation {
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+    }
+    
+    .quiz-navigation button {
+        width: 100% !important;
+    }
+    
+    .resource-filters button {
+        font-size: 0.7rem !important;
+        padding: 0.4rem 0.6rem !important;
+    }
+    
+    .career-item {
+        padding: 0.75rem !important;
+    }
+    
+    .career-title {
+        font-size: 1rem !important;
+    }
+    
+    .career-description {
+        font-size: 0.8rem !important;
+    }
+    
+    .profile-avatar {
+        width: 4rem !important;
+        height: 4rem !important;
+        font-size: 1.5rem !important;
+    }
+    
+    .profile-name {
+        font-size: 1.1rem !important;
+    }
+}
+
+/* Print styles */
+@media print {
+    .gradient-bg {
+        background: white !important;
+    }
+    
+    button {
+        display: none !important;
+    }
+    
+    .mobile-menu {
+        display: none !important;
+    }
+    
+    .stats-grid {
+        break-inside: avoid !important;
+    }
+    
+    .document-card, .quiz-card, .resource-card {
+        break-inside: avoid !important;
+        border: 1px solid #000 !important;
+    }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+    
+    .fade-in {
+        animation: none !important;
+    }
+    
+    .quiz-option:hover, .resource-card:hover, .card-hover:hover {
+        transform: none !important;
+    }
+    
+    .btn-bounce:hover {
+        animation: none !important;
+    }
+}
+
+/* Dark mode preference */
+@media (prefers-color-scheme: dark) {
+    .bg-white {
+        background-color: #1f2937 !important;
+        color: #f9fafb !important;
+    }
+    
+    .bg-gradient-to-br {
+        background: linear-gradient(135deg, #111827 0%, #1f2937 100%) !important;
+    }
+    
+    .text-gray-900 {
+        color: #f9fafb !important;
+    }
+    
+    .text-gray-700 {
+        color: #d1d5db !important;
+    }
+    
+    .text-gray-600, .text-gray-500 {
+        color: #9ca3af !important;
+    }
+    
+    .border-gray-300 {
+        border-color: #374151 !important;
+    }
+    
+    .bg-blue-50, .bg-green-50, .bg-purple-50, .bg-yellow-50, .bg-red-50, .bg-orange-50 {
+        background-color: #374151 !important;
+    }
+    
+    .gradient-green, .gradient-orange, .gradient-purple, .gradient-yellow {
+        filter: brightness(0.8) !important;
+    }
+    
+    input, select, textarea {
+        background-color: #374151 !important;
+        color: #f9fafb !important;
+        border-color: #4b5563 !important;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+        border-color: #3b82f6 !important;
+    }
+}
+
+/* Landscape orientation for mobile */
+@media (max-height: 600px) and (orientation: landscape) {
+    .hero-section {
+        padding: 1rem 0 !important;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.5rem !important;
+    }
+    
+    .main-content {
+        padding: 0.5rem 0 !important;
+    }
+    
+    .mobile-menu {
+        padding: 1rem !important;
+    }
+}
+
+/* Very large screens */
+@media (min-width: 1600px) {
+    .container {
+        max-width: 1400px;
+    }
+    
+    .documents-grid, .quizzes-grid, .resources-grid {
+        grid-template-columns: repeat(4, 1fr) !important;
+    }
+}
