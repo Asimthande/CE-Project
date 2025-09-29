@@ -6,7 +6,6 @@
     <title>Mentor Dashboard - UJ Community Engagement</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="mentor.css">
     <style>
         body {
             box-sizing: border-box;
@@ -31,396 +30,864 @@
             0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.7); }
             70% { box-shadow: 0 0 0 10px rgba(255, 107, 53, 0); }
         }
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        .logout-btn {
+            transition: all 0.3s ease;
+        }
+        .logout-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
-    <!-- Header -->
-    <header class="gradient-bg text-white shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center py-4">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                        <span class="text-orange-500 font-bold text-lg">UJ</span>
-                    </div>
-                    <div>
-                        <h1 class="text-xl font-bold">Mentor Dashboard</h1>
-                        <p class="text-orange-100 text-sm">UJ Community Engagement</p>
-                    </div>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <div class="text-right">
-                        <p class="font-semibold">Dr. Michael Thompson</p>
-                        <p class="text-orange-100 text-sm">Senior Academic Mentor</p>
-                    </div>
-                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                        <span class="text-orange-500 font-bold">MT</span>
-                    </div>
-                </div>
+    <!-- Authentication Check -->
+    <div id="authCheck" class="hidden">
+        <!-- This div will be used to check authentication -->
+    </div>
+
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="fixed inset-0 bg-white z-50 flex items-center justify-center">
+        <div class="text-center">
+            <div class="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-spinner fa-spin text-white text-2xl"></i>
             </div>
+            <h2 class="text-xl font-bold text-gray-800">Loading Dashboard</h2>
+            <p class="text-gray-600 mt-2">Please wait while we verify your access...</p>
         </div>
-    </header>
+    </div>
 
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Quick Stats -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white rounded-lg p-6 shadow-md card-hover">
-                <div class="flex items-center">
-                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-users text-orange-600 text-xl"></i>
-                    </div>
-                    <div class="ml-4">
-                        <p class="text-gray-600 text-sm">Active Mentees</p>
-                        <p class="text-2xl font-bold text-gray-900">34</p>
-                    </div>
-                </div>
+    <!-- Access Denied Screen -->
+    <div id="accessDenied" class="hidden fixed inset-0 bg-white z-50 flex items-center justify-center">
+        <div class="text-center max-w-md mx-4">
+            <div class="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-exclamation-triangle text-white text-3xl"></i>
             </div>
-            <div class="bg-white rounded-lg p-6 shadow-md card-hover">
-                <div class="flex items-center">
-                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-user-friends text-orange-600 text-xl"></i>
-                    </div>
-                    <div class="ml-4">
-                        <p class="text-gray-600 text-sm">Group Sessions</p>
-                        <p class="text-2xl font-bold text-gray-900">8</p>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white rounded-lg p-6 shadow-md card-hover">
-                <div class="flex items-center">
-                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-handshake text-orange-600 text-xl"></i>
-                    </div>
-                    <div class="ml-4">
-                        <p class="text-gray-600 text-sm">1-on-1 Sessions</p>
-                        <p class="text-2xl font-bold text-gray-900">15</p>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white rounded-lg p-6 shadow-md card-hover">
-                <div class="flex items-center">
-                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-folder-open text-orange-600 text-xl"></i>
-                    </div>
-                    <div class="ml-4">
-                        <p class="text-gray-600 text-sm">Resources Shared</p>
-                        <p class="text-2xl font-bold text-gray-900">42</p>
-                    </div>
-                </div>
-            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Access Denied</h2>
+            <p class="text-gray-600 mb-6">You don't have permission to access the Mentor Dashboard. Please contact your administrator if you believe this is an error.</p>
+            <button onclick="logout()" class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                <i class="fas fa-sign-out-alt mr-2"></i>Return to Login
+            </button>
         </div>
+    </div>
 
-        <!-- Main Dashboard Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Left Column - Main Actions -->
-            <div class="lg:col-span-2 space-y-6">
-                <!-- Group Sessions -->
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold text-gray-900">Group Sessions</h2>
-                        <button class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
-                            <i class="fas fa-plus mr-2"></i>Schedule Group Session
+    <!-- Main Dashboard (Initially Hidden) -->
+    <div id="mainDashboard" class="hidden">
+        <!-- Header -->
+        <header class="gradient-bg text-white shadow-lg">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                            <span class="text-orange-500 font-bold text-lg">UJ</span>
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold">Mentor Dashboard</h1>
+                            <p class="text-orange-100 text-sm">UJ Community Engagement</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="text-right">
+                            <p class="font-semibold" id="mentorName">Loading...</p>
+                            <p class="text-orange-100 text-sm">Academic Mentor</p>
+                        </div>
+                        <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                            <span class="text-orange-500 font-bold" id="mentorInitials">M</span>
+                        </div>
+                        <button onclick="logout()" class="logout-btn text-white hover:bg-orange-600 px-3 py-2 rounded-lg transition-colors ml-2" title="Logout">
+                            <i class="fas fa-sign-out-alt"></i>
                         </button>
                     </div>
-                    <div class="space-y-3">
-                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
-                            <div class="flex justify-between items-start">
-                                <div class="flex-1">
-                                    <h3 class="font-semibold text-gray-900">Study Skills Workshop</h3>
-                                    <p class="text-gray-600 text-sm">12 participants • Room 204, Main Building</p>
-                                    <p class="text-orange-600 text-sm font-medium">
-                                        <i class="fas fa-calendar mr-1"></i>Today, 3:00 PM - 5:00 PM
-                                    </p>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium pulse-orange">Live</span>
-                                    <button class="text-orange-600 hover:text-orange-700">
-                                        <i class="fas fa-video"></i>
-                                    </button>
-                                </div>
-                            </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-lg p-6 shadow-md card-hover">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-users text-orange-600 text-xl"></i>
                         </div>
-                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
-                            <div class="flex justify-between items-start">
-                                <div class="flex-1">
-                                    <h3 class="font-semibold text-gray-900">Career Guidance Session</h3>
-                                    <p class="text-gray-600 text-sm">8 participants • Virtual Meeting</p>
-                                    <p class="text-orange-600 text-sm font-medium">
-                                        <i class="fas fa-calendar mr-1"></i>Tomorrow, 2:00 PM - 3:30 PM
-                                    </p>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">Scheduled</span>
-                                    <button class="text-orange-600 hover:text-orange-700">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
-                            <div class="flex justify-between items-start">
-                                <div class="flex-1">
-                                    <h3 class="font-semibold text-gray-900">Exam Preparation Group</h3>
-                                    <p class="text-gray-600 text-sm">15 participants • Library Conference Room</p>
-                                    <p class="text-orange-600 text-sm font-medium">
-                                        <i class="fas fa-calendar mr-1"></i>Friday, 10:00 AM - 12:00 PM
-                                    </p>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs font-medium">Upcoming</span>
-                                    <button class="text-orange-600 hover:text-orange-700">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                </div>
-                            </div>
+                        <div class="ml-4">
+                            <p class="text-gray-600 text-sm">Active Mentees</p>
+                            <p class="text-2xl font-bold text-gray-900" id="activeMentees">0</p>
                         </div>
                     </div>
                 </div>
-
-                <!-- One-on-One Sessions -->
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold text-gray-900">One-on-One Sessions</h2>
-                        <button class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
-                            <i class="fas fa-plus mr-2"></i>Schedule 1-on-1
-                        </button>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
-                            <div class="flex items-center space-x-3 mb-3">
-                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                                    <span class="text-blue-600 font-semibold text-sm">JS</span>
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="font-medium text-gray-900">Jessica Smith</h4>
-                                    <p class="text-gray-600 text-sm">Computer Science, 2nd Year</p>
-                                </div>
-                            </div>
-                            <div class="text-sm text-gray-600 mb-2">
-                                <i class="fas fa-clock mr-1 text-orange-500"></i>
-                                Today, 1:00 PM - 2:00 PM
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">In Progress</span>
-                                <button class="text-orange-600 hover:text-orange-700 text-sm">
-                                    <i class="fas fa-video mr-1"></i>Join
-                                </button>
-                            </div>
+                <div class="bg-white rounded-lg p-6 shadow-md card-hover">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-user-friends text-orange-600 text-xl"></i>
                         </div>
-                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
-                            <div class="flex items-center space-x-3 mb-3">
-                                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                                    <span class="text-green-600 font-semibold text-sm">MJ</span>
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="font-medium text-gray-900">Mark Johnson</h4>
-                                    <p class="text-gray-600 text-sm">Business Studies, 3rd Year</p>
-                                </div>
-                            </div>
-                            <div class="text-sm text-gray-600 mb-2">
-                                <i class="fas fa-clock mr-1 text-orange-500"></i>
-                                Tomorrow, 11:00 AM - 12:00 PM
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">Scheduled</span>
-                                <button class="text-orange-600 hover:text-orange-700 text-sm">
-                                    <i class="fas fa-edit mr-1"></i>Edit
-                                </button>
-                            </div>
-                        </div>
-                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
-                            <div class="flex items-center space-x-3 mb-3">
-                                <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                                    <span class="text-purple-600 font-semibold text-sm">AL</span>
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="font-medium text-gray-900">Anna Lee</h4>
-                                    <p class="text-gray-600 text-sm">Psychology, 1st Year</p>
-                                </div>
-                            </div>
-                            <div class="text-sm text-gray-600 mb-2">
-                                <i class="fas fa-clock mr-1 text-orange-500"></i>
-                                Friday, 3:00 PM - 4:00 PM
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs font-medium">Upcoming</span>
-                                <button class="text-orange-600 hover:text-orange-700 text-sm">
-                                    <i class="fas fa-edit mr-1"></i>Edit
-                                </button>
-                            </div>
-                        </div>
-                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
-                            <div class="flex items-center space-x-3 mb-3">
-                                <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                                    <span class="text-red-600 font-semibold text-sm">DW</span>
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="font-medium text-gray-900">David Wilson</h4>
-                                    <p class="text-gray-600 text-sm">Engineering, 4th Year</p>
-                                </div>
-                            </div>
-                            <div class="text-sm text-gray-600 mb-2">
-                                <i class="fas fa-clock mr-1 text-orange-500"></i>
-                                Next Monday, 9:00 AM - 10:00 AM
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-xs font-medium">Confirmed</span>
-                                <button class="text-orange-600 hover:text-orange-700 text-sm">
-                                    <i class="fas fa-edit mr-1"></i>Edit
-                                </button>
-                            </div>
+                        <div class="ml-4">
+                            <p class="text-gray-600 text-sm">Group Sessions</p>
+                            <p class="text-2xl font-bold text-gray-900" id="groupSessions">0</p>
                         </div>
                     </div>
                 </div>
-
-                <!-- Resources Management -->
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold text-gray-900">Mentoring Resources</h2>
-                        <button class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
-                            <i class="fas fa-upload mr-2"></i>Upload Resource
-                        </button>
+                <div class="bg-white rounded-lg p-6 shadow-md card-hover">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-handshake text-orange-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-gray-600 text-sm">1-on-1 Sessions</p>
+                            <p class="text-2xl font-bold text-gray-900" id="oneOnOneSessions">0</p>
+                        </div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-file-pdf text-red-600"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="font-medium text-gray-900">Study Techniques Guide</h4>
-                                    <p class="text-gray-600 text-sm">Downloaded 156 times</p>
-                                    <p class="text-orange-600 text-xs">Shared with all mentees</p>
-                                </div>
-                            </div>
+                </div>
+                <div class="bg-white rounded-lg p-6 shadow-md card-hover">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-folder-open text-orange-600 text-xl"></i>
                         </div>
-                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-file-word text-blue-600"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="font-medium text-gray-900">Career Planning Template</h4>
-                                    <p class="text-gray-600 text-sm">Downloaded 89 times</p>
-                                    <p class="text-orange-600 text-xs">Shared with 3rd & 4th years</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-file-excel text-green-600"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="font-medium text-gray-900">Goal Setting Worksheet</h4>
-                                    <p class="text-gray-600 text-sm">Downloaded 203 times</p>
-                                    <p class="text-orange-600 text-xs">Shared with all mentees</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-file-powerpoint text-purple-600"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="font-medium text-gray-900">Time Management Slides</h4>
-                                    <p class="text-gray-600 text-sm">Downloaded 134 times</p>
-                                    <p class="text-orange-600 text-xs">Shared with 1st & 2nd years</p>
-                                </div>
-                            </div>
+                        <div class="ml-4">
+                            <p class="text-gray-600 text-sm">Resources Shared</p>
+                            <p class="text-2xl font-bold text-gray-900" id="resourcesShared">0</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Right Column - Sidebar -->
-            <div class="space-y-6">
-                <!-- Today's Schedule -->
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">Today's Schedule</h3>
-                    <div class="space-y-3">
-                        <div class="flex items-center space-x-3 p-3 bg-orange-50 rounded-lg border-l-4 border-orange-500">
-                            <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
-                            <div class="flex-1">
-                                <p class="font-medium text-gray-900">Jessica Smith</p>
-                                <p class="text-gray-600 text-sm">1:00 PM - 2:00 PM</p>
+            <!-- Main Dashboard Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Left Column - Main Actions -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Group Sessions -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold text-gray-900">Group Sessions</h2>
+                            <button id="scheduleGroupSession" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                                <i class="fas fa-plus mr-2"></i>Schedule Group Session
+                            </button>
+                        </div>
+                        <div id="groupSessionsList" class="space-y-3">
+                            <!-- Group sessions will be loaded here -->
+                            <div class="text-center py-8 text-gray-500">
+                                <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                                <p>Loading group sessions...</p>
                             </div>
                         </div>
-                        <div class="flex items-center space-x-3 p-3 bg-green-50 rounded-lg border-l-4 border-green-500">
-                            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-                            <div class="flex-1">
-                                <p class="font-medium text-gray-900">Study Skills Workshop</p>
-                                <p class="text-gray-600 text-sm">3:00 PM - 5:00 PM</p>
+                    </div>
+
+                    <!-- One-on-One Sessions -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold text-gray-900">One-on-One Sessions</h2>
+                            <button id="scheduleOneOnOne" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                                <i class="fas fa-plus mr-2"></i>Schedule 1-on-1
+                            </button>
+                        </div>
+                        <div id="oneOnOneSessionsList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- One-on-one sessions will be loaded here -->
+                            <div class="text-center py-8 text-gray-500 col-span-2">
+                                <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                                <p>Loading one-on-one sessions...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resources Management -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold text-gray-900">Mentoring Resources</h2>
+                            <button id="uploadResource" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                                <i class="fas fa-upload mr-2"></i>Upload Resource
+                            </button>
+                        </div>
+                        <div id="resourcesList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Resources will be loaded here -->
+                            <div class="text-center py-8 text-gray-500 col-span-2">
+                                <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                                <p>Loading resources...</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Recent Activity -->
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">Recent Activity</h3>
-                    <div class="space-y-3">
-                        <div class="flex items-start space-x-3">
-                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                <i class="fas fa-download text-blue-600 text-xs"></i>
-                            </div>
-                            <div class="flex-1">
-                                <p class="text-gray-900 text-sm">Mark Johnson downloaded "Career Planning Template"</p>
-                                <p class="text-gray-500 text-xs">2 hours ago</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                                <i class="fas fa-check text-green-600 text-xs"></i>
-                            </div>
-                            <div class="flex-1">
-                                <p class="text-gray-900 text-sm">Completed session with Anna Lee</p>
-                                <p class="text-gray-500 text-xs">Yesterday, 3:00 PM</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                                <i class="fas fa-upload text-purple-600 text-xs"></i>
-                            </div>
-                            <div class="flex-1">
-                                <p class="text-gray-900 text-sm">Uploaded "Time Management Slides"</p>
-                                <p class="text-gray-500 text-xs">2 days ago</p>
+                <!-- Right Column - Sidebar -->
+                <div class="space-y-6">
+                    <!-- Today's Schedule -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-lg font-bold text-gray-900 mb-4">Today's Schedule</h3>
+                        <div id="todaysSchedule" class="space-y-3">
+                            <!-- Today's schedule will be loaded here -->
+                            <div class="text-center py-4 text-gray-500">
+                                <i class="fas fa-spinner fa-spin text-lg mb-2"></i>
+                                <p class="text-sm">Loading schedule...</p>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Quick Actions -->
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">Quick Actions</h3>
-                    <div class="space-y-3">
-                        <button class="w-full text-left p-3 rounded-lg border border-gray-200 hover:border-orange-300 hover:bg-orange-50 transition-colors">
-                            <div class="flex items-center space-x-3">
-                                <i class="fas fa-calendar-plus text-orange-600"></i>
-                                <span class="text-gray-900">Schedule Emergency Session</span>
+                    <!-- Recent Activity -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-lg font-bold text-gray-900 mb-4">Recent Activity</h3>
+                        <div id="recentActivity" class="space-y-3">
+                            <!-- Recent activity will be loaded here -->
+                            <div class="text-center py-4 text-gray-500">
+                                <i class="fas fa-spinner fa-spin text-lg mb-2"></i>
+                                <p class="text-sm">Loading activity...</p>
                             </div>
-                        </button>
-                        <button class="w-full text-left p-3 rounded-lg border border-gray-200 hover:border-orange-300 hover:bg-orange-50 transition-colors">
-                            <div class="flex items-center space-x-3">
-                                <i class="fas fa-envelope text-orange-600"></i>
-                                <span class="text-gray-900">Send Group Message</span>
-                            </div>
-                        </button>
-                        <button class="w-full text-left p-3 rounded-lg border border-gray-200 hover:border-orange-300 hover:bg-orange-50 transition-colors">
-                            <div class="flex items-center space-x-3">
-                                <i class="fas fa-chart-line text-orange-600"></i>
-                                <span class="text-gray-900">View Progress Reports</span>
-                            </div>
-                        </button>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-lg font-bold text-gray-900 mb-4">Quick Actions</h3>
+                        <div class="space-y-3">
+                            <button id="emergencySession" class="w-full text-left p-3 rounded-lg border border-gray-200 hover:border-orange-300 hover:bg-orange-50 transition-colors">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-calendar-plus text-orange-600"></i>
+                                    <span class="text-gray-900">Schedule Emergency Session</span>
+                                </div>
+                            </button>
+                            <button id="groupMessage" class="w-full text-left p-3 rounded-lg border border-gray-200 hover:border-orange-300 hover:bg-orange-50 transition-colors">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-envelope text-orange-600"></i>
+                                    <span class="text-gray-900">Send Group Message</span>
+                                </div>
+                            </button>
+                            <button id="progressReports" class="w-full text-left p-3 rounded-lg border border-gray-200 hover:border-orange-300 hover:bg-orange-50 transition-colors">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-chart-line text-orange-600"></i>
+                                    <span class="text-gray-900">View Progress Reports</span>
+                                </div>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </main>
+        </main>
+    </div>
+
+    <!-- Modals Container -->
+    <div id="modalsContainer"></div>
 
     <script>
+        // API Configuration
+        const API_BASE_URL = 'https://ce-apii.onrender.com';
+
+        // Global variables
+        let currentMentor = null;
+        let isAuthenticated = false;
+
+        // Utility functions
+        const api = {
+            async get(endpoint) {
+                const response = await fetch(`${API_BASE_URL}${endpoint}`);
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                return await response.json();
+            },
+
+            async post(endpoint, data) {
+                const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                return await response.json();
+            },
+
+            async put(endpoint, data) {
+                const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                return await response.json();
+            },
+
+            async delete(endpoint) {
+                const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                    method: 'DELETE'
+                });
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                return await response.json();
+            }
+        };
+
+        // Authentication functions
+        async function checkAuthentication() {
+            try {
+                // Check if user is logged in
+                const currentUser = localStorage.getItem('currentUser');
+                if (!currentUser) {
+                    throw new Error('No user session found');
+                }
+
+                const userData = JSON.parse(currentUser);
+                
+                // Verify this is a mentor
+                if (userData.role !== 'mentor') {
+                    throw new Error('Access denied: Mentor role required');
+                }
+
+                // Verify mentor exists in database
+                const mentors = await api.get('/mentors');
+                const mentor = mentors.find(m => m.id === userData.id && m.email === userData.email);
+                
+                if (!mentor) {
+                    throw new Error('Mentor account not found');
+                }
+
+                currentMentor = mentor;
+                isAuthenticated = true;
+                
+                return true;
+                
+            } catch (error) {
+                console.error('Authentication error:', error);
+                return false;
+            }
+        }
+
+        function logout() {
+            // Clear all stored data
+            localStorage.removeItem('currentUser');
+            sessionStorage.clear();
+            
+            // Redirect to login page
+            window.location.href = '/Auth/login.html';
+        }
+
+        // Initialize dashboard
+        async function initializeDashboard() {
+            try {
+                // Show loading screen
+                document.getElementById('loadingScreen').classList.remove('hidden');
+                
+                // Check authentication
+                const authResult = await checkAuthentication();
+                
+                if (!authResult) {
+                    // Show access denied
+                    document.getElementById('loadingScreen').classList.add('hidden');
+                    document.getElementById('accessDenied').classList.remove('hidden');
+                    return;
+                }
+
+                // Authentication successful - show dashboard
+                document.getElementById('loadingScreen').classList.add('hidden');
+                document.getElementById('mainDashboard').classList.remove('hidden');
+
+                // Set mentor info
+                document.getElementById('mentorName').textContent = `${currentMentor.name} ${currentMentor.surname}`;
+                document.getElementById('mentorInitials').textContent = `${currentMentor.name[0]}${currentMentor.surname[0]}`;
+
+                // Load all data
+                await Promise.all([
+                    loadStudents(),
+                    loadSessions(),
+                    loadResources(),
+                    loadTodaySchedule(),
+                    loadRecentActivity()
+                ]);
+
+                updateStats();
+                setupEventListeners();
+
+            } catch (error) {
+                console.error('Error initializing dashboard:', error);
+                document.getElementById('loadingScreen').classList.add('hidden');
+                document.getElementById('accessDenied').classList.remove('hidden');
+            }
+        }
+
+        // Data loading functions
+        async function loadStudents() {
+            try {
+                const students = await api.get('/students');
+                const mentorStudents = students.filter(student => student.group_id === currentMentor.group_id);
+                document.getElementById('activeMentees').textContent = mentorStudents.length;
+                return mentorStudents;
+            } catch (error) {
+                console.error('Error loading students:', error);
+                document.getElementById('activeMentees').textContent = '0';
+                return [];
+            }
+        }
+
+        async function loadSessions() {
+            try {
+                const sessions = await api.get('/sessions');
+                const mentorSessions = sessions.filter(session => session.hoster === currentMentor.id);
+                
+                // Separate group and one-on-one sessions
+                const groupSessions = mentorSessions.filter(session => session.capacity > 1);
+                const oneOnOneSessions = mentorSessions.filter(session => session.capacity === 1);
+
+                document.getElementById('groupSessions').textContent = groupSessions.length;
+                document.getElementById('oneOnOneSessions').textContent = oneOnOneSessions.length;
+
+                renderGroupSessions(groupSessions);
+                renderOneOnOneSessions(oneOnOneSessions);
+
+                return mentorSessions;
+            } catch (error) {
+                console.error('Error loading sessions:', error);
+                document.getElementById('groupSessions').textContent = '0';
+                document.getElementById('oneOnOneSessions').textContent = '0';
+                return [];
+            }
+        }
+
+        async function loadResources() {
+            try {
+                const resources = await api.get('/resources');
+                const mentorResources = resources.filter(resource => resource.upload_by === currentMentor.id);
+                
+                document.getElementById('resourcesShared').textContent = mentorResources.length;
+                renderResources(mentorResources);
+
+                return mentorResources;
+            } catch (error) {
+                console.error('Error loading resources:', error);
+                document.getElementById('resourcesShared').textContent = '0';
+                return [];
+            }
+        }
+
+        async function loadTodaySchedule() {
+            try {
+                const sessions = await api.get('/sessions');
+                const today = new Date().toISOString().split('T')[0];
+                const todaySessions = sessions.filter(session => {
+                    const sessionDate = new Date(session.start_time).toISOString().split('T')[0];
+                    return sessionDate === today && session.hoster === currentMentor.id;
+                });
+
+                renderTodaySchedule(todaySessions);
+                return todaySessions;
+            } catch (error) {
+                console.error('Error loading today\'s schedule:', error);
+                return [];
+            }
+        }
+
+        async function loadRecentActivity() {
+            try {
+                const [sessions, resources] = await Promise.all([
+                    api.get('/sessions'),
+                    api.get('/resources')
+                ]);
+
+                const recentSessions = sessions
+                    .filter(s => s.hoster === currentMentor.id)
+                    .slice(0, 3);
+                
+                const recentResources = resources
+                    .filter(r => r.upload_by === currentMentor.id)
+                    .slice(0, 2);
+
+                renderRecentActivity([...recentSessions, ...recentResources]);
+            } catch (error) {
+                console.error('Error loading recent activity:', error);
+            }
+        }
+
+        // Rendering functions
+        function renderGroupSessions(sessions) {
+            const container = document.getElementById('groupSessionsList');
+            if (sessions.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-calendar-times text-2xl mb-2"></i>
+                        <p>No group sessions scheduled</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = sessions.map(session => `
+                <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-gray-900">${session.name}</h3>
+                            <p class="text-gray-600 text-sm">${session.capacity} participants • ${session.description}</p>
+                            <p class="text-orange-600 text-sm font-medium">
+                                <i class="fas fa-calendar mr-1"></i>${formatDate(session.start_time)}
+                            </p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs font-medium">${getSessionStatus(session)}</span>
+                            <button class="text-orange-600 hover:text-orange-700 edit-session" data-id="${session.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderOneOnOneSessions(sessions) {
+            const container = document.getElementById('oneOnOneSessionsList');
+            if (sessions.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500 col-span-2">
+                        <i class="fas fa-user-times text-2xl mb-2"></i>
+                        <p>No one-on-one sessions scheduled</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = sessions.map(session => `
+                <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <span class="text-blue-600 font-semibold text-sm">ST</span>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-medium text-gray-900">Student Session</h4>
+                            <p class="text-gray-600 text-sm">One-on-one mentoring</p>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-600 mb-2">
+                        <i class="fas fa-clock mr-1 text-orange-500"></i>
+                        ${formatDate(session.start_time)}
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">${getSessionStatus(session)}</span>
+                        <button class="text-orange-600 hover:text-orange-700 text-sm edit-session" data-id="${session.id}">
+                            <i class="fas fa-edit mr-1"></i>Edit
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderResources(resources) {
+            const container = document.getElementById('resourcesList');
+            if (resources.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500 col-span-2">
+                        <i class="fas fa-folder-open text-2xl mb-2"></i>
+                        <p>No resources uploaded yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = resources.map(resource => `
+                <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 ${getResourceColor(resource.type)} rounded-lg flex items-center justify-center">
+                            <i class="fas ${getResourceIcon(resource.type)} text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-medium text-gray-900">${resource.name}</h4>
+                            <p class="text-gray-600 text-sm">${resource.description}</p>
+                            <p class="text-orange-600 text-xs">Shared with mentees</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderTodaySchedule(sessions) {
+            const container = document.getElementById('todaysSchedule');
+            if (sessions.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-4 text-gray-500">
+                        <i class="fas fa-calendar-day text-lg mb-2"></i>
+                        <p class="text-sm">No sessions today</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = sessions.map(session => `
+                <div class="flex items-center space-x-3 p-3 bg-orange-50 rounded-lg border-l-4 border-orange-500">
+                    <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
+                    <div class="flex-1">
+                        <p class="font-medium text-gray-900">${session.name}</p>
+                        <p class="text-gray-600 text-sm">${formatTime(session.start_time)}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderRecentActivity(activities) {
+            const container = document.getElementById('recentActivity');
+            if (activities.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-4 text-gray-500">
+                        <i class="fas fa-history text-lg mb-2"></i>
+                        <p class="text-sm">No recent activity</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = activities.map(activity => `
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas ${activity.capacity ? 'fa-users' : 'fa-file-upload'} text-blue-600 text-xs"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-gray-900 text-sm">${activity.capacity ? 'Hosted session: ' : 'Uploaded resource: '}${activity.name}</p>
+                        <p class="text-gray-500 text-xs">${formatRelativeTime(activity.start_time || new Date())}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function setupEventListeners() {
+            // Schedule buttons
+            document.getElementById('scheduleGroupSession').addEventListener('click', () => showSessionModal('group'));
+            document.getElementById('scheduleOneOnOne').addEventListener('click', () => showSessionModal('one-on-one'));
+            document.getElementById('uploadResource').addEventListener('click', showResourceModal);
+
+            // Quick actions
+            document.getElementById('emergencySession').addEventListener('click', () => showSessionModal('emergency'));
+            document.getElementById('groupMessage').addEventListener('click', showGroupMessageModal);
+            document.getElementById('progressReports').addEventListener('click', showProgressReports);
+
+            // Edit session buttons (delegated)
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('.edit-session')) {
+                    const sessionId = e.target.closest('.edit-session').dataset.id;
+                    editSession(sessionId);
+                }
+            });
+        }
+
+        function showSessionModal(type) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg p-6 w-full max-w-md">
+                    <h3 class="text-lg font-bold mb-4">Schedule ${type === 'emergency' ? 'Emergency ' : ''}Session</h3>
+                    <form id="sessionForm">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Session Name</label>
+                                <input type="text" name="name" required class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Description</label>
+                                <textarea name="description" required class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Start Time</label>
+                                <input type="datetime-local" name="start_time" required class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Duration (minutes)</label>
+                                <input type="number" name="duration" required class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Capacity</label>
+                                <input type="number" name="capacity" value="${type === 'one-on-one' ? 1 : 10}" required class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2">
+                            </div>
+                        </div>
+                        <div class="mt-6 flex space-x-3">
+                            <button type="button" onclick="this.closest('.fixed').remove()" class="flex-1 bg-gray-300 text-gray-700 px-4 py-2 rounded-md">Cancel</button>
+                            <button type="submit" class="flex-1 bg-orange-500 text-white px-4 py-2 rounded-md">Schedule</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+
+            document.getElementById('modalsContainer').appendChild(modal);
+
+            modal.querySelector('#sessionForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const sessionData = {
+                    hoster: currentMentor.id,
+                    name: formData.get('name'),
+                    description: formData.get('description'),
+                    start_time: formData.get('start_time'),
+                    duration: parseInt(formData.get('duration')),
+                    capacity: parseInt(formData.get('capacity')),
+                    subject: 'Mentoring'
+                };
+
+                try {
+                    await api.post('/sessions', sessionData);
+                    modal.remove();
+                    showSuccess('Session scheduled successfully!');
+                    await loadSessions();
+                    await loadTodaySchedule();
+                } catch (error) {
+                    showError('Failed to schedule session');
+                }
+            });
+        }
+
+        function showResourceModal() {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg p-6 w-full max-w-md">
+                    <h3 class="text-lg font-bold mb-4">Upload Resource</h3>
+                    <form id="resourceForm">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Resource Name</label>
+                                <input type="text" name="name" required class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Description</label>
+                                <textarea name="description" required class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Type</label>
+                                <select name="type" required class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2">
+                                    <option value="pdf">PDF Document</option>
+                                    <option value="doc">Word Document</option>
+                                    <option value="ppt">Presentation</option>
+                                    <option value="video">Video</option>
+                                    <option value="link">Web Link</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">File Path/URL</label>
+                                <input type="text" name="file_path" required class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" placeholder="/resources/file.pdf or https://...">
+                            </div>
+                        </div>
+                        <div class="mt-6 flex space-x-3">
+                            <button type="button" onclick="this.closest('.fixed').remove()" class="flex-1 bg-gray-300 text-gray-700 px-4 py-2 rounded-md">Cancel</button>
+                            <button type="submit" class="flex-1 bg-orange-500 text-white px-4 py-2 rounded-md">Upload</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+
+            document.getElementById('modalsContainer').appendChild(modal);
+
+            modal.querySelector('#resourceForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const resourceData = {
+                    upload_by: currentMentor.id,
+                    name: formData.get('name'),
+                    description: formData.get('description'),
+                    type: formData.get('type'),
+                    file_path: formData.get('file_path'),
+                    subject: 'Mentoring'
+                };
+
+                try {
+                    await api.post('/resources', resourceData);
+                    modal.remove();
+                    showSuccess('Resource uploaded successfully!');
+                    await loadResources();
+                } catch (error) {
+                    showError('Failed to upload resource');
+                }
+            });
+        }
+
+        function showGroupMessageModal() {
+            alert('Group message feature would be implemented here');
+        }
+
+        function showProgressReports() {
+            alert('Progress reports feature would be implemented here');
+        }
+
+        async function editSession(sessionId) {
+            try {
+                const sessions = await api.get('/sessions');
+                const session = sessions.find(s => s.id == sessionId);
+                
+                if (session) {
+                    showSessionModal('edit');
+                    // Pre-populate form with session data
+                    // This would be implemented in the modal
+                }
+            } catch (error) {
+                showError('Failed to load session details');
+            }
+        }
+
+        // Utility functions
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function formatTime(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function formatRelativeTime(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffHours = Math.floor((now - date) / (1000 * 60 * 60));
+            
+            if (diffHours < 1) return 'Just now';
+            if (diffHours < 24) return `${diffHours} hours ago`;
+            return `${Math.floor(diffHours / 24)} days ago`;
+        }
+
+        function getSessionStatus(session) {
+            const now = new Date();
+            const start = new Date(session.start_time);
+            const end = new Date(start.getTime() + session.duration * 60000);
+
+            if (now >= start && now <= end) return 'Live';
+            if (now > end) return 'Completed';
+            if (now < start) return 'Scheduled';
+            return 'Upcoming';
+        }
+
+        function getResourceIcon(type) {
+            const icons = {
+                'pdf': 'fa-file-pdf',
+                'doc': 'fa-file-word',
+                'ppt': 'fa-file-powerpoint',
+                'video': 'fa-file-video',
+                'link': 'fa-link'
+            };
+            return icons[type] || 'fa-file';
+        }
+
+        function getResourceColor(type) {
+            const colors = {
+                'pdf': 'bg-red-100',
+                'doc': 'bg-blue-100',
+                'ppt': 'bg-orange-100',
+                'video': 'bg-purple-100',
+                'link': 'bg-green-100'
+            };
+            return colors[type] || 'bg-gray-100';
+        }
+
+        function updateStats() {
+            // Stats are updated automatically when data loads
+        }
+
+        function showError(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-md shadow-lg';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        function showSuccess(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        // Initialize the dashboard when page loads
         document.addEventListener('DOMContentLoaded', function() {
+            initializeDashboard();
+
             // Add hover effects to cards
             document.querySelectorAll('.card-hover').forEach(card => {
                 card.addEventListener('mouseenter', function() {
@@ -429,36 +896,6 @@
                 
                 card.addEventListener('mouseleave', function() {
                     this.classList.remove('orange-glow');
-                });
-            });
-
-            // Handle session status updates
-            document.querySelectorAll('button').forEach(button => {
-                if (button.textContent.includes('Join')) {
-                    button.addEventListener('click', function() {
-                        const statusSpan = this.closest('.border').querySelector('.bg-yellow-100');
-                        if (statusSpan) {
-                            statusSpan.textContent = 'Active';
-                            statusSpan.className = 'bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium pulse-orange';
-                            this.innerHTML = '<i class="fas fa-video mr-1"></i>Active';
-                            this.classList.add('bg-green-100', 'text-green-800');
-                            this.classList.remove('text-orange-600', 'hover:text-orange-700');
-                        }
-                    });
-                }
-            });
-
-            // Handle quick action buttons
-            document.querySelectorAll('.space-y-3 button').forEach(button => {
-                button.addEventListener('click', function() {
-                    const originalBg = this.style.backgroundColor;
-                    this.style.backgroundColor = '#fed7aa';
-                    this.style.borderColor = '#f97316';
-                    
-                    setTimeout(() => {
-                        this.style.backgroundColor = originalBg;
-                        this.style.borderColor = '';
-                    }, 1000);
                 });
             });
 
@@ -474,5 +911,5 @@
             }, 5000);
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'984de6104557ae03',t:'MTc1ODgzODcyMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>

@@ -11,687 +11,1662 @@
             box-sizing: border-box;
         }
         .gradient-bg {
-            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
         }
         .card-hover {
             transition: all 0.3s ease;
         }
         .card-hover:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(255, 107, 53, 0.15);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.15);
         }
-        .orange-glow {
-            box-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
+        .blue-glow {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
         }
-        .terminal {
-            background: #1a1a1a;
-            font-family: 'Courier New', monospace;
-            color: #00ff00;
+        .pulse-blue {
+            animation: pulse-blue 2s infinite;
         }
-        .terminal-input {
-            background: transparent;
-            border: none;
-            outline: none;
-            color: #00ff00;
-            font-family: 'Courier New', monospace;
-            width: 100%;
+        @keyframes pulse-blue {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
         }
-        .terminal-line {
-            margin-bottom: 4px;
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
         }
-        .terminal-prompt {
-            color: #ff6b35;
+        .tab-active {
+            border-bottom: 3px solid #3b82f6;
+            color: #3b82f6;
+            font-weight: 600;
         }
-        .terminal-command {
-            color: #00ff00;
+        .logout-btn {
+            transition: all 0.3s ease;
         }
-        .terminal-output {
-            color: #ffffff;
+        .logout-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
         }
-        .terminal-error {
-            color: #ff4444;
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
         }
-        .progress-bar {
-            transition: width 0.5s ease;
+        .floating-label {
+            transition: all 0.3s ease;
+            pointer-events: none;
         }
-        .blink {
-            animation: blink 1s infinite;
+        .floating-label.active {
+            transform: translateY(-20px) scale(0.8);
+            color: #3b82f6;
         }
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
+        .input-container {
+            position: relative;
+            margin-bottom: 1rem;
         }
-        .status-indicator {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
+        .input-container input, .input-container select, .input-container textarea {
+            padding-top: 1.5rem;
+            padding-bottom: 0.5rem;
         }
-        .status-online { background-color: #22c55e; }
-        .status-warning { background-color: #f59e0b; }
-        .status-offline { background-color: #ef4444; }
+        .input-container label {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            transition: all 0.3s ease;
+            z-index: 0;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
-    <!-- Header -->
-    <header class="gradient-bg text-white shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center py-4">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                        <span class="text-orange-500 font-bold text-lg">UJ</span>
+    <!-- Authentication Check -->
+    <div id="authCheck" class="hidden"></div>
+
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="fixed inset-0 bg-white z-50 flex items-center justify-center">
+        <div class="text-center">
+            <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-spinner fa-spin text-white text-2xl"></i>
+            </div>
+            <h2 class="text-xl font-bold text-gray-800">Loading Dashboard</h2>
+            <p class="text-gray-600 mt-2">Please wait while we verify your access...</p>
+        </div>
+    </div>
+
+    <!-- Access Denied Screen -->
+    <div id="accessDenied" class="hidden fixed inset-0 bg-white z-50 flex items-center justify-center">
+        <div class="text-center max-w-md mx-4">
+            <div class="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-exclamation-triangle text-white text-3xl"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Access Denied</h2>
+            <p class="text-gray-600 mb-6">You don't have permission to access the Admin Dashboard. Admin role required.</p>
+            <button onclick="logout()" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                <i class="fas fa-sign-out-alt mr-2"></i>Return to Login
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Dashboard (Initially Hidden) -->
+    <div id="mainDashboard" class="hidden">
+        <!-- Header -->
+        <header class="gradient-bg text-white shadow-lg">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                            <span class="text-blue-600 font-bold text-lg">UJ</span>
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold">Admin Dashboard</h1>
+                            <p class="text-blue-100 text-sm">UJ Community Engagement</p>
+                        </div>
                     </div>
-                    <div>
-                        <h1 class="text-xl font-bold">System Administrator</h1>
-                        <p class="text-orange-100 text-sm">UJ Community Engagement - Admin Panel</p>
+                    <div class="flex items-center space-x-4">
+                        <div class="text-right">
+                            <p class="font-semibold" id="adminName">Loading...</p>
+                            <p class="text-blue-100 text-sm">System Administrator</p>
+                        </div>
+                        <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                            <span class="text-blue-600 font-bold" id="adminInitials">A</span>
+                        </div>
+                        <button onclick="logout()" class="logout-btn text-white hover:bg-blue-600 px-3 py-2 rounded-lg transition-colors ml-2" title="Logout">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
                     </div>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <div class="text-right">
-                        <p class="font-semibold">Admin Root</p>
-                        <p class="text-orange-100 text-sm">System Administrator</p>
-                    </div>
-                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                        <i class="fas fa-user-shield text-orange-500"></i>
-                    </div>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <div class="bg-white shadow-sm border-b">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex space-x-8">
+                    <button class="tab-btn py-4 px-2 text-gray-600 hover:text-blue-600 transition-colors tab-active" data-tab="overview">
+                        <i class="fas fa-chart-bar mr-2"></i>Overview
+                    </button>
+                    <button class="tab-btn py-4 px-2 text-gray-600 hover:text-blue-600 transition-colors" data-tab="users">
+                        <i class="fas fa-users mr-2"></i>User Management
+                    </button>
+                    <button class="tab-btn py-4 px-2 text-gray-600 hover:text-blue-600 transition-colors" data-tab="schools">
+                        <i class="fas fa-school mr-2"></i>Schools & Groups
+                    </button>
+                    <button class="tab-btn py-4 px-2 text-gray-600 hover:text-blue-600 transition-colors" data-tab="content">
+                        <i class="fas fa-file-alt mr-2"></i>Content Management
+                    </button>
+                    <button class="tab-btn py-4 px-2 text-gray-600 hover:text-blue-600 transition-colors" data-tab="analytics">
+                        <i class="fas fa-chart-line mr-2"></i>Analytics
+                    </button>
                 </div>
             </div>
         </div>
-    </header>
 
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- System Status Overview -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white rounded-lg p-6 shadow-md card-hover">
-                <div class="flex items-center">
-                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-server text-green-600 text-xl"></i>
-                    </div>
-                    <div class="ml-4">
-                        <p class="text-gray-600 text-sm">System Status</p>
-                        <p class="text-lg font-bold text-green-600">
-                            <span class="status-indicator status-online"></span>Online
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white rounded-lg p-6 shadow-md card-hover">
-                <div class="flex items-center">
-                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-users text-orange-600 text-xl"></i>
-                    </div>
-                    <div class="ml-4">
-                        <p class="text-gray-600 text-sm">Total Users</p>
-                        <p class="text-2xl font-bold text-gray-900">1,247</p>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white rounded-lg p-6 shadow-md card-hover">
-                <div class="flex items-center">
-                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-exclamation-triangle text-blue-600 text-xl"></i>
-                    </div>
-                    <div class="ml-4">
-                        <p class="text-gray-600 text-sm">Pending Actions</p>
-                        <p class="text-2xl font-bold text-gray-900">23</p>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white rounded-lg p-6 shadow-md card-hover">
-                <div class="flex items-center">
-                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-chart-line text-purple-600 text-xl"></i>
-                    </div>
-                    <div class="ml-4">
-                        <p class="text-gray-600 text-sm">System Load</p>
-                        <p class="text-2xl font-bold text-gray-900">67%</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Main Dashboard Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Left Column - System Management -->
-            <div class="lg:col-span-2 space-y-6">
-                <!-- CLI Terminal -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="bg-gray-800 px-4 py-2 flex items-center space-x-2">
-                        <div class="w-3 h-3 bg-red-500 rounded-full"></div>
-                        <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                        <div class="w-3 h-3 bg-green-500 rounded-full"></div>
-                        <span class="text-gray-300 text-sm ml-4">UJ Admin Terminal</span>
-                    </div>
-                    <div class="terminal p-4 h-80 overflow-y-auto" id="terminal">
-                        <div class="terminal-line">
-                            <span class="terminal-prompt">admin@uj-system:~$</span> <span class="terminal-command">system status</span>
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Overview Tab -->
+            <div id="overview-tab" class="tab-content">
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-lg p-6 shadow-md card-hover">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-users text-blue-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-gray-600 text-sm">Total Users</p>
+                                <p class="text-2xl font-bold text-gray-900" id="totalUsers">0</p>
+                            </div>
                         </div>
-                        <div class="terminal-line terminal-output">System Status: ONLINE</div>
-                        <div class="terminal-line terminal-output">CPU Usage: 67% | Memory: 4.2GB/8GB | Disk: 234GB/500GB</div>
-                        <div class="terminal-line terminal-output">Active Sessions: 156 | Database: Connected</div>
-                        <div class="terminal-line">
-                            <span class="terminal-prompt">admin@uj-system:~$</span> <span class="terminal-command">user count</span>
+                    </div>
+                    <div class="bg-white rounded-lg p-6 shadow-md card-hover">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-school text-green-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-gray-600 text-sm">Schools</p>
+                                <p class="text-2xl font-bold text-gray-900" id="totalSchools">0</p>
+                            </div>
                         </div>
-                        <div class="terminal-line terminal-output">Students: 1,089 | Teachers: 124 | Mentors: 34 | Total: 1,247</div>
-                        <div class="terminal-line">
-                            <span class="terminal-prompt">admin@uj-system:~$</span> <span class="terminal-command">pending alerts</span>
+                    </div>
+                    <div class="bg-white rounded-lg p-6 shadow-md card-hover">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-chalkboard-teacher text-purple-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-gray-600 text-sm">Active Sessions</p>
+                                <p class="text-2xl font-bold text-gray-900" id="activeSessions">0</p>
+                            </div>
                         </div>
-                        <div class="terminal-line terminal-output">Content Review Queue: 15 items</div>
-                        <div class="terminal-line terminal-output">User Role Changes: 8 pending</div>
-                        <div class="terminal-line">
-                            <span class="terminal-prompt">admin@uj-system:~$</span> 
-                            <input type="text" class="terminal-input" id="terminalInput" placeholder="Type command..." autocomplete="off">
-                            <span class="blink">_</span>
+                    </div>
+                    <div class="bg-white rounded-lg p-6 shadow-md card-hover">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-file-upload text-orange-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-gray-600 text-sm">Total Resources</p>
+                                <p class="text-2xl font-bold text-gray-900" id="totalResources">0</p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- User Management -->
+                <!-- Recent Activity and System Health -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Recent Activity -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold text-gray-900 mb-4">Recent System Activity</h2>
+                        <div id="systemActivity" class="space-y-3">
+                            <div class="text-center py-8 text-gray-500">
+                                <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                                <p>Loading activity...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Health -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold text-gray-900 mb-4">System Health</h2>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-700">Database Status</span>
+                                <span id="dbStatus" class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium">Checking...</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-700">API Status</span>
+                                <span id="apiStatus" class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium">Checking...</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-700">Server Uptime</span>
+                                <span id="serverUptime" class="text-gray-900 font-medium">--</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-700">Active Connections</span>
+                                <span id="activeConnections" class="text-gray-900 font-medium">--</span>
+                            </div>
+                        </div>
+                        <button id="refreshHealth" class="w-full mt-6 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                            <i class="fas fa-sync-alt mr-2"></i>Refresh Status
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Management Tab -->
+            <div id="users-tab" class="tab-content hidden">
                 <div class="bg-white rounded-lg shadow-md p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold text-gray-900">User Role Management</h2>
-                        <div class="flex space-x-2">
-                            <select class="border border-gray-300 rounded px-3 py-1 text-sm">
-                                <option>All Roles</option>
-                                <option>Students</option>
-                                <option>Teachers</option>
-                                <option>Mentors</option>
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-gray-900">User Management</h2>
+                        <div class="flex space-x-3">
+                            <select id="userTypeFilter" class="border border-gray-300 rounded-md px-3 py-2">
+                                <option value="all">All Users</option>
+                                <option value="students">Students</option>
+                                <option value="mentors">Mentors</option>
+                                <option value="teachers">Teachers</option>
+                                <option value="admin">Admins</option>
                             </select>
-                            <button class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm">
+                            <button id="addUserBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
                                 <i class="fas fa-plus mr-2"></i>Add User
                             </button>
                         </div>
                     </div>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-sm">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-4 py-2 text-left">User</th>
-                                    <th class="px-4 py-2 text-left">Role</th>
-                                    <th class="px-4 py-2 text-left">Status</th>
-                                    <th class="px-4 py-2 text-left">Last Active</th>
-                                    <th class="px-4 py-2 text-left">Actions</th>
+                        <table class="w-full">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-200">
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-4 py-2">
-                                        <div class="flex items-center space-x-2">
-                                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                                <span class="text-blue-600 text-xs font-bold">SJ</span>
-                                            </div>
-                                            <div>
-                                                <p class="font-medium">Sarah Johnson</p>
-                                                <p class="text-gray-500 text-xs">sarah.j@uj.ac.za</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-4 py-2">
-                                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Teacher</span>
-                                    </td>
-                                    <td class="px-4 py-2">
-                                        <span class="status-indicator status-online"></span>Online
-                                    </td>
-                                    <td class="px-4 py-2 text-gray-600">2 min ago</td>
-                                    <td class="px-4 py-2">
-                                        <button class="text-orange-600 hover:text-orange-700 mr-2">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="text-red-600 hover:text-red-700">
-                                            <i class="fas fa-ban"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-4 py-2">
-                                        <div class="flex items-center space-x-2">
-                                            <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                                                <span class="text-purple-600 text-xs font-bold">MT</span>
-                                            </div>
-                                            <div>
-                                                <p class="font-medium">Michael Thompson</p>
-                                                <p class="text-gray-500 text-xs">m.thompson@uj.ac.za</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-4 py-2">
-                                        <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs">Mentor</span>
-                                    </td>
-                                    <td class="px-4 py-2">
-                                        <span class="status-indicator status-online"></span>Online
-                                    </td>
-                                    <td class="px-4 py-2 text-gray-600">5 min ago</td>
-                                    <td class="px-4 py-2">
-                                        <button class="text-orange-600 hover:text-orange-700 mr-2">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="text-red-600 hover:text-red-700">
-                                            <i class="fas fa-ban"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-4 py-2">
-                                        <div class="flex items-center space-x-2">
-                                            <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                                                <span class="text-gray-600 text-xs font-bold">JS</span>
-                                            </div>
-                                            <div>
-                                                <p class="font-medium">John Smith</p>
-                                                <p class="text-gray-500 text-xs">john.smith@student.uj.ac.za</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-4 py-2">
-                                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">Student</span>
-                                    </td>
-                                    <td class="px-4 py-2">
-                                        <span class="status-indicator status-warning"></span>Away
-                                    </td>
-                                    <td class="px-4 py-2 text-gray-600">1 hour ago</td>
-                                    <td class="px-4 py-2">
-                                        <button class="text-orange-600 hover:text-orange-700 mr-2">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="text-red-600 hover:text-red-700">
-                                            <i class="fas fa-ban"></i>
-                                        </button>
+                            <tbody id="usersTableBody" class="bg-white divide-y divide-gray-200">
+                                <tr>
+                                    <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                                        <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                                        <p>Loading users...</p>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
+            </div>
 
-                <!-- Content Moderation -->
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold text-gray-900">Content Approval Queue</h2>
-                        <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium">15 Pending</span>
+            <!-- Schools & Groups Tab -->
+            <div id="schools-tab" class="tab-content hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Schools Management -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-xl font-bold text-gray-900">Schools</h2>
+                            <button id="addSchoolBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                                <i class="fas fa-plus mr-2"></i>Add School
+                            </button>
+                        </div>
+                        <div id="schoolsList" class="space-y-3">
+                            <div class="text-center py-8 text-gray-500">
+                                <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                                <p>Loading schools...</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="space-y-3">
-                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
-                            <div class="flex justify-between items-start">
-                                <div class="flex-1">
-                                    <h4 class="font-medium text-gray-900">Advanced Calculus Notes - Chapter 7</h4>
-                                    <p class="text-gray-600 text-sm">Uploaded by: Prof. Sarah Johnson</p>
-                                    <p class="text-gray-500 text-xs">PDF • 2.4 MB • Submitted 2 hours ago</p>
-                                </div>
-                                <div class="flex space-x-2">
-                                    <button class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors">
-                                        <i class="fas fa-check mr-1"></i>Approve
-                                    </button>
-                                    <button class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors">
-                                        <i class="fas fa-times mr-1"></i>Reject
-                                    </button>
-                                </div>
-                            </div>
+
+                    <!-- Groups Management -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-xl font-bold text-gray-900">Groups</h2>
+                            <button id="addGroupBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                                <i class="fas fa-plus mr-2"></i>Add Group
+                            </button>
                         </div>
-                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
-                            <div class="flex justify-between items-start">
-                                <div class="flex-1">
-                                    <h4 class="font-medium text-gray-900">Study Group Discussion Forum Post</h4>
-                                    <p class="text-gray-600 text-sm">Posted by: John Smith (Student)</p>
-                                    <p class="text-gray-500 text-xs">Text Post • Flagged for review • 4 hours ago</p>
-                                </div>
-                                <div class="flex space-x-2">
-                                    <button class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors">
-                                        <i class="fas fa-check mr-1"></i>Approve
-                                    </button>
-                                    <button class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors">
-                                        <i class="fas fa-times mr-1"></i>Reject
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
-                            <div class="flex justify-between items-start">
-                                <div class="flex-1">
-                                    <h4 class="font-medium text-gray-900">Career Guidance Presentation</h4>
-                                    <p class="text-gray-600 text-sm">Uploaded by: Dr. Michael Thompson</p>
-                                    <p class="text-gray-500 text-xs">PowerPoint • 15.2 MB • Submitted 6 hours ago</p>
-                                </div>
-                                <div class="flex space-x-2">
-                                    <button class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors">
-                                        <i class="fas fa-check mr-1"></i>Approve
-                                    </button>
-                                    <button class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors">
-                                        <i class="fas fa-times mr-1"></i>Reject
-                                    </button>
-                                </div>
+                        <div id="groupsList" class="space-y-3">
+                            <div class="text-center py-8 text-gray-500">
+                                <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                                <p>Loading groups...</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Right Column - System Monitoring -->
-            <div class="space-y-6">
-                <!-- System Performance -->
+            <!-- Content Management Tab -->
+            <div id="content-tab" class="tab-content hidden">
                 <div class="bg-white rounded-lg shadow-md p-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">System Performance</h3>
-                    <div class="space-y-4">
-                        <div>
-                            <div class="flex justify-between text-sm mb-1">
-                                <span>CPU Usage</span>
-                                <span>67%</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-orange-500 h-2 rounded-full progress-bar" style="width: 67%"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between text-sm mb-1">
-                                <span>Memory</span>
-                                <span>52%</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-blue-500 h-2 rounded-full progress-bar" style="width: 52%"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between text-sm mb-1">
-                                <span>Disk Space</span>
-                                <span>47%</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-green-500 h-2 rounded-full progress-bar" style="width: 47%"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between text-sm mb-1">
-                                <span>Network</span>
-                                <span>23%</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-purple-500 h-2 rounded-full progress-bar" style="width: 23%"></div>
-                            </div>
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-gray-900">Content Management</h2>
+                        <div class="flex space-x-3">
+                            <select id="contentTypeFilter" class="border border-gray-300 rounded-md px-3 py-2">
+                                <option value="all">All Content</option>
+                                <option value="resources">Resources</option>
+                                <option value="quizzes">Quizzes</option>
+                                <option value="subjects">Subjects</option>
+                            </select>
+                            <button id="addContentBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                                <i class="fas fa-plus mr-2"></i>Add Content
+                            </button>
                         </div>
                     </div>
-                </div>
-
-                <!-- Recent System Alerts -->
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">System Alerts</h3>
-                    <div class="space-y-3">
-                        <div class="flex items-start space-x-3 p-3 bg-yellow-50 rounded-lg border-l-4 border-yellow-500">
-                            <i class="fas fa-exclamation-triangle text-yellow-600 mt-1"></i>
-                            <div class="flex-1">
-                                <p class="text-gray-900 text-sm font-medium">High CPU Usage Detected</p>
-                                <p class="text-gray-600 text-xs">System load above 65% for 10 minutes</p>
-                                <p class="text-gray-500 text-xs">5 minutes ago</p>
-                            </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="contentGrid">
+                        <div class="text-center py-12 text-gray-500 col-span-3">
+                            <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                            <p>Loading content...</p>
                         </div>
-                        <div class="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
-                            <i class="fas fa-info-circle text-blue-600 mt-1"></i>
-                            <div class="flex-1">
-                                <p class="text-gray-900 text-sm font-medium">Database Backup Completed</p>
-                                <p class="text-gray-600 text-xs">Scheduled backup finished successfully</p>
-                                <p class="text-gray-500 text-xs">1 hour ago</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3 p-3 bg-green-50 rounded-lg border-l-4 border-green-500">
-                            <i class="fas fa-check-circle text-green-600 mt-1"></i>
-                            <div class="flex-1">
-                                <p class="text-gray-900 text-sm font-medium">Security Update Applied</p>
-                                <p class="text-gray-600 text-xs">System security patches installed</p>
-                                <p class="text-gray-500 text-xs">3 hours ago</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quick System Actions -->
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">Quick Actions</h3>
-                    <div class="space-y-3">
-                        <button class="w-full text-left p-3 rounded-lg border border-gray-200 hover:border-orange-300 hover:bg-orange-50 transition-colors">
-                            <div class="flex items-center space-x-3">
-                                <i class="fas fa-database text-orange-600"></i>
-                                <span class="text-gray-900">Backup Database</span>
-                            </div>
-                        </button>
-                        <button class="w-full text-left p-3 rounded-lg border border-gray-200 hover:border-orange-300 hover:bg-orange-50 transition-colors">
-                            <div class="flex items-center space-x-3">
-                                <i class="fas fa-sync text-orange-600"></i>
-                                <span class="text-gray-900">Restart Services</span>
-                            </div>
-                        </button>
-                        <button class="w-full text-left p-3 rounded-lg border border-gray-200 hover:border-orange-300 hover:bg-orange-50 transition-colors">
-                            <div class="flex items-center space-x-3">
-                                <i class="fas fa-shield-alt text-orange-600"></i>
-                                <span class="text-gray-900">Security Scan</span>
-                            </div>
-                        </button>
-                        <button class="w-full text-left p-3 rounded-lg border border-gray-200 hover:border-orange-300 hover:bg-orange-50 transition-colors">
-                            <div class="flex items-center space-x-3">
-                                <i class="fas fa-chart-bar text-orange-600"></i>
-                                <span class="text-gray-900">Generate Reports</span>
-                            </div>
-                        </button>
                     </div>
                 </div>
             </div>
-        </div>
-    </main>
+
+            <!-- Analytics Tab -->
+            <div id="analytics-tab" class="tab-content hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Usage Statistics -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold text-gray-900 mb-4">Platform Usage</h2>
+                        <div class="space-y-4" id="usageStats">
+                            <div class="text-center py-8 text-gray-500">
+                                <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                                <p>Loading usage statistics...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Sessions -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold text-gray-900 mb-4">Recent Sessions</h2>
+                        <div id="recentSessions" class="space-y-3">
+                            <div class="text-center py-8 text-gray-500">
+                                <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                                <p>Loading sessions...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals Container -->
+    <div id="modalsContainer"></div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const terminal = document.getElementById('terminal');
-            const terminalInput = document.getElementById('terminalInput');
-            let commandHistory = [];
-            let historyIndex = -1;
+        // API Configuration
+        const API_BASE_URL = 'https://ce-apii.onrender.com';
 
-            // CLI Commands
-            const commands = {
-                'help': () => {
-                    return [
-                        'Available commands:',
-                        '  system status    - Show system status',
-                        '  user list        - List all users',
-                        '  user count       - Show user statistics',
-                        '  pending alerts   - Show pending alerts',
-                        '  backup start     - Start database backup',
-                        '  logs show        - Show recent logs',
-                        '  clear           - Clear terminal',
-                        '  help            - Show this help'
-                    ];
-                },
-                'system status': () => {
-                    return [
-                        'System Status: ONLINE',
-                        'Uptime: 15 days, 7 hours, 23 minutes',
-                        'CPU: 67% | Memory: 4.2GB/8GB | Disk: 234GB/500GB',
-                        'Active Sessions: 156 | Database: Connected',
-                        'Last Backup: 2024-03-15 02:00:00'
-                    ];
-                },
-                'user list': () => {
-                    return [
-                        'Recent Active Users:',
-                        '  sarah.j@uj.ac.za        [Teacher]   Online',
-                        '  m.thompson@uj.ac.za     [Mentor]    Online',
-                        '  john.smith@student.uj   [Student]   Away',
-                        '  emma.davis@student.uj   [Student]   Online',
-                        '  alex.chen@student.uj    [Student]   Offline'
-                    ];
-                },
-                'user count': () => {
-                    return [
-                        'User Statistics:',
-                        '  Students: 1,089 (87.3%)',
-                        '  Teachers: 124 (9.9%)',
-                        '  Mentors: 34 (2.7%)',
-                        '  Total: 1,247 users',
-                        '  Active (last 24h): 892 users'
-                    ];
-                },
-                'pending alerts': () => {
-                    return [
-                        'Pending System Alerts:',
-                        '  Content Review Queue: 15 items',
-                        '  User Role Changes: 8 pending',
-                        '  System Updates: 3 available',
-                        '  Security Notifications: 2 unread'
-                    ];
-                },
-                'backup start': () => {
-                    return [
-                        'Starting database backup...',
-                        'Backup initiated at ' + new Date().toLocaleTimeString(),
-                        'Estimated completion: 15 minutes',
-                        'Status: IN PROGRESS'
-                    ];
-                },
-                'logs show': () => {
-                    return [
-                        'Recent System Logs:',
-                        '[INFO] User login: sarah.j@uj.ac.za',
-                        '[WARN] High CPU usage detected: 67%',
-                        '[INFO] Content approved: calculus_notes.pdf',
-                        '[INFO] Database backup completed',
-                        '[ERROR] Failed login attempt from 192.168.1.100'
-                    ];
-                },
-                'clear': () => {
-                    terminal.innerHTML = '';
-                    addTerminalLine('admin@uj-system:~$', '', 'input');
-                    return [];
+        // Global variables
+        let currentAdmin = null;
+        let isAuthenticated = false;
+        let allUsers = [];
+        let allSchools = [];
+        let allGroups = [];
+        let allContent = [];
+
+        // Utility functions
+        const api = {
+            async get(endpoint) {
+                const response = await fetch(`${API_BASE_URL}${endpoint}`);
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                return await response.json();
+            },
+
+            async post(endpoint, data) {
+                const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                return await response.json();
+            },
+
+            async put(endpoint, data) {
+                const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                return await response.json();
+            },
+
+            async delete(endpoint) {
+                const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                    method: 'DELETE'
+                });
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                return await response.json();
+            }
+        };
+
+        // Authentication functions
+        async function checkAuthentication() {
+            try {
+                const currentUser = localStorage.getItem('currentUser');
+                if (!currentUser) {
+                    throw new Error('No user session found');
                 }
+
+                const userData = JSON.parse(currentUser);
+                
+                if (userData.role !== 'admin') {
+                    throw new Error('Access denied: Admin role required');
+                }
+
+                const admins = await api.get('/admin');
+                const admin = admins.find(a => a.id === userData.id && a.email === userData.email);
+                
+                if (!admin) {
+                    throw new Error('Admin account not found');
+                }
+
+                currentAdmin = admin;
+                isAuthenticated = true;
+                
+                return true;
+                
+            } catch (error) {
+                console.error('Authentication error:', error);
+                return false;
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            sessionStorage.clear();
+            window.location.href = '/Auth/login.html';
+        }
+
+        // Initialize dashboard
+        async function initializeDashboard() {
+            try {
+                document.getElementById('loadingScreen').classList.remove('hidden');
+                
+                const authResult = await checkAuthentication();
+                
+                if (!authResult) {
+                    document.getElementById('loadingScreen').classList.add('hidden');
+                    document.getElementById('accessDenied').classList.remove('hidden');
+                    return;
+                }
+
+                document.getElementById('loadingScreen').classList.add('hidden');
+                document.getElementById('mainDashboard').classList.remove('hidden');
+
+                document.getElementById('adminName').textContent = `${currentAdmin.name} ${currentAdmin.surname}`;
+                document.getElementById('adminInitials').textContent = `${currentAdmin.name[0]}${currentAdmin.surname[0]}`;
+
+                await Promise.all([
+                    loadOverviewData(),
+                    checkSystemHealth()
+                ]);
+
+                setupEventListeners();
+                setupTabNavigation();
+
+            } catch (error) {
+                console.error('Error initializing dashboard:', error);
+                document.getElementById('loadingScreen').classList.add('hidden');
+                document.getElementById('accessDenied').classList.remove('hidden');
+            }
+        }
+
+        // Data loading functions
+        async function loadOverviewData() {
+            try {
+                const [students, mentors, teachers, admins, schools, sessions, resources] = await Promise.all([
+                    api.get('/students'),
+                    api.get('/mentors'),
+                    api.get('/teachers'),
+                    api.get('/admin'),
+                    api.get('/schools'),
+                    api.get('/sessions'),
+                    api.get('/resources')
+                ]);
+
+                document.getElementById('totalUsers').textContent = students.length + mentors.length + teachers.length + admins.length;
+                document.getElementById('totalSchools').textContent = schools.length;
+                document.getElementById('totalResources').textContent = resources.length;
+                
+                const today = new Date().toISOString().split('T')[0];
+                const activeSessionsCount = sessions.filter(session => {
+                    const sessionDate = new Date(session.start_time).toISOString().split('T')[0];
+                    return sessionDate === today;
+                }).length;
+                document.getElementById('activeSessions').textContent = activeSessionsCount;
+
+                loadSystemActivity([...sessions.slice(0, 5), ...resources.slice(0, 3)]);
+
+            } catch (error) {
+                console.error('Error loading overview data:', error);
+            }
+        }
+
+        async function loadUsersData() {
+            try {
+                const [students, mentors, teachers, admins] = await Promise.all([
+                    api.get('/students'),
+                    api.get('/mentors'),
+                    api.get('/teachers'),
+                    api.get('/admin')
+                ]);
+
+                allUsers = [
+                    ...students.map(s => ({ ...s, role: 'Student', type: 'students' })),
+                    ...mentors.map(m => ({ ...m, role: 'Mentor', type: 'mentors' })),
+                    ...teachers.map(t => ({ ...t, role: 'Teacher', type: 'teachers' })),
+                    ...admins.map(a => ({ ...a, role: 'Admin', type: 'admin' }))
+                ];
+
+                renderUsersTable(allUsers);
+                return allUsers;
+
+            } catch (error) {
+                console.error('Error loading users data:', error);
+                document.getElementById('usersTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="5" class="px-6 py-8 text-center text-red-500">
+                            <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
+                            <p>Failed to load users</p>
+                        </td>
+                    </tr>
+                `;
+                return [];
+            }
+        }
+
+        async function loadSchoolsData() {
+            try {
+                const [schools, groups] = await Promise.all([
+                    api.get('/schools'),
+                    api.get('/groups')
+                ]);
+
+                allSchools = schools;
+                allGroups = groups;
+
+                renderSchoolsList(schools);
+                renderGroupsList(groups);
+                return { schools, groups };
+
+            } catch (error) {
+                console.error('Error loading schools data:', error);
+                document.getElementById('schoolsList').innerHTML = `
+                    <div class="text-center py-8 text-red-500">
+                        <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
+                        <p>Failed to load schools</p>
+                    </div>
+                `;
+                return { schools: [], groups: [] };
+            }
+        }
+
+        async function loadContentData() {
+            try {
+                const [resources, quizzes, subjects] = await Promise.all([
+                    api.get('/resources'),
+                    api.get('/quizzes'),
+                    api.get('/subjects')
+                ]);
+
+                allContent = [...resources, ...quizzes, ...subjects];
+                renderContentGrid(allContent);
+                return { resources, quizzes, subjects };
+
+            } catch (error) {
+                console.error('Error loading content data:', error);
+                document.getElementById('contentGrid').innerHTML = `
+                    <div class="text-center py-12 text-red-500 col-span-3">
+                        <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
+                        <p>Failed to load content</p>
+                    </div>
+                `;
+                return { resources: [], quizzes: [], subjects: [] };
+            }
+        }
+
+        async function loadAnalyticsData() {
+            try {
+                const [sessions, students, resources] = await Promise.all([
+                    api.get('/sessions'),
+                    api.get('/students'),
+                    api.get('/resources')
+                ]);
+
+                renderUsageStats(students.length, sessions.length, resources.length);
+                renderRecentSessions(sessions.slice(0, 5));
+                return { sessions, students, resources };
+
+            } catch (error) {
+                console.error('Error loading analytics data:', error);
+                return { sessions: [], students: [], resources: [] };
+            }
+        }
+
+        // Rendering functions
+        function renderUsersTable(users) {
+            const container = document.getElementById('usersTableBody');
+            if (users.length === 0) {
+                container.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                            <i class="fas fa-users text-2xl mb-2"></i>
+                            <p>No users found</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            container.innerHTML = users.map(user => `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                <span class="text-blue-600 text-sm font-medium">${user.name[0]}${user.surname[0]}</span>
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900">${user.name} ${user.surname}</div>
+                                <div class="text-sm text-gray-500">${user.id_num || 'N/A'}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 py-1 text-xs font-medium rounded-full ${getRoleBadgeColor(user.role)}">${user.role}</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${user.email}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Active</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button class="text-blue-600 hover:text-blue-900 mr-3 edit-user" data-id="${user.id}" data-type="${user.type}">
+                            <i class="fas fa-edit mr-1"></i>Edit
+                        </button>
+                        <button class="text-red-600 hover:text-red-900 delete-user" data-id="${user.id}" data-type="${user.type}">
+                            <i class="fas fa-trash mr-1"></i>Delete
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderSchoolsList(schools) {
+            const container = document.getElementById('schoolsList');
+            if (schools.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-school text-2xl mb-2"></i>
+                        <p>No schools registered</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = schools.map(school => `
+                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-gray-900">${school.name}</h3>
+                            <p class="text-gray-600 text-sm">${school.district}, ${school.province}</p>
+                            <p class="text-blue-600 text-xs font-medium">ID: ${school.id}</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button class="text-blue-600 hover:text-blue-700 edit-school" data-id="${school.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="text-red-600 hover:text-red-700 delete-school" data-id="${school.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderGroupsList(groups) {
+            const container = document.getElementById('groupsList');
+            if (groups.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-users text-2xl mb-2"></i>
+                        <p>No groups created</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = groups.map(group => `
+                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-gray-900">${group.name}</h3>
+                            <p class="text-gray-600 text-sm">Group ${group.number}</p>
+                            <p class="text-blue-600 text-xs font-medium">School ID: ${group.school}</p>
+                            <p class="text-gray-500 text-sm mt-1">${group.description}</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button class="text-blue-600 hover:text-blue-700 edit-group" data-id="${group.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="text-red-600 hover:text-red-700 delete-group" data-id="${group.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderContentGrid(content) {
+            const container = document.getElementById('contentGrid');
+            if (content.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-gray-500 col-span-3">
+                        <i class="fas fa-file-alt text-2xl mb-2"></i>
+                        <p>No content available</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = content.map(item => `
+                <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <div class="w-10 h-10 ${getContentColor(item.type || 'resource')} rounded-lg flex items-center justify-center">
+                            <i class="fas ${getContentIcon(item.type || 'resource')} text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-medium text-gray-900">${item.name}</h4>
+                            <p class="text-gray-600 text-sm">${item.description || 'No description'}</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs text-gray-500">${getContentType(item)}</span>
+                        <div class="flex space-x-2">
+                            <button class="text-blue-600 hover:text-blue-700 text-sm edit-content" data-id="${item.id}" data-type="${getContentEndpoint(item)}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="text-red-600 hover:text-red-700 text-sm delete-content" data-id="${item.id}" data-type="${getContentEndpoint(item)}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderUsageStats(studentCount, sessionCount, resourceCount) {
+            const container = document.getElementById('usageStats');
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-700">Student Registrations</span>
+                            <span class="text-sm font-medium text-gray-900">${studentCount}</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-blue-600 h-2 rounded-full" style="width: ${Math.min((studentCount / 1000) * 100, 100)}%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-700">Sessions Conducted</span>
+                            <span class="text-sm font-medium text-gray-900">${sessionCount}</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-600 h-2 rounded-full" style="width: ${Math.min((sessionCount / 500) * 100, 100)}%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-700">Resources Uploaded</span>
+                            <span class="text-sm font-medium text-gray-900">${resourceCount}</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-purple-600 h-2 rounded-full" style="width: ${Math.min((resourceCount / 200) * 100, 100)}%"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderRecentSessions(sessions) {
+            const container = document.getElementById('recentSessions');
+            if (sessions.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-calendar-times text-2xl mb-2"></i>
+                        <p>No recent sessions</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = sessions.map(session => `
+                <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                    <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <div class="flex-1">
+                        <p class="font-medium text-gray-900">${session.name}</p>
+                        <p class="text-gray-600 text-sm">${formatDate(session.start_time)}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadSystemActivity(activities) {
+            const container = document.getElementById('systemActivity');
+            if (activities.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-4 text-gray-500">
+                        <i class="fas fa-history text-lg mb-2"></i>
+                        <p class="text-sm">No recent activity</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = activities.map(activity => `
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas ${activity.capacity ? 'fa-users' : 'fa-file-upload'} text-blue-600 text-xs"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-gray-900 text-sm">${activity.capacity ? 'New session: ' : 'Resource uploaded: '}${activity.name}</p>
+                        <p class="text-gray-500 text-xs">${formatRelativeTime(activity.start_time || new Date())}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Modal functions - FULL IMPLEMENTATION
+        function showAddUserModal() {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 modal-overlay flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                    <div class="p-6 border-b">
+                        <h3 class="text-xl font-bold text-gray-900">Add New User</h3>
+                    </div>
+                    <form id="addUserForm" class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div class="input-container">
+                                <input type="text" id="userFirstName" name="firstName" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
+                                <label for="userFirstName" class="floating-label text-gray-500">First Name</label>
+                            </div>
+                            <div class="input-container">
+                                <input type="text" id="userLastName" name="lastName" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
+                                <label for="userLastName" class="floating-label text-gray-500">Last Name</label>
+                            </div>
+                        </div>
+                        
+                        <div class="input-container mb-4">
+                            <input type="email" id="userEmail" name="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
+                            <label for="userEmail" class="floating-label text-gray-500">Email Address</label>
+                        </div>
+
+                        <div class="input-container mb-4">
+                            <input type="text" id="userIdNum" name="id_num" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
+                            <label for="userIdNum" class="floating-label text-gray-500">ID Number</label>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div class="input-container">
+                                <select id="userProvince" name="province" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 bg-white" required>
+                                    <option value="">Select Province</option>
+                                    <option value="eastern-cape">Eastern Cape</option>
+                                    <option value="free-state">Free State</option>
+                                    <option value="gauteng">Gauteng</option>
+                                    <option value="kwazulu-natal">KwaZulu-Natal</option>
+                                    <option value="limpopo">Limpopo</option>
+                                    <option value="mpumalanga">Mpumalanga</option>
+                                    <option value="northern-cape">Northern Cape</option>
+                                    <option value="north-west">North West</option>
+                                    <option value="western-cape">Western Cape</option>
+                                </select>
+                                <label for="userProvince" class="floating-label text-gray-500">Province</label>
+                            </div>
+                            
+                            <div class="input-container">
+                                <select id="userRole" name="role" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 bg-white" required>
+                                    <option value="">Select Role</option>
+                                    <option value="students">Student</option>
+                                    <option value="mentors">Mentor</option>
+                                    <option value="teachers">Teacher</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                                <label for="userRole" class="floating-label text-gray-500">User Role</label>
+                            </div>
+                        </div>
+
+                        <div id="studentFields" class="hidden">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div class="input-container">
+                                    <select id="userGrade" name="grade" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 bg-white">
+                                        <option value="">Select Grade</option>
+                                        ${Array.from({length: 12}, (_, i) => `<option value="${i+1}">Grade ${i+1}</option>`).join('')}
+                                    </select>
+                                    <label for="userGrade" class="floating-label text-gray-500">Grade</label>
+                                </div>
+                                <div class="input-container">
+                                    <select id="userGroup" name="group_id" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 bg-white">
+                                        <option value="">Select Group</option>
+                                        ${allGroups.map(group => `<option value="${group.id}">${group.name}</option>`).join('')}
+                                    </select>
+                                    <label for="userGroup" class="floating-label text-gray-500">Group</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="mentorTeacherFields" class="hidden">
+                            <div class="input-container mb-4">
+                                <select id="userMentorGroup" name="group_id" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 bg-white">
+                                    <option value="">Select Group (Optional)</option>
+                                    ${allGroups.map(group => `<option value="${group.id}">${group.name}</option>`).join('')}
+                                </select>
+                                <label for="userMentorGroup" class="floating-label text-gray-500">Assigned Group</label>
+                            </div>
+                        </div>
+
+                        <div class="input-container mb-4">
+                            <input type="text" id="userAddress" name="address" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
+                            <label for="userAddress" class="floating-label text-gray-500">Address</label>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            <div class="input-container">
+                                <input type="password" id="userPassword" name="password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
+                                <label for="userPassword" class="floating-label text-gray-500">Password</label>
+                            </div>
+                            <div class="input-container">
+                                <input type="password" id="userConfirmPassword" name="confirmPassword" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
+                                <label for="userConfirmPassword" class="floating-label text-gray-500">Confirm Password</label>
+                            </div>
+                        </div>
+
+                        <div class="flex space-x-3 pt-4 border-t">
+                            <button type="button" onclick="closeModal(this)" class="flex-1 bg-gray-300 text-gray-700 px-4 py-3 rounded-lg font-medium hover:bg-gray-400 transition-colors">Cancel</button>
+                            <button type="submit" class="flex-1 bg-blue-500 text-white px-4 py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors">
+                                <i class="fas fa-plus mr-2"></i>Create User
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+
+            document.getElementById('modalsContainer').appendChild(modal);
+            initializeFloatingLabels(modal);
+            setupUserRoleToggle(modal);
+            
+            modal.querySelector('#addUserForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await handleAddUser(modal);
+            });
+        }
+
+        function setupUserRoleToggle(modal) {
+            const roleSelect = modal.querySelector('#userRole');
+            const studentFields = modal.querySelector('#studentFields');
+            const mentorTeacherFields = modal.querySelector('#mentorTeacherFields');
+
+            roleSelect.addEventListener('change', function() {
+                studentFields.classList.add('hidden');
+                mentorTeacherFields.classList.add('hidden');
+
+                if (this.value === 'students') {
+                    studentFields.classList.remove('hidden');
+                } else if (this.value === 'mentors' || this.value === 'teachers') {
+                    mentorTeacherFields.classList.remove('hidden');
+                }
+            });
+        }
+
+        async function handleAddUser(modal) {
+            const form = modal.querySelector('#addUserForm');
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+
+            try {
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Creating...';
+                submitBtn.disabled = true;
+
+                const userData = {
+                    name: formData.get('firstName'),
+                    surname: formData.get('lastName'),
+                    email: formData.get('email'),
+                    id_num: formData.get('id_num'),
+                    province: formData.get('province'),
+                    address: formData.get('address'),
+                    password: formData.get('password'),
+                    group_id: formData.get('group_id') || null
+                };
+
+                // Add role-specific fields
+                const role = formData.get('role');
+                if (role === 'students') {
+                    userData.grade = parseInt(formData.get('grade'));
+                } else if (role === 'mentors') {
+                    userData.incentives = "Standard";
+                } else if (role === 'teachers') {
+                    userData.salary = "0";
+                } else if (role === 'admin') {
+                    userData.role = "Administrator";
+                }
+
+                // Validate passwords
+                if (formData.get('password') !== formData.get('confirmPassword')) {
+                    throw new Error('Passwords do not match');
+                }
+
+                const result = await api.post(`/${role}`, userData);
+                showSuccess('User created successfully!');
+                closeModal(modal);
+                await loadUsersData();
+
+            } catch (error) {
+                console.error('Error creating user:', error);
+                showError(`Failed to create user: ${error.message}`);
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        function showAddSchoolModal() {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 modal-overlay flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg w-full max-w-md">
+                    <div class="p-6 border-b">
+                        <h3 class="text-xl font-bold text-gray-900">Add New School</h3>
+                    </div>
+                    <form id="addSchoolForm" class="p-6">
+                        <div class="input-container mb-4">
+                            <input type="text" id="schoolName" name="name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
+                            <label for="schoolName" class="floating-label text-gray-500">School Name</label>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div class="input-container">
+                                <select id="schoolProvince" name="province" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 bg-white" required>
+                                    <option value="">Select Province</option>
+                                    <option value="eastern-cape">Eastern Cape</option>
+                                    <option value="free-state">Free State</option>
+                                    <option value="gauteng">Gauteng</option>
+                                    <option value="kwazulu-natal">KwaZulu-Natal</option>
+                                    <option value="limpopo">Limpopo</option>
+                                    <option value="mpumalanga">Mpumalanga</option>
+                                    <option value="northern-cape">Northern Cape</option>
+                                    <option value="north-west">North West</option>
+                                    <option value="western-cape">Western Cape</option>
+                                </select>
+                                <label for="schoolProvince" class="floating-label text-gray-500">Province</label>
+                            </div>
+                            
+                            <div class="input-container">
+                                <input type="text" id="schoolDistrict" name="district" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
+                                <label for="schoolDistrict" class="floating-label text-gray-500">District</label>
+                            </div>
+                        </div>
+
+                        <div class="flex space-x-3 pt-4 border-t">
+                            <button type="button" onclick="closeModal(this)" class="flex-1 bg-gray-300 text-gray-700 px-4 py-3 rounded-lg font-medium hover:bg-gray-400 transition-colors">Cancel</button>
+                            <button type="submit" class="flex-1 bg-blue-500 text-white px-4 py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors">
+                                <i class="fas fa-plus mr-2"></i>Create School
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+
+            document.getElementById('modalsContainer').appendChild(modal);
+            initializeFloatingLabels(modal);
+            
+            modal.querySelector('#addSchoolForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await handleAddSchool(modal);
+            });
+        }
+
+        async function handleAddSchool(modal) {
+            const form = modal.querySelector('#addSchoolForm');
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+
+            try {
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Creating...';
+                submitBtn.disabled = true;
+
+                const schoolData = {
+                    name: formData.get('name'),
+                    province: formData.get('province'),
+                    district: formData.get('district')
+                };
+
+                const result = await api.post('/schools', schoolData);
+                showSuccess('School created successfully!');
+                closeModal(modal);
+                await loadSchoolsData();
+
+            } catch (error) {
+                console.error('Error creating school:', error);
+                showError(`Failed to create school: ${error.message}`);
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        function showAddGroupModal() {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 modal-overlay flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg w-full max-w-md">
+                    <div class="p-6 border-b">
+                        <h3 class="text-xl font-bold text-gray-900">Add New Group</h3>
+                    </div>
+                    <form id="addGroupForm" class="p-6">
+                        <div class="input-container mb-4">
+                            <input type="text" id="groupName" name="name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
+                            <label for="groupName" class="floating-label text-gray-500">Group Name</label>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div class="input-container">
+                                <input type="number" id="groupNumber" name="number" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
+                                <label for="groupNumber" class="floating-label text-gray-500">Group Number</label>
+                            </div>
+                            
+                            <div class="input-container">
+                                <select id="groupSchool" name="school" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 bg-white" required>
+                                    <option value="">Select School</option>
+                                    ${allSchools.map(school => `<option value="${school.id}">${school.name}</option>`).join('')}
+                                </select>
+                                <label for="groupSchool" class="floating-label text-gray-500">School</label>
+                            </div>
+                        </div>
+
+                        <div class="input-container mb-4">
+                            <textarea id="groupDescription" name="description" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" rows="3"></textarea>
+                            <label for="groupDescription" class="floating-label text-gray-500">Description (Optional)</label>
+                        </div>
+
+                        <div class="flex space-x-3 pt-4 border-t">
+                            <button type="button" onclick="closeModal(this)" class="flex-1 bg-gray-300 text-gray-700 px-4 py-3 rounded-lg font-medium hover:bg-gray-400 transition-colors">Cancel</button>
+                            <button type="submit" class="flex-1 bg-blue-500 text-white px-4 py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors">
+                                <i class="fas fa-plus mr-2"></i>Create Group
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+
+            document.getElementById('modalsContainer').appendChild(modal);
+            initializeFloatingLabels(modal);
+            
+            modal.querySelector('#addGroupForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await handleAddGroup(modal);
+            });
+        }
+
+        async function handleAddGroup(modal) {
+            const form = modal.querySelector('#addGroupForm');
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+
+            try {
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Creating...';
+                submitBtn.disabled = true;
+
+                const groupData = {
+                    name: formData.get('name'),
+                    number: parseInt(formData.get('number')),
+                    school: parseInt(formData.get('school')),
+                    description: formData.get('description') || ''
+                };
+
+                const result = await api.post('/groups', groupData);
+                showSuccess('Group created successfully!');
+                closeModal(modal);
+                await loadSchoolsData();
+
+            } catch (error) {
+                console.error('Error creating group:', error);
+                showError(`Failed to create group: ${error.message}`);
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        // Edit functions
+        async function editUser(userId, userType) {
+            const user = allUsers.find(u => u.id == userId && u.type === userType);
+            if (!user) {
+                showError('User not found');
+                return;
+            }
+
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 modal-overlay flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                    <div class="p-6 border-b">
+                        <h3 class="text-xl font-bold text-gray-900">Edit User</h3>
+                    </div>
+                    <form id="editUserForm" class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div class="input-container">
+                                <input type="text" id="editFirstName" name="firstName" value="${user.name}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
+                                <label for="editFirstName" class="floating-label active text-gray-500">First Name</label>
+                            </div>
+                            <div class="input-container">
+                                <input type="text" id="editLastName" name="lastName" value="${user.surname}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
+                                <label for="editLastName" class="floating-label active text-gray-500">Last Name</label>
+                            </div>
+                        </div>
+                        
+                        <div class="input-container mb-4">
+                            <input type="email" id="editEmail" name="email" value="${user.email}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
+                            <label for="editEmail" class="floating-label active text-gray-500">Email Address</label>
+                        </div>
+
+                        <div class="input-container mb-4">
+                            <input type="text" id="editIdNum" name="id_num" value="${user.id_num || ''}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
+                            <label for="editIdNum" class="floating-label active text-gray-500">ID Number</label>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div class="input-container">
+                                <select id="editProvince" name="province" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 bg-white" required>
+                                    <option value="">Select Province</option>
+                                    ${['eastern-cape', 'free-state', 'gauteng', 'kwazulu-natal', 'limpopo', 'mpumalanga', 'northern-cape', 'north-west', 'western-cape']
+                                        .map(province => `<option value="${province}" ${user.province === province ? 'selected' : ''}>${province.replace('-', ' ').toUpperCase()}</option>`).join('')}
+                                </select>
+                                <label for="editProvince" class="floating-label active text-gray-500">Province</label>
+                            </div>
+                            
+                            <div class="input-container">
+                                <input type="text" value="${user.role}" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                                <label class="floating-label active text-gray-500">User Role</label>
+                            </div>
+                        </div>
+
+                        ${user.role === 'Student' ? `
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div class="input-container">
+                                    <select id="editGrade" name="grade" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 bg-white">
+                                        <option value="">Select Grade</option>
+                                        ${Array.from({length: 12}, (_, i) => `<option value="${i+1}" ${user.grade == i+1 ? 'selected' : ''}>Grade ${i+1}</option>`).join('')}
+                                    </select>
+                                    <label for="editGrade" class="floating-label active text-gray-500">Grade</label>
+                                </div>
+                                <div class="input-container">
+                                    <select id="editGroup" name="group_id" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 bg-white">
+                                        <option value="">Select Group</option>
+                                        ${allGroups.map(group => `<option value="${group.id}" ${user.group_id == group.id ? 'selected' : ''}>${group.name}</option>`).join('')}
+                                    </select>
+                                    <label for="editGroup" class="floating-label active text-gray-500">Group</label>
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        ${user.role === 'Mentor' || user.role === 'Teacher' ? `
+                            <div class="input-container mb-4">
+                                <select id="editMentorGroup" name="group_id" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 bg-white">
+                                    <option value="">Select Group (Optional)</option>
+                                    ${allGroups.map(group => `<option value="${group.id}" ${user.group_id == group.id ? 'selected' : ''}>${group.name}</option>`).join('')}
+                                </select>
+                                <label for="editMentorGroup" class="floating-label active text-gray-500">Assigned Group</label>
+                            </div>
+                        ` : ''}
+
+                        <div class="input-container mb-4">
+                            <input type="text" id="editAddress" name="address" value="${user.address || ''}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
+                            <label for="editAddress" class="floating-label active text-gray-500">Address</label>
+                        </div>
+
+                        <div class="input-container mb-6">
+                            <input type="password" id="editPassword" name="password" placeholder="Leave blank to keep current password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500">
+                            <label for="editPassword" class="floating-label text-gray-500">New Password (Optional)</label>
+                        </div>
+
+                        <div class="flex space-x-3 pt-4 border-t">
+                            <button type="button" onclick="closeModal(this)" class="flex-1 bg-gray-300 text-gray-700 px-4 py-3 rounded-lg font-medium hover:bg-gray-400 transition-colors">Cancel</button>
+                            <button type="submit" class="flex-1 bg-blue-500 text-white px-4 py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors">
+                                <i class="fas fa-save mr-2"></i>Update User
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+
+            document.getElementById('modalsContainer').appendChild(modal);
+            initializeFloatingLabels(modal);
+            
+            modal.querySelector('#editUserForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await handleEditUser(modal, userId, userType);
+            });
+        }
+
+        async function handleEditUser(modal, userId, userType) {
+            const form = modal.querySelector('#editUserForm');
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+
+            try {
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Updating...';
+                submitBtn.disabled = true;
+
+                const userData = {
+                    name: formData.get('firstName'),
+                    surname: formData.get('lastName'),
+                    email: formData.get('email'),
+                    id_num: formData.get('id_num'),
+                    province: formData.get('province'),
+                    address: formData.get('address')
+                };
+
+                // Add password if provided
+                if (formData.get('password')) {
+                    userData.password = formData.get('password');
+                }
+
+                // Add role-specific fields
+                if (userType === 'students') {
+                    userData.grade = parseInt(formData.get('grade'));
+                    userData.group_id = formData.get('group_id') || null;
+                } else if (userType === 'mentors' || userType === 'teachers') {
+                    userData.group_id = formData.get('group_id') || null;
+                }
+
+                const result = await api.put(`/${userType}/${userId}`, userData);
+                showSuccess('User updated successfully!');
+                closeModal(modal);
+                await loadUsersData();
+
+            } catch (error) {
+                console.error('Error updating user:', error);
+                showError(`Failed to update user: ${error.message}`);
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        // Delete functions
+        async function deleteUser(userId, userType) {
+            if (!confirm(`Are you sure you want to delete this ${userType.slice(0, -1)}? This action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                await api.delete(`/${userType}/${userId}`);
+                showSuccess(`${userType.slice(0, -1)} deleted successfully!`);
+                await loadUsersData();
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                showError(`Failed to delete ${userType.slice(0, -1)}: ${error.message}`);
+            }
+        }
+
+        async function deleteSchool(schoolId) {
+            if (!confirm('Are you sure you want to delete this school? This will also delete all associated groups and cannot be undone.')) {
+                return;
+            }
+
+            try {
+                await api.delete(`/schools/${schoolId}`);
+                showSuccess('School deleted successfully!');
+                await loadSchoolsData();
+            } catch (error) {
+                console.error('Error deleting school:', error);
+                showError(`Failed to delete school: ${error.message}`);
+            }
+        }
+
+        async function deleteGroup(groupId) {
+            if (!confirm('Are you sure you want to delete this group? This action cannot be undone.')) {
+                return;
+            }
+
+            try {
+                await api.delete(`/groups/${groupId}`);
+                showSuccess('Group deleted successfully!');
+                await loadSchoolsData();
+            } catch (error) {
+                console.error('Error deleting group:', error);
+                showError(`Failed to delete group: ${error.message}`);
+            }
+        }
+
+        // Utility functions
+        function closeModal(element) {
+            const modal = element.closest('.fixed');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        function initializeFloatingLabels(container) {
+            const inputs = container.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                const label = input.parentElement.querySelector('label');
+                if (!label) return;
+
+                if (input.value) {
+                    label.classList.add('active');
+                }
+
+                input.addEventListener('focus', () => label.classList.add('active'));
+                input.addEventListener('blur', () => {
+                    if (!input.value) label.classList.remove('active');
+                });
+                input.addEventListener('input', () => {
+                    if (input.value) label.classList.add('active');
+                    else label.classList.remove('active');
+                });
+            });
+        }
+
+        function getRoleBadgeColor(role) {
+            const colors = {
+                'Student': 'bg-green-100 text-green-800',
+                'Mentor': 'bg-blue-100 text-blue-800',
+                'Teacher': 'bg-purple-100 text-purple-800',
+                'Admin': 'bg-red-100 text-red-800'
             };
+            return colors[role] || 'bg-gray-100 text-gray-800';
+        }
 
-            function addTerminalLine(prompt, command, type = 'output') {
-                const line = document.createElement('div');
-                line.className = 'terminal-line';
-                
-                if (type === 'input') {
-                    line.innerHTML = `<span class="terminal-prompt">${prompt}</span> <input type="text" class="terminal-input" placeholder="Type command..." autocomplete="off"><span class="blink">_</span>`;
-                    const input = line.querySelector('.terminal-input');
-                    input.addEventListener('keydown', handleCommand);
-                    terminal.appendChild(line);
-                    input.focus();
-                } else if (type === 'command') {
-                    line.innerHTML = `<span class="terminal-prompt">${prompt}</span> <span class="terminal-command">${command}</span>`;
-                    terminal.appendChild(line);
-                } else {
-                    line.innerHTML = `<span class="terminal-output">${command}</span>`;
-                    terminal.appendChild(line);
-                }
-                
-                terminal.scrollTop = terminal.scrollHeight;
+        function getContentIcon(type) {
+            const icons = {
+                'pdf': 'fa-file-pdf',
+                'doc': 'fa-file-word',
+                'ppt': 'fa-file-powerpoint',
+                'video': 'fa-file-video',
+                'quiz': 'fa-question-circle',
+                'subject': 'fa-book',
+                'resource': 'fa-file'
+            };
+            return icons[type] || 'fa-file';
+        }
+
+        function getContentColor(type) {
+            const colors = {
+                'pdf': 'bg-red-100',
+                'doc': 'bg-blue-100',
+                'ppt': 'bg-orange-100',
+                'video': 'bg-purple-100',
+                'quiz': 'bg-green-100',
+                'subject': 'bg-indigo-100',
+                'resource': 'bg-gray-100'
+            };
+            return colors[type] || 'bg-gray-100';
+        }
+
+        function getContentType(item) {
+            if (item.file_path) return 'Resource';
+            if (item.description && !item.capacity) return 'Subject';
+            return 'Quiz';
+        }
+
+        function getContentEndpoint(item) {
+            if (item.file_path && !item.upload_by) return 'resources';
+            if (item.file_path && item.upload_by) return 'quizzes';
+            return 'subjects';
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function formatRelativeTime(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffHours = Math.floor((now - date) / (1000 * 60 * 60));
+            
+            if (diffHours < 1) return 'Just now';
+            if (diffHours < 24) return `${diffHours} hours ago`;
+            return `${Math.floor(diffHours / 24)} days ago`;
+        }
+
+        function showError(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-md shadow-lg z-50';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 5000);
+        }
+
+        function showSuccess(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg z-50';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 5000);
+        }
+
+        async function checkSystemHealth() {
+            try {
+                const health = await api.get('/health');
+                document.getElementById('apiStatus').textContent = 'Healthy';
+                document.getElementById('apiStatus').className = 'px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium';
+
+                await api.get('/schools');
+                document.getElementById('dbStatus').textContent = 'Connected';
+                document.getElementById('dbStatus').className = 'px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium';
+
+                document.getElementById('serverUptime').textContent = '24/7';
+                document.getElementById('activeConnections').textContent = 'Active';
+
+            } catch (error) {
+                document.getElementById('apiStatus').textContent = 'Unhealthy';
+                document.getElementById('apiStatus').className = 'px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-medium';
+                document.getElementById('dbStatus').textContent = 'Disconnected';
+                document.getElementById('dbStatus').className = 'px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-medium';
             }
+        }
 
-            function handleCommand(e) {
-                if (e.key === 'Enter') {
-                    const command = e.target.value.trim().toLowerCase();
-                    
-                    // Remove current input line
-                    e.target.parentElement.remove();
-                    
-                    // Add command to history
-                    if (command) {
-                        commandHistory.push(command);
-                        historyIndex = commandHistory.length;
-                        
-                        // Show command
-                        addTerminalLine('admin@uj-system:~$', command, 'command');
-                        
-                        // Execute command
-                        if (commands[command]) {
-                            const output = commands[command]();
-                            output.forEach(line => {
-                                addTerminalLine('', line);
-                            });
-                        } else if (command) {
-                            addTerminalLine('', `Command not found: ${command}. Type 'help' for available commands.`, 'error');
-                        }
-                    }
-                    
-                    // Add new input line
-                    addTerminalLine('admin@uj-system:~$', '', 'input');
-                }
-                
-                if (e.key === 'ArrowUp') {
-                    e.preventDefault();
-                    if (historyIndex > 0) {
-                        historyIndex--;
-                        e.target.value = commandHistory[historyIndex];
-                    }
-                }
-                
-                if (e.key === 'ArrowDown') {
-                    e.preventDefault();
-                    if (historyIndex < commandHistory.length - 1) {
-                        historyIndex++;
-                        e.target.value = commandHistory[historyIndex];
-                    } else {
-                        historyIndex = commandHistory.length;
-                        e.target.value = '';
-                    }
-                }
-            }
+        function setupEventListeners() {
+            document.getElementById('refreshHealth').addEventListener('click', checkSystemHealth);
+            document.getElementById('addUserBtn').addEventListener('click', showAddUserModal);
+            document.getElementById('addSchoolBtn').addEventListener('click', showAddSchoolModal);
+            document.getElementById('addGroupBtn').addEventListener('click', showAddGroupModal);
+            document.getElementById('addContentBtn').addEventListener('click', showAddContentModal);
 
-            // Initialize terminal input
-            terminalInput.addEventListener('keydown', handleCommand);
+            document.getElementById('userTypeFilter').addEventListener('change', filterUsersTable);
+            document.getElementById('contentTypeFilter').addEventListener('change', filterContent);
 
-            // Add hover effects to cards
-            document.querySelectorAll('.card-hover').forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.classList.add('orange-glow');
-                });
-                
-                card.addEventListener('mouseleave', function() {
-                    this.classList.remove('orange-glow');
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('.edit-user')) {
+                    const button = e.target.closest('.edit-user');
+                    editUser(button.dataset.id, button.dataset.type);
+                }
+                if (e.target.closest('.delete-user')) {
+                    const button = e.target.closest('.delete-user');
+                    deleteUser(button.dataset.id, button.dataset.type);
+                }
+                if (e.target.closest('.edit-school')) {
+                    const button = e.target.closest('.edit-school');
+                    editSchool(button.dataset.id);
+                }
+                if (e.target.closest('.delete-school')) {
+                    const button = e.target.closest('.delete-school');
+                    deleteSchool(button.dataset.id);
+                }
+                if (e.target.closest('.edit-group')) {
+                    const button = e.target.closest('.edit-group');
+                    editGroup(button.dataset.id);
+                }
+                if (e.target.closest('.delete-group')) {
+                    const button = e.target.closest('.delete-group');
+                    deleteGroup(button.dataset.id);
+                }
+            });
+        }
+
+        function setupTabNavigation() {
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabName = button.dataset.tab;
+
+                    tabButtons.forEach(btn => btn.classList.remove('tab-active'));
+                    button.classList.add('tab-active');
+
+                    tabContents.forEach(content => content.classList.add('hidden'));
+                    document.getElementById(`${tabName}-tab`).classList.remove('hidden');
+
+                    switch(tabName) {
+                        case 'users':
+                            loadUsersData();
+                            break;
+                        case 'schools':
+                            loadSchoolsData();
+                            break;
+                        case 'content':
+                            loadContentData();
+                            break;
+                        case 'analytics':
+                            loadAnalyticsData();
+                            break;
+                    }
                 });
             });
+        }
 
-            // Handle content approval buttons
-            document.querySelectorAll('button').forEach(button => {
-                if (button.textContent.includes('Approve')) {
-                    button.addEventListener('click', function() {
-                        const card = this.closest('.border');
-                        card.style.backgroundColor = '#f0fdf4';
-                        card.style.borderColor = '#22c55e';
-                        this.textContent = 'Approved';
-                        this.disabled = true;
-                        this.classList.remove('bg-green-500', 'hover:bg-green-600');
-                        this.classList.add('bg-gray-400');
-                        
-                        // Hide reject button
-                        const rejectBtn = card.querySelector('button:last-child');
-                        if (rejectBtn) rejectBtn.style.display = 'none';
-                    });
-                }
-                
-                if (button.textContent.includes('Reject')) {
-                    button.addEventListener('click', function() {
-                        const card = this.closest('.border');
-                        card.style.backgroundColor = '#fef2f2';
-                        card.style.borderColor = '#ef4444';
-                        this.textContent = 'Rejected';
-                        this.disabled = true;
-                        this.classList.remove('bg-red-500', 'hover:bg-red-600');
-                        this.classList.add('bg-gray-400');
-                        
-                        // Hide approve button
-                        const approveBtn = card.querySelector('button:first-child');
-                        if (approveBtn) approveBtn.style.display = 'none';
-                    });
-                }
-            });
+        function filterUsersTable() {
+            const filterValue = document.getElementById('userTypeFilter').value;
+            const filteredUsers = filterValue === 'all' ? allUsers : allUsers.filter(user => user.type === filterValue);
+            renderUsersTable(filteredUsers);
+        }
 
-            // Simulate real-time system updates
-            setInterval(() => {
-                const cpuBar = document.querySelector('.progress-bar');
-                if (cpuBar) {
-                    const newValue = Math.floor(Math.random() * 30) + 50; // 50-80%
-                    cpuBar.style.width = newValue + '%';
-                    cpuBar.parentElement.previousElementSibling.querySelector('span:last-child').textContent = newValue + '%';
-                }
-            }, 5000);
+        function filterContent() {
+            const filterValue = document.getElementById('contentTypeFilter').value;
+            let filteredContent = allContent;
+            
+            if (filterValue === 'resources') {
+                filteredContent = allContent.filter(item => item.file_path && !item.upload_by);
+            } else if (filterValue === 'quizzes') {
+                filteredContent = allContent.filter(item => item.file_path && item.upload_by);
+            } else if (filterValue === 'subjects') {
+                filteredContent = allContent.filter(item => item.description && !item.capacity && !item.file_path);
+            }
+            
+            renderContentGrid(filteredContent);
+        }
+
+        function showAddContentModal() {
+            showSuccess('Content management feature coming soon!');
+        }
+
+        // Initialize the dashboard when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDashboard();
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'984df7c7a38f60b5',t:'MTc1ODgzOTQ0NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>

@@ -54,6 +54,15 @@
             40% { transform: translateY(-10px); }
             80% { transform: translateY(-5px); }
         }
+        .loading {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-pink-100 via-purple-50 to-indigo-100 min-h-screen">
@@ -132,8 +141,8 @@
         <!-- Dashboard Section -->
         <div id="dashboard" class="section fade-in">
             <div class="mb-8 text-center">
-                <h1 class="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
-                    Welcome back, Alex! 
+                <h1 class="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4" id="welcome-message">
+                    Welcome back!
                 </h1>
                 <p class="text-lg text-purple-700 font-medium">Let's make learning fun today!</p>
             </div>
@@ -146,7 +155,7 @@
                         </div>
                         <div>
                             <p class="text-sm font-medium opacity-90">My Documents</p>
-                            <p class="text-3xl font-bold">24</p>
+                            <p class="text-3xl font-bold" id="documents-count">0</p>
                         </div>
                     </div>
                 </div>
@@ -157,7 +166,7 @@
                         </div>
                         <div>
                             <p class="text-sm font-medium opacity-90">Quizzes Done</p>
-                            <p class="text-3xl font-bold">8</p>
+                            <p class="text-3xl font-bold" id="quizzes-count">0</p>
                         </div>
                     </div>
                 </div>
@@ -168,18 +177,18 @@
                         </div>
                         <div>
                             <p class="text-sm font-medium opacity-90">Study Sessions</p>
-                            <p class="text-3xl font-bold">3</p>
+                            <p class="text-3xl font-bold" id="sessions-count">0</p>
                         </div>
                     </div>
                 </div>
                 <div class="gradient-yellow rounded-xl shadow-lg p-6 card-hover transform transition-all duration-300">
                     <div class="flex items-center text-gray-700">
                         <div class="bg-white bg-opacity-30 rounded-full p-3 mr-4">
-                            <i class="fas fa-rocket text-2xl"></i>
+                            <i class="fas fa-users text-2xl"></i>
                         </div>
                         <div>
-                            <p class="text-sm font-medium opacity-90">Goals</p>
-                            <p class="text-3xl font-bold">5</p>
+                            <p class="text-sm font-medium opacity-90">My Group</p>
+                            <p class="text-3xl font-bold" id="group-name">-</p>
                         </div>
                     </div>
                 </div>
@@ -191,79 +200,18 @@
                         <i class="fas fa-clock text-blue-500 mr-2"></i>
                         Recent Activity
                     </h3>
-                    <div class="space-y-3">
-                        <div class="flex items-center p-4 bg-gradient-to-r from-blue-100 to-blue-50 rounded-xl border-l-4 border-blue-400 card-hover">
-                            <div class="bg-blue-500 text-white rounded-full p-2 mr-4">
-                                <i class="fas fa-pencil-alt"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-semibold text-blue-800">Completed Math Quiz #3</p>
-                                <p class="text-xs text-blue-600">2 hours ago • Great job!</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center p-4 bg-gradient-to-r from-green-100 to-green-50 rounded-xl border-l-4 border-green-400 card-hover">
-                            <div class="bg-green-500 text-white rounded-full p-2 mr-4">
-                                <i class="fas fa-download"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-semibold text-green-800">Downloaded Science Notes</p>
-                                <p class="text-xs text-green-600">1 day ago • Ready to study!</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center p-4 bg-gradient-to-r from-purple-100 to-purple-50 rounded-xl border-l-4 border-purple-400 card-hover">
-                            <div class="bg-purple-500 text-white rounded-full p-2 mr-4">
-                                <i class="fas fa-play"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-semibold text-purple-800">Watched Fun Video</p>
-                                <p class="text-xs text-purple-600">2 days ago • Learning is fun!</p>
-                            </div>
-                        </div>
+                    <div class="space-y-3" id="recent-activity">
+                        <div class="loading h-16 rounded-lg"></div>
                     </div>
                 </div>
                 
                 <div class="bg-white rounded-xl shadow-lg p-6 border-t-4 border-orange-400">
                     <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
                         <i class="fas fa-exclamation-triangle text-orange-500 mr-2"></i>
-                        Coming Up Soon!
+                        Coming Up Soon
                     </h3>
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between p-4 bg-gradient-to-r from-red-100 to-pink-50 rounded-xl border-l-4 border-red-400 card-hover">
-                            <div class="flex items-center">
-                                <div class="bg-red-500 text-white rounded-full p-2 mr-3">
-                                    <i class="fas fa-fire"></i>
-                                </div>
-                                <div>
-                                    <p class="text-sm font-semibold text-red-800">Story Writing</p>
-                                    <p class="text-xs text-red-600">Due in 2 days</p>
-                                </div>
-                            </div>
-                            <span class="bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold">Important!</span>
-                        </div>
-                        <div class="flex items-center justify-between p-4 bg-gradient-to-r from-yellow-100 to-orange-50 rounded-xl border-l-4 border-yellow-400 card-hover">
-                            <div class="flex items-center">
-                                <div class="bg-yellow-500 text-white rounded-full p-2 mr-3">
-                                    <i class="fas fa-leaf"></i>
-                                </div>
-                                <div>
-                                    <p class="text-sm font-semibold text-yellow-800">Nature Quiz</p>
-                                    <p class="text-xs text-yellow-600">Due in 5 days</p>
-                                </div>
-                            </div>
-                            <span class="bg-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold">Soon</span>
-                        </div>
-                        <div class="flex items-center justify-between p-4 bg-gradient-to-r from-green-100 to-emerald-50 rounded-xl border-l-4 border-green-400 card-hover">
-                            <div class="flex items-center">
-                                <div class="bg-green-500 text-white rounded-full p-2 mr-3">
-                                    <i class="fas fa-calculator"></i>
-                                </div>
-                                <div>
-                                    <p class="text-sm font-semibold text-green-800">Math Practice</p>
-                                    <p class="text-xs text-green-600">Due in 1 week</p>
-                                </div>
-                            </div>
-                            <span class="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold">No Rush</span>
-                        </div>
+                    <div class="space-y-3" id="upcoming-items">
+                        <div class="loading h-16 rounded-lg"></div>
                     </div>
                 </div>
             </div>
@@ -294,132 +242,8 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-white rounded-xl shadow-lg p-6 resource-card border-t-4 border-blue-400">
-                    <div class="flex items-center mb-4">
-                        <div class="bg-blue-100 rounded-full p-3 mr-4">
-                            <i class="fas fa-calculator text-2xl text-blue-600"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-bold text-blue-800">Fun Math Notes</h3>
-                            <p class="text-sm text-blue-600 font-medium">Mathematics • Easy to read!</p>
-                        </div>
-                    </div>
-                    <p class="text-gray-700 mb-4">Cool math tricks and easy ways to solve problems!</p>
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-500 flex items-center">
-                            <i class="fas fa-clock mr-1"></i>2 days ago
-                        </span>
-                        <button class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all btn-bounce">
-                            <i class="fas fa-download mr-1"></i>Get It!
-                        </button>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl shadow-lg p-6 resource-card border-t-4 border-purple-400">
-                    <div class="flex items-center mb-4">
-                        <div class="bg-purple-100 rounded-full p-3 mr-4">
-                            <i class="fas fa-atom text-2xl text-purple-600"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-bold text-purple-800">Amazing Science</h3>
-                            <p class="text-sm text-purple-600 font-medium">Science • Super cool!</p>
-                        </div>
-                    </div>
-                    <p class="text-gray-700 mb-4">Discover the wonders of atoms and molecules!</p>
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-500 flex items-center">
-                            <i class="fas fa-clock mr-1"></i>1 week ago
-                        </span>
-                        <button class="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all btn-bounce">
-                            <i class="fas fa-download mr-1"></i>Get It!
-                        </button>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl shadow-lg p-6 resource-card border-t-4 border-green-400">
-                    <div class="flex items-center mb-4">
-                        <div class="bg-green-100 rounded-full p-3 mr-4">
-                            <i class="fas fa-flask text-2xl text-green-600"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-bold text-green-800">Chemistry Fun</h3>
-                            <p class="text-sm text-green-600 font-medium">Chemistry • Experiments!</p>
-                        </div>
-                    </div>
-                    <p class="text-gray-700 mb-4">Learn about cool chemical reactions and experiments!</p>
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-500 flex items-center">
-                            <i class="fas fa-clock mr-1"></i>3 days ago
-                        </span>
-                        <button class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all btn-bounce">
-                            <i class="fas fa-download mr-1"></i>Get It!
-                        </button>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl shadow-lg p-6 resource-card border-t-4 border-pink-400">
-                    <div class="flex items-center mb-4">
-                        <div class="bg-pink-100 rounded-full p-3 mr-4">
-                            <i class="fas fa-dna text-2xl text-pink-600"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-bold text-pink-800">Living Things</h3>
-                            <p class="text-sm text-pink-600 font-medium">Biology • Nature rocks!</p>
-                        </div>
-                    </div>
-                    <p class="text-gray-700 mb-4">Explore how plants and animals work!</p>
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-500 flex items-center">
-                            <i class="fas fa-clock mr-1"></i>5 days ago
-                        </span>
-                        <button class="bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all btn-bounce">
-                            <i class="fas fa-download mr-1"></i>Get It!
-                        </button>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl shadow-lg p-6 resource-card border-t-4 border-orange-400">
-                    <div class="flex items-center mb-4">
-                        <div class="bg-orange-100 rounded-full p-3 mr-4">
-                            <i class="fas fa-landmark text-2xl text-orange-600"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-bold text-orange-800">History Stories</h3>
-                            <p class="text-sm text-orange-600 font-medium">History • Amazing tales!</p>
-                        </div>
-                    </div>
-                    <p class="text-gray-700 mb-4">Read exciting stories from the past!</p>
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-500 flex items-center">
-                            <i class="fas fa-clock mr-1"></i>1 week ago
-                        </span>
-                        <button class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all btn-bounce">
-                            <i class="fas fa-download mr-1"></i>Get It!
-                        </button>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl shadow-lg p-6 resource-card border-t-4 border-indigo-400">
-                    <div class="flex items-center mb-4">
-                        <div class="bg-indigo-100 rounded-full p-3 mr-4">
-                            <i class="fas fa-chart-line text-2xl text-indigo-600"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-bold text-indigo-800">Number Patterns</h3>
-                            <p class="text-sm text-indigo-600 font-medium">Math • Pattern fun!</p>
-                        </div>
-                    </div>
-                    <p class="text-gray-700 mb-4">Discover cool patterns and number tricks!</p>
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-500 flex items-center">
-                            <i class="fas fa-clock mr-1"></i>4 days ago
-                        </span>
-                        <button class="bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all btn-bounce">
-                            <i class="fas fa-download mr-1"></i>Get It!
-                        </button>
-                    </div>
-                </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="documents-list">
+                <div class="loading h-64 rounded-lg"></div>
             </div>
         </div>
 
@@ -428,84 +252,14 @@
             <div class="mb-8 text-center">
                 <h1 class="text-4xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent mb-4">
                     <i class="fas fa-brain text-green-500 mr-2"></i>
-                    Fun Quiz Time!
+                    Fun Quiz Time
                     <i class="fas fa-lightbulb text-yellow-400 ml-2"></i>
                 </h1>
                 <p class="text-lg text-purple-700 font-medium">Test what you've learned and have fun!</p>
             </div>
 
             <div id="quiz-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-white rounded-xl shadow-lg p-6 resource-card border-t-4 border-blue-400">
-                    <div class="flex items-center mb-4">
-                        <div class="bg-blue-100 rounded-full p-3 mr-4">
-                            <i class="fas fa-plus text-2xl text-blue-600"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-bold text-blue-800">Math Challenge!</h3>
-                            <p class="text-sm text-blue-600 font-medium">Numbers • 10 Fun Questions</p>
-                        </div>
-                    </div>
-                    <p class="text-gray-700 mb-4">Show off your awesome math skills!</p>
-                    <div class="flex justify-between items-center mb-4">
-                        <span class="text-sm text-gray-500 flex items-center">
-                            <i class="fas fa-clock mr-1"></i>30 minutes
-                        </span>
-                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold flex items-center">
-                            <i class="fas fa-play mr-1"></i>Ready!
-                        </span>
-                    </div>
-                    <button onclick="startQuiz('Math Challenge!')" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2 rounded-lg font-bold transition-all btn-bounce">
-                        <i class="fas fa-rocket mr-2"></i>Let's Go!
-                    </button>
-                </div>
-
-                <div class="bg-white rounded-xl shadow-lg p-6 resource-card border-t-4 border-purple-400">
-                    <div class="flex items-center mb-4">
-                        <div class="bg-purple-100 rounded-full p-3 mr-4">
-                            <i class="fas fa-atom text-2xl text-purple-600"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-bold text-purple-800">Science Explorer</h3>
-                            <p class="text-sm text-purple-600 font-medium">Science • 15 Cool Questions</p>
-                        </div>
-                    </div>
-                    <p class="text-gray-700 mb-4">Discover amazing science facts!</p>
-                    <div class="flex justify-between items-center mb-4">
-                        <span class="text-sm text-gray-500 flex items-center">
-                            <i class="fas fa-clock mr-1"></i>45 minutes
-                        </span>
-                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold flex items-center">
-                            <i class="fas fa-play mr-1"></i>Ready!
-                        </span>
-                    </div>
-                    <button onclick="startQuiz('Science Explorer')" class="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white px-4 py-2 rounded-lg font-bold transition-all btn-bounce">
-                        <i class="fas fa-rocket mr-2"></i>Let's Go!
-                    </button>
-                </div>
-
-                <div class="bg-white rounded-xl shadow-lg p-6 resource-card border-t-4 border-yellow-400">
-                    <div class="flex items-center mb-4">
-                        <div class="bg-yellow-100 rounded-full p-3 mr-4">
-                            <i class="fas fa-flask text-2xl text-yellow-600"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-bold text-yellow-800">Chemistry Lab</h3>
-                            <p class="text-sm text-yellow-600 font-medium">Chemistry • 12 Experiments</p>
-                        </div>
-                    </div>
-                    <p class="text-gray-700 mb-4">Mix and match chemical knowledge!</p>
-                    <div class="flex justify-between items-center mb-4">
-                        <span class="text-sm text-gray-500 flex items-center">
-                            <i class="fas fa-clock mr-1"></i>40 minutes
-                        </span>
-                        <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-bold flex items-center">
-                            <i class="fas fa-trophy mr-1"></i>Done!
-                        </span>
-                    </div>
-                    <button class="w-full bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white px-4 py-2 rounded-lg font-bold transition-all">
-                        <i class="fas fa-star mr-2"></i>See Results!
-                    </button>
-                </div>
+                <div class="loading h-64 rounded-lg"></div>
             </div>
 
             <!-- Quiz Interface (Hidden by default) -->
@@ -548,12 +302,8 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Subject</label>
-                                    <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                                        <option>Mathematics</option>
-                                        <option>Physics</option>
-                                        <option>Chemistry</option>
-                                        <option>Biology</option>
-                                        <option>History</option>
+                                    <select id="session-subject" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                        <option value="">Select Subject</option>
                                     </select>
                                 </div>
                                 <div>
@@ -595,22 +345,8 @@
                 <div>
                     <div class="bg-white rounded-lg shadow-md p-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">Upcoming Sessions</h3>
-                        <div class="space-y-4">
-                            <div class="border-l-4 border-blue-500 pl-4 py-2">
-                                <h4 class="font-medium text-gray-900">Mathematics Tutoring</h4>
-                                <p class="text-sm text-gray-600">Tomorrow, 2:00 PM</p>
-                                <p class="text-xs text-gray-500">Individual Session</p>
-                            </div>
-                            <div class="border-l-4 border-green-500 pl-4 py-2">
-                                <h4 class="font-medium text-gray-900">Physics Group Study</h4>
-                                <p class="text-sm text-gray-600">Friday, 10:00 AM</p>
-                                <p class="text-xs text-gray-500">Group Session</p>
-                            </div>
-                            <div class="border-l-4 border-purple-500 pl-4 py-2">
-                                <h4 class="font-medium text-gray-900">Chemistry Exam Prep</h4>
-                                <p class="text-sm text-gray-600">Monday, 3:00 PM</p>
-                                <p class="text-xs text-gray-500">Exam Preparation</p>
-                            </div>
+                        <div class="space-y-4" id="upcoming-sessions-list">
+                            <div class="loading h-24 rounded-lg"></div>
                         </div>
                     </div>
                 </div>
@@ -620,7 +356,7 @@
         <!-- Resources Section -->
         <div id="resources" class="section hidden fade-in">
             <div class="mb-8">
-                <h1 class="text-3xl font-bold text-gray-900 mb-2">Learning Resources 🎥</h1>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Learning Resources</h1>
                 <p class="text-gray-600">Access videos, recordings, and join group discussions.</p>
             </div>
 
@@ -636,98 +372,7 @@
                     </div>
 
                     <div id="resources-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Videos -->
-                        <div class="resource-card bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-all" data-type="videos">
-                            <div class="flex items-center mb-4">
-                                <div class="text-3xl mr-3">🎥</div>
-                                <div>
-                                    <h3 class="text-lg font-semibold text-gray-900">Calculus Fundamentals</h3>
-                                    <p class="text-sm text-gray-600">Video • 45 minutes</p>
-                                </div>
-                            </div>
-                            <p class="text-gray-700 mb-4">Complete introduction to differential calculus with examples.</p>
-                            <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-500">Mathematics</span>
-                                <button class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">Watch</button>
-                            </div>
-                        </div>
-
-                        <div class="resource-card bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-all" data-type="videos">
-                            <div class="flex items-center mb-4">
-                                <div class="text-3xl mr-3">🎥</div>
-                                <div>
-                                    <h3 class="text-lg font-semibold text-gray-900">Quantum Mechanics</h3>
-                                    <p class="text-sm text-gray-600">Video • 60 minutes</p>
-                                </div>
-                            </div>
-                            <p class="text-gray-700 mb-4">Advanced concepts in quantum physics and wave functions.</p>
-                            <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-500">Physics</span>
-                                <button class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">Watch</button>
-                            </div>
-                        </div>
-
-                        <!-- Recordings -->
-                        <div class="resource-card bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-all" data-type="recordings">
-                            <div class="flex items-center mb-4">
-                                <div class="text-3xl mr-3">🎙️</div>
-                                <div>
-                                    <h3 class="text-lg font-semibold text-gray-900">Organic Chemistry Lecture</h3>
-                                    <p class="text-sm text-gray-600">Recording • 90 minutes</p>
-                                </div>
-                            </div>
-                            <p class="text-gray-700 mb-4">Recorded lecture on reaction mechanisms and synthesis.</p>
-                            <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-500">Chemistry</span>
-                                <button class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">Listen</button>
-                            </div>
-                        </div>
-
-                        <div class="resource-card bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-all" data-type="recordings">
-                            <div class="flex items-center mb-4">
-                                <div class="text-3xl mr-3">🎙️</div>
-                                <div>
-                                    <h3 class="text-lg font-semibold text-gray-900">Biology Lab Session</h3>
-                                    <p class="text-sm text-gray-600">Recording • 75 minutes</p>
-                                </div>
-                            </div>
-                            <p class="text-gray-700 mb-4">Recorded lab session on cell division and mitosis.</p>
-                            <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-500">Biology</span>
-                                <button class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">Listen</button>
-                            </div>
-                        </div>
-
-                        <!-- Discussions -->
-                        <div class="resource-card bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-all" data-type="discussions">
-                            <div class="flex items-center mb-4">
-                                <div class="text-3xl mr-3">💬</div>
-                                <div>
-                                    <h3 class="text-lg font-semibold text-gray-900">Math Study Group</h3>
-                                    <p class="text-sm text-gray-600">Discussion • 24 members</p>
-                                </div>
-                            </div>
-                            <p class="text-gray-700 mb-4">Active discussion about calculus problems and solutions.</p>
-                            <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-500">5 new messages</span>
-                                <button class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">Join</button>
-                            </div>
-                        </div>
-
-                        <div class="resource-card bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-all" data-type="discussions">
-                            <div class="flex items-center mb-4">
-                                <div class="text-3xl mr-3">💬</div>
-                                <div>
-                                    <h3 class="text-lg font-semibold text-gray-900">Physics Forum</h3>
-                                    <p class="text-sm text-gray-600">Discussion • 18 members</p>
-                                </div>
-                            </div>
-                            <p class="text-gray-700 mb-4">Questions and answers about quantum physics concepts.</p>
-                            <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-500">2 new messages</span>
-                                <button class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">Join</button>
-                            </div>
-                        </div>
+                        <div class="loading h-48 rounded-lg"></div>
                     </div>
                 </div>
 
@@ -737,19 +382,19 @@
                         <div class="space-y-3">
                             <button class="w-full text-left p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
                                 <div class="flex items-center">
-                                    <span class="text-blue-600 mr-3">📚</span>
+                                    <i class="fas fa-calendar text-blue-600 mr-3"></i>
                                     <span class="text-sm font-medium">Study Planner</span>
                                 </div>
                             </button>
                             <button class="w-full text-left p-3 bg-green-50 hover:bg-green-100 rounded-lg transition-colors">
                                 <div class="flex items-center">
-                                    <span class="text-green-600 mr-3">📝</span>
+                                    <i class="fas fa-sticky-note text-green-600 mr-3"></i>
                                     <span class="text-sm font-medium">Note Taking</span>
                                 </div>
                             </button>
                             <button class="w-full text-left p-3 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors">
                                 <div class="flex items-center">
-                                    <span class="text-purple-600 mr-3">🎯</span>
+                                    <i class="fas fa-chart-line text-purple-600 mr-3"></i>
                                     <span class="text-sm font-medium">Progress Tracker</span>
                                 </div>
                             </button>
@@ -762,7 +407,7 @@
         <!-- Career Section -->
         <div id="career" class="section hidden fade-in">
             <div class="mb-8">
-                <h1 class="text-3xl font-bold text-gray-900 mb-2">Career Guidance 🎯</h1>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Career Guidance</h1>
                 <p class="text-gray-600">Explore career paths and get personalized guidance.</p>
             </div>
 
@@ -773,17 +418,17 @@
                         <p class="text-gray-600 mb-4">Take our comprehensive assessment to discover careers that match your interests and skills.</p>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                             <div class="text-center p-4 bg-blue-50 rounded-lg">
-                                <div class="text-2xl mb-2">🧠</div>
+                                <i class="fas fa-brain text-blue-600 text-3xl mb-2"></i>
                                 <h4 class="font-medium text-gray-900">Personality</h4>
                                 <p class="text-sm text-gray-600">Discover your work style</p>
                             </div>
                             <div class="text-center p-4 bg-green-50 rounded-lg">
-                                <div class="text-2xl mb-2">💪</div>
+                                <i class="fas fa-dumbbell text-green-600 text-3xl mb-2"></i>
                                 <h4 class="font-medium text-gray-900">Skills</h4>
                                 <p class="text-sm text-gray-600">Identify your strengths</p>
                             </div>
                             <div class="text-center p-4 bg-purple-50 rounded-lg">
-                                <div class="text-2xl mb-2">❤️</div>
+                                <i class="fas fa-heart text-purple-600 text-3xl mb-2"></i>
                                 <h4 class="font-medium text-gray-900">Interests</h4>
                                 <p class="text-sm text-gray-600">Find what motivates you</p>
                             </div>
@@ -793,63 +438,8 @@
 
                     <div class="bg-white rounded-lg shadow-md p-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">Recommended Career Paths</h3>
-                        <div class="space-y-4">
-                            <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                                <div class="flex items-start justify-between">
-                                    <div class="flex-1">
-                                        <h4 class="font-semibold text-gray-900 mb-2">Data Scientist</h4>
-                                        <p class="text-gray-600 text-sm mb-3">Analyze complex data to help organizations make informed decisions using statistical methods and machine learning.</p>
-                                        <div class="flex flex-wrap gap-2 mb-3">
-                                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">Mathematics</span>
-                                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Statistics</span>
-                                            <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs">Programming</span>
-                                        </div>
-                                        <div class="flex items-center text-sm text-gray-500">
-                                            <span class="mr-4">💰 $95,000 - $165,000</span>
-                                            <span>📈 High Growth</span>
-                                        </div>
-                                    </div>
-                                    <button class="ml-4 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition-colors">Learn More</button>
-                                </div>
-                            </div>
-
-                            <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                                <div class="flex items-start justify-between">
-                                    <div class="flex-1">
-                                        <h4 class="font-semibold text-gray-900 mb-2">Biomedical Engineer</h4>
-                                        <p class="text-gray-600 text-sm mb-3">Design and develop medical devices, equipment, and software to improve healthcare outcomes.</p>
-                                        <div class="flex flex-wrap gap-2 mb-3">
-                                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">Biology</span>
-                                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Engineering</span>
-                                            <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs">Medicine</span>
-                                        </div>
-                                        <div class="flex items-center text-sm text-gray-500">
-                                            <span class="mr-4">💰 $75,000 - $125,000</span>
-                                            <span>📈 Growing</span>
-                                        </div>
-                                    </div>
-                                    <button class="ml-4 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition-colors">Learn More</button>
-                                </div>
-                            </div>
-
-                            <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                                <div class="flex items-start justify-between">
-                                    <div class="flex-1">
-                                        <h4 class="font-semibold text-gray-900 mb-2">Research Scientist</h4>
-                                        <p class="text-gray-600 text-sm mb-3">Conduct scientific research to advance knowledge in fields like chemistry, physics, or environmental science.</p>
-                                        <div class="flex flex-wrap gap-2 mb-3">
-                                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">Chemistry</span>
-                                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Physics</span>
-                                            <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs">Research</span>
-                                        </div>
-                                        <div class="flex items-center text-sm text-gray-500">
-                                            <span class="mr-4">💰 $80,000 - $140,000</span>
-                                            <span>📈 Stable</span>
-                                        </div>
-                                    </div>
-                                    <button class="ml-4 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition-colors">Learn More</button>
-                                </div>
-                            </div>
+                        <div class="space-y-4" id="career-paths">
+                            <div class="loading h-32 rounded-lg"></div>
                         </div>
                     </div>
                 </div>
@@ -857,22 +447,8 @@
                 <div>
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">Upcoming Events</h3>
-                        <div class="space-y-4">
-                            <div class="border-l-4 border-blue-500 pl-4 py-2">
-                                <h4 class="font-medium text-gray-900">Career Fair</h4>
-                                <p class="text-sm text-gray-600">March 15, 2024</p>
-                                <p class="text-xs text-gray-500">Virtual Event</p>
-                            </div>
-                            <div class="border-l-4 border-green-500 pl-4 py-2">
-                                <h4 class="font-medium text-gray-900">Tech Industry Panel</h4>
-                                <p class="text-sm text-gray-600">March 22, 2024</p>
-                                <p class="text-xs text-gray-500">In-Person</p>
-                            </div>
-                            <div class="border-l-4 border-purple-500 pl-4 py-2">
-                                <h4 class="font-medium text-gray-900">Resume Workshop</h4>
-                                <p class="text-sm text-gray-600">March 28, 2024</p>
-                                <p class="text-xs text-gray-500">Hybrid</p>
-                            </div>
+                        <div class="space-y-4" id="career-events">
+                            <div class="loading h-24 rounded-lg"></div>
                         </div>
                     </div>
 
@@ -881,19 +457,19 @@
                         <div class="space-y-3">
                             <button class="w-full text-left p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
                                 <div class="flex items-center">
-                                    <span class="text-blue-600 mr-3">📄</span>
+                                    <i class="fas fa-file-alt text-blue-600 mr-3"></i>
                                     <span class="text-sm font-medium">Resume Builder</span>
                                 </div>
                             </button>
                             <button class="w-full text-left p-3 bg-green-50 hover:bg-green-100 rounded-lg transition-colors">
                                 <div class="flex items-center">
-                                    <span class="text-green-600 mr-3">🎤</span>
+                                    <i class="fas fa-microphone text-green-600 mr-3"></i>
                                     <span class="text-sm font-medium">Interview Prep</span>
                                 </div>
                             </button>
                             <button class="w-full text-left p-3 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors">
                                 <div class="flex items-center">
-                                    <span class="text-purple-600 mr-3">🌐</span>
+                                    <i class="fas fa-network-wired text-purple-600 mr-3"></i>
                                     <span class="text-sm font-medium">Networking Tips</span>
                                 </div>
                             </button>
@@ -906,7 +482,7 @@
         <!-- Profile Section -->
         <div id="profile" class="section hidden fade-in">
             <div class="mb-8">
-                <h1 class="text-3xl font-bold text-gray-900 mb-2">My Profile 👤</h1>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">My Profile</h1>
                 <p class="text-gray-600">Manage your account settings and preferences.</p>
             </div>
 
@@ -918,42 +494,34 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
-                                    <input type="text" value="Alex" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                    <input type="text" id="profile-first-name" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-                                    <input type="text" value="Johnson" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                    <input type="text" id="profile-last-name" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                                 </div>
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                                <input type="email" value="alex.johnson@email.com" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <input type="email" id="profile-email" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Student ID</label>
-                                    <input type="text" value="STU2024001" readonly class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50">
+                                    <input type="text" id="profile-id" readonly class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Year of Study</label>
-                                    <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                                        <option>Freshman</option>
-                                        <option selected>Sophomore</option>
-                                        <option>Junior</option>
-                                        <option>Senior</option>
-                                    </select>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Grade</label>
+                                    <input type="text" id="profile-grade" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Major</label>
-                                <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                                    <option>Computer Science</option>
-                                    <option>Mathematics</option>
-                                    <option>Physics</option>
-                                    <option>Chemistry</option>
-                                    <option>Biology</option>
-                                    <option selected>Engineering</option>
-                                </select>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Province</label>
+                                <input type="text" id="profile-province" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Address</label>
+                                <textarea id="profile-address" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
                             </div>
                             <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">Update Profile</button>
                         </form>
@@ -973,20 +541,11 @@
                             </div>
                             <div>
                                 <div class="flex justify-between items-center mb-2">
-                                    <span class="text-sm font-medium text-gray-700">Credits Completed</span>
-                                    <span class="text-sm font-bold text-blue-600">45/120</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div class="bg-blue-500 h-2 rounded-full" style="width: 37.5%"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="flex justify-between items-center mb-2">
                                     <span class="text-sm font-medium text-gray-700">Quizzes Completed</span>
-                                    <span class="text-sm font-bold text-purple-600">8/12</span>
+                                    <span class="text-sm font-bold text-purple-600" id="completed-quizzes">0/0</span>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div class="bg-purple-500 h-2 rounded-full" style="width: 66.7%"></div>
+                                    <div class="bg-purple-500 h-2 rounded-full" id="quizzes-progress" style="width: 0%"></div>
                                 </div>
                             </div>
                         </div>
@@ -996,9 +555,9 @@
                 <div>
                     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                         <div class="text-center mb-4">
-                            <div class="w-24 h-24 bg-blue-500 rounded-full flex items-center justify-center text-white text-3xl font-bold mx-auto mb-4">AJ</div>
-                            <h3 class="text-lg font-semibold text-gray-900">Alex Johnson</h3>
-                            <p class="text-gray-600">Engineering Student</p>
+                            <div class="w-24 h-24 bg-blue-500 rounded-full flex items-center justify-center text-white text-3xl font-bold mx-auto mb-4" id="profile-avatar">U</div>
+                            <h3 class="text-lg font-semibold text-gray-900" id="profile-full-name">User Name</h3>
+                            <p class="text-gray-600" id="profile-role">Student</p>
                         </div>
                         <button class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium transition-colors">Change Photo</button>
                     </div>
@@ -1040,7 +599,7 @@
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-sm text-gray-600">Sessions Attended</span>
-                                <span class="text-sm font-medium">12</span>
+                                <span class="text-sm font-medium" id="sessions-attended">0</span>
                             </div>
                         </div>
                     </div>
@@ -1050,50 +609,357 @@
     </main>
 
     <script>
-        // Global variables
+        // Configuration
+        const API_BASE_URL = 'https://ce-apii.onrender.com'; // Update with your server URL
+        
+        // Global state
+        let currentUser = null;
+        let userData = null;
         let currentQuiz = null;
         let currentQuestion = 0;
         let userAnswers = [];
         let quizTimer = null;
 
-        // Sample quiz data
-        const quizData = {
-            'Calculus Quiz #4': {
-                questions: [
-                    {
-                        question: "What is the derivative of x²?",
-                        options: ["x", "2x", "x²", "2x²"],
-                        correct: 1
-                    },
-                    {
-                        question: "What is ∫x dx?",
-                        options: ["x²/2 + C", "x + C", "x²", "2x + C"],
-                        correct: 0
-                    },
-                    {
-                        question: "What is the limit of (sin x)/x as x approaches 0?",
-                        options: ["0", "1", "∞", "undefined"],
-                        correct: 1
-                    }
-                ],
-                timeLimit: 30
-            },
-            'Physics Quiz #2': {
-                questions: [
-                    {
-                        question: "What is the speed of light in vacuum?",
-                        options: ["3 × 10⁸ m/s", "3 × 10⁶ m/s", "3 × 10¹⁰ m/s", "3 × 10⁷ m/s"],
-                        correct: 0
-                    },
-                    {
-                        question: "What is the unit of electric field?",
-                        options: ["N/C", "C/N", "V/m", "Both A and C"],
-                        correct: 3
-                    }
-                ],
-                timeLimit: 45
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get user data from localStorage (set during authentication)
+            currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            
+            if (!currentUser) {
+                // Redirect to login if no user data
+                window.location.href = 'Auth/login.html';
+                return;
             }
-        };
+            
+            // Load initial data
+            loadDashboardData();
+            loadUserProfile();
+            
+            // Set dashboard as active by default
+            const dashboardBtn = document.querySelector('button[onclick="showSection(\'dashboard\')"]');
+            if (dashboardBtn) {
+                dashboardBtn.classList.add('bg-white', 'bg-opacity-20', 'text-white');
+                dashboardBtn.classList.remove('hover:bg-white', 'hover:bg-opacity-20');
+            }
+        });
+
+        // API Functions
+        async function apiCall(endpoint, options = {}) {
+            try {
+                const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    ...options
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.status}`);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error('API call failed:', error);
+                throw error;
+            }
+        }
+
+        // Data Loading Functions
+        async function loadDashboardData() {
+            try {
+                // Load sessions, resources, quizzes, and groups in parallel
+                const [sessions, resources, quizzes, groups] = await Promise.all([
+                    apiCall('/sessions'),
+                    apiCall('/resources'),
+                    apiCall('/quizzes'),
+                    apiCall('/groups')
+                ]);
+
+                // Update statistics
+                document.getElementById('documents-count').textContent = 
+                    resources.filter(r => r.upload_by === currentUser.id).length;
+                document.getElementById('quizzes-count').textContent = 
+                    quizzes.filter(q => q.upload_by === currentUser.id).length;
+                document.getElementById('sessions-count').textContent = 
+                    sessions.filter(s => s.hoster === currentUser.id).length;
+                
+                // Find user's group
+                const userGroup = groups.find(g => g.id === currentUser.group_id);
+                document.getElementById('group-name').textContent = userGroup ? userGroup.name : 'Not assigned';
+
+                // Update welcome message
+                document.getElementById('welcome-message').textContent = `Welcome back, ${currentUser.name}!`;
+
+                // Display recent activity
+                const recentActivity = document.getElementById('recent-activity');
+                const activities = [
+                    {
+                        type: 'quiz',
+                        text: 'Completed Math Quiz #3',
+                        time: '2 hours ago',
+                        color: 'blue'
+                    },
+                    {
+                        type: 'resource',
+                        text: 'Downloaded Science Notes',
+                        time: '1 day ago',
+                        color: 'green'
+                    },
+                    {
+                        type: 'session',
+                        text: 'Attended Study Session',
+                        time: '2 days ago',
+                        color: 'purple'
+                    }
+                ];
+
+                recentActivity.innerHTML = activities.map(activity => `
+                    <div class="flex items-center p-4 bg-gradient-to-r from-${activity.color}-100 to-${activity.color}-50 rounded-xl border-l-4 border-${activity.color}-400 card-hover">
+                        <div class="bg-${activity.color}-500 text-white rounded-full p-2 mr-4">
+                            <i class="fas fa-${activity.type === 'quiz' ? 'pencil-alt' : activity.type === 'resource' ? 'download' : 'play'}"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-${activity.color}-800">${activity.text}</p>
+                            <p class="text-xs text-${activity.color}-600">${activity.time} • Great job!</p>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Display upcoming items
+                const upcomingItems = document.getElementById('upcoming-items');
+                const upcoming = [
+                    {
+                        title: 'Story Writing',
+                        due: 'Due in 2 days',
+                        priority: 'Important!',
+                        color: 'red'
+                    },
+                    {
+                        title: 'Nature Quiz',
+                        due: 'Due in 5 days',
+                        priority: 'Soon',
+                        color: 'yellow'
+                    },
+                    {
+                        title: 'Math Practice',
+                        due: 'Due in 1 week',
+                        priority: 'No Rush',
+                        color: 'green'
+                    }
+                ];
+
+                upcomingItems.innerHTML = upcoming.map(item => `
+                    <div class="flex items-center justify-between p-4 bg-gradient-to-r from-${item.color}-100 to-${item.color}-50 rounded-xl border-l-4 border-${item.color}-400 card-hover">
+                        <div class="flex items-center">
+                            <div class="bg-${item.color}-500 text-white rounded-full p-2 mr-3">
+                                <i class="fas fa-${item.color === 'red' ? 'fire' : item.color === 'yellow' ? 'leaf' : 'calculator'}"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-${item.color}-800">${item.title}</p>
+                                <p class="text-xs text-${item.color}-600">${item.due}</p>
+                            </div>
+                        </div>
+                        <span class="bg-${item.color}-500 text-white px-3 py-1 rounded-full text-xs font-bold">${item.priority}</span>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                showError('Failed to load dashboard data');
+            }
+        }
+
+        async function loadUserProfile() {
+            try {
+                // Update profile information
+                document.getElementById('profile-first-name').value = currentUser.name;
+                document.getElementById('profile-last-name').value = currentUser.surname;
+                document.getElementById('profile-email').value = currentUser.email;
+                document.getElementById('profile-id').value = currentUser.id_num;
+                document.getElementById('profile-grade').value = currentUser.grade;
+                document.getElementById('profile-province').value = currentUser.province;
+                document.getElementById('profile-address').value = currentUser.address;
+                
+                document.getElementById('profile-full-name').textContent = `${currentUser.name} ${currentUser.surname}`;
+                document.getElementById('profile-avatar').textContent = currentUser.name.charAt(0);
+                document.getElementById('profile-role').textContent = 'Student';
+                
+                // Load quizzes for progress tracking
+                const quizzes = await apiCall('/quizzes');
+                const userQuizzes = quizzes.filter(q => q.upload_by === currentUser.id);
+                document.getElementById('completed-quizzes').textContent = `${userQuizzes.length}/${quizzes.length}`;
+                
+                const progress = quizzes.length > 0 ? (userQuizzes.length / quizzes.length) * 100 : 0;
+                document.getElementById('quizzes-progress').style.width = `${progress}%`;
+                
+                // Load sessions attended
+                const sessions = await apiCall('/sessions');
+                const attendedSessions = sessions.filter(s => s.hoster === currentUser.id);
+                document.getElementById('sessions-attended').textContent = attendedSessions.length;
+
+            } catch (error) {
+                console.error('Error loading profile data:', error);
+            }
+        }
+
+        async function loadDocuments() {
+            try {
+                const resources = await apiCall('/resources');
+                const documentsContainer = document.getElementById('documents-list');
+                
+                if (resources.length > 0) {
+                    documentsContainer.innerHTML = resources.map(resource => `
+                        <div class="bg-white rounded-xl shadow-lg p-6 resource-card border-t-4 border-blue-400">
+                            <div class="flex items-center mb-4">
+                                <div class="bg-blue-100 rounded-full p-3 mr-4">
+                                    <i class="fas fa-file text-2xl text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-blue-800">${resource.name}</h3>
+                                    <p class="text-sm text-blue-600 font-medium">${resource.subject} • ${resource.type}</p>
+                                </div>
+                            </div>
+                            <p class="text-gray-700 mb-4">${resource.description}</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-500 flex items-center">
+                                    <i class="fas fa-clock mr-1"></i>Recently added
+                                </span>
+                                <button class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all btn-bounce">
+                                    <i class="fas fa-download mr-1"></i>Get It!
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    documentsContainer.innerHTML = '<p class="text-gray-600 text-center col-span-3 py-8">No documents available</p>';
+                }
+            } catch (error) {
+                console.error('Error loading documents:', error);
+                document.getElementById('documents-list').innerHTML = 
+                    '<p class="text-red-600 text-center col-span-3 py-8">Error loading documents</p>';
+            }
+        }
+
+        async function loadQuizzes() {
+            try {
+                const quizzes = await apiCall('/quizzes');
+                const quizList = document.getElementById('quiz-list');
+                
+                if (quizzes.length > 0) {
+                    quizList.innerHTML = quizzes.map(quiz => `
+                        <div class="bg-white rounded-xl shadow-lg p-6 resource-card border-t-4 border-blue-400">
+                            <div class="flex items-center mb-4">
+                                <div class="bg-blue-100 rounded-full p-3 mr-4">
+                                    <i class="fas fa-question-circle text-2xl text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-blue-800">${quiz.name}</h3>
+                                    <p class="text-sm text-blue-600 font-medium">${quiz.subject} • ${quiz.type}</p>
+                                </div>
+                            </div>
+                            <p class="text-gray-700 mb-4">${quiz.description}</p>
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-sm text-gray-500 flex items-center">
+                                    <i class="fas fa-clock mr-1"></i>30 minutes
+                                </span>
+                                <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold flex items-center">
+                                    <i class="fas fa-play mr-1"></i>Ready!
+                                </span>
+                            </div>
+                            <button onclick="startQuiz('${quiz.name}')" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2 rounded-lg font-bold transition-all btn-bounce">
+                                <i class="fas fa-rocket mr-2"></i>Let's Go!
+                            </button>
+                        </div>
+                    `).join('');
+                } else {
+                    quizList.innerHTML = '<p class="text-gray-600 text-center col-span-3 py-8">No quizzes available</p>';
+                }
+            } catch (error) {
+                console.error('Error loading quizzes:', error);
+                document.getElementById('quiz-list').innerHTML = 
+                    '<p class="text-red-600 text-center col-span-3 py-8">Error loading quizzes</p>';
+            }
+        }
+
+        async function loadSessions() {
+            try {
+                const sessions = await apiCall('/sessions');
+                const subjects = await apiCall('/subjects');
+                
+                // Populate subject dropdown
+                const subjectSelect = document.getElementById('session-subject');
+                subjectSelect.innerHTML = '<option value="">Select Subject</option>' + 
+                    subjects.map(subject => `<option value="${subject.id}">${subject.name}</option>`).join('');
+                
+                // Display upcoming sessions
+                const upcomingSessionsList = document.getElementById('upcoming-sessions-list');
+                const upcomingSessions = sessions
+                    .filter(s => new Date(s.start_time) > new Date())
+                    .slice(0, 3);
+                
+                if (upcomingSessions.length > 0) {
+                    upcomingSessionsList.innerHTML = upcomingSessions.map(session => {
+                        const subject = subjects.find(s => s.id === session.subject);
+                        return `
+                            <div class="border-l-4 border-blue-500 pl-4 py-2">
+                                <h4 class="font-medium text-gray-900">${session.name}</h4>
+                                <p class="text-sm text-gray-600">${new Date(session.start_time).toLocaleString()}</p>
+                                <p class="text-xs text-gray-500">${subject ? subject.name : 'General'} • ${session.duration} minutes</p>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    upcomingSessionsList.innerHTML = '<p class="text-gray-600 text-center py-4">No upcoming sessions</p>';
+                }
+            } catch (error) {
+                console.error('Error loading sessions:', error);
+            }
+        }
+
+        async function loadResources() {
+            try {
+                const resources = await apiCall('/resources');
+                const resourcesGrid = document.getElementById('resources-grid');
+                
+                if (resources.length > 0) {
+                    resourcesGrid.innerHTML = resources.map(resource => {
+                        const type = resource.type.toLowerCase();
+                        const typeConfig = {
+                            'video': { icon: 'fas fa-video', buttonColor: 'red', buttonText: 'Watch' },
+                            'recording': { icon: 'fas fa-microphone', buttonColor: 'green', buttonText: 'Listen' },
+                            'document': { icon: 'fas fa-file', buttonColor: 'blue', buttonText: 'View' }
+                        };
+                        
+                        const config = typeConfig[type] || { icon: 'fas fa-folder', buttonColor: 'gray', buttonText: 'Open' };
+                        
+                        return `
+                            <div class="resource-card bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-all" data-type="${type}">
+                                <div class="flex items-center mb-4">
+                                    <i class="${config.icon} text-3xl mr-3 text-${config.buttonColor}-600"></i>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-900">${resource.name}</h3>
+                                        <p class="text-sm text-gray-600">${resource.type} • ${resource.subject}</p>
+                                    </div>
+                                </div>
+                                <p class="text-gray-700 mb-4">${resource.description}</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-500">${resource.subject}</span>
+                                    <button class="bg-${config.buttonColor}-500 hover:bg-${config.buttonColor}-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                                        ${config.buttonText}
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    resourcesGrid.innerHTML = '<p class="text-gray-600 text-center col-span-2 py-8">No resources available</p>';
+                }
+            } catch (error) {
+                console.error('Error loading resources:', error);
+                document.getElementById('resources-grid').innerHTML = 
+                    '<p class="text-red-600 text-center col-span-2 py-8">Error loading resources</p>';
+            }
+        }
 
         // Navigation functions
         function showSection(sectionId) {
@@ -1118,6 +984,25 @@
             event.target.classList.remove('text-white', 'hover:bg-white', 'hover:bg-opacity-20');
             event.target.classList.add('bg-white', 'bg-opacity-20', 'text-white');
             
+            // Load section-specific data
+            switch(sectionId) {
+                case 'documents':
+                    loadDocuments();
+                    break;
+                case 'quizzes':
+                    loadQuizzes();
+                    break;
+                case 'sessions':
+                    loadSessions();
+                    break;
+                case 'resources':
+                    loadResources();
+                    break;
+                case 'profile':
+                    loadUserProfile();
+                    break;
+            }
+            
             // Close mobile menu if open
             document.getElementById('mobile-menu').classList.add('hidden');
         }
@@ -1127,9 +1012,25 @@
             mobileMenu.classList.toggle('hidden');
         }
 
-        // Quiz functions
+        // Quiz functions (simplified for demo)
         function startQuiz(quizName) {
-            currentQuiz = quizData[quizName];
+            // For demo purposes, we'll use sample quiz data
+            currentQuiz = {
+                questions: [
+                    {
+                        question: "What is the derivative of x²?",
+                        options: ["x", "2x", "x²", "2x²"],
+                        correct: 1
+                    },
+                    {
+                        question: "What is ∫x dx?",
+                        options: ["x²/2 + C", "x + C", "x²", "2x + C"],
+                        correct: 0
+                    }
+                ],
+                timeLimit: 30
+            };
+            
             currentQuestion = 0;
             userAnswers = [];
             
@@ -1279,15 +1180,11 @@
             }
         }
 
-        // Initialize the page
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set dashboard as active by default
-            const dashboardBtn = document.querySelector('button[onclick="showSection(\'dashboard\')"]');
-            if (dashboardBtn) {
-                dashboardBtn.classList.add('bg-white', 'bg-opacity-20', 'text-white');
-                dashboardBtn.classList.remove('hover:bg-white', 'hover:bg-opacity-20');
-            }
-        });
+        // Utility Functions
+        function showError(message) {
+            // You can implement a toast notification system here
+            alert(`Error: ${message}`);
+        }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'984de5a2546fb72b',t:'MTc1ODgzODcwMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
