@@ -3,146 +3,568 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Session Profile - Live Learning</title>
+    <title>LearnSphere - Interactive Learning Sessions</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="session.css">
     <style>
+        :root {
+            --primary: #4f46e5;
+            --secondary: #ec4899;
+            --accent: #10b981;
+            --background: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+        }
+        
         body {
-            box-sizing: border-box;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
         }
-        .video-container {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
         }
-        .chat-message {
-            animation: slideIn 0.3s ease-out;
+        
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
+        
+        .card {
+            background: var(--card);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.4);
+        }
+        
+        .btn-secondary {
+            background: var(--background);
+            color: var(--text);
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: #f1f5f9;
+            transform: translateY(-2px);
+        }
+        
+        .subject-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse 3s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+        
         @keyframes slideIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .participant-item {
-            transition: all 0.3s ease;
+        
+        .bounce-in {
+            animation: bounceIn 0.6s ease-out;
         }
-        .participant-item:hover {
-            transform: translateX(5px);
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+            100% { transform: scale(1); opacity: 1; }
         }
-        .file-item {
-            transition: all 0.3s ease;
+        
+        .glow {
+            box-shadow: 0 0 15px rgba(79, 70, 229, 0.3);
         }
-        .file-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
         }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
-    <!-- Session Setup Modal -->
-    <div id="sessionSetupModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">
-                <i class="fas fa-chalkboard-teacher text-blue-600 mr-3"></i>Create New Session
-            </h2>
+<body class="min-h-screen">
+    <!-- Notification System -->
+    <div id="notification" class="notification hidden">
+        <div class="flex items-center">
+            <i class="fas fa-check-circle text-green-500 text-xl mr-3"></i>
+            <div>
+                <p class="font-semibold" id="notification-title">Success</p>
+                <p class="text-sm text-gray-600" id="notification-message">Action completed successfully</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fas fa-graduation-cap text-2xl gradient-text mr-3"></i>
+                    <h1 class="text-xl font-bold gradient-text">LearnSphere</h1>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button id="userMenuButton" class="flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 rounded-full px-4 py-2 transition-colors">
+                            <div class="w-8 h-8 rounded-full gradient-bg flex items-center justify-center text-white font-bold">JS</div>
+                            <span class="font-medium">John Student</span>
+                            <i class="fas fa-chevron-down text-gray-500 text-xs"></i>
+                        </button>
+                        
+                        <div id="userMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg py-2 hidden z-50">
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-user mr-2 text-gray-500"></i>My Profile
+                            </a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-cog mr-2 text-gray-500"></i>Settings
+                            </a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-question-circle mr-2 text-gray-500"></i>Help & Support
+                            </a>
+                            <div class="border-t my-1"></div>
+                            <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <!-- Welcome Section -->
+        <div class="mb-10 text-center">
+            <h1 class="text-4xl font-bold mb-4">Interactive Learning Sessions</h1>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">Join engaging live sessions, collaborate with peers, and enhance your learning experience with our interactive platform.</p>
+        </div>
+
+        <!-- Role-based Content -->
+        <div id="studentView" class="space-y-8">
+            <!-- Available Sessions -->
+            <div class="card p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Available Sessions</h2>
+                    <div class="flex space-x-2">
+                        <button class="btn-secondary">
+                            <i class="fas fa-filter mr-2"></i>Filter
+                        </button>
+                        <button class="btn-secondary">
+                            <i class="fas fa-sort mr-2"></i>Sort
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Session Card 1 -->
+                    <div class="card p-5 border border-gray-100 hover:glow cursor-pointer">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="subject-badge bg-purple-100 text-purple-800">Mathematics</span>
+                            <span class="text-xs font-medium bg-green-100 text-green-800 px-2 py-1 rounded-full">Live Now</span>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">Advanced Calculus - Derivatives</h3>
+                        <p class="text-gray-600 text-sm mb-4">Explore the fundamentals of derivatives with practical examples and interactive problem-solving.</p>
+                        
+                        <div class="flex items-center text-sm text-gray-500 mb-4">
+                            <i class="fas fa-user mr-2 text-blue-500"></i>
+                            <span class="mr-4">Dr. Sarah Johnson</span>
+                            <i class="fas fa-clock mr-2 text-orange-500"></i>
+                            <span>45 mins left</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <i class="fas fa-users text-gray-400 mr-1"></i>
+                                <span class="text-sm text-gray-600">24/30 joined</span>
+                            </div>
+                            <button class="btn-primary text-sm px-4 py-2">
+                                Join Now <i class="fas fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Session Card 2 -->
+                    <div class="card p-5 border border-gray-100 hover:glow cursor-pointer">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="subject-badge bg-blue-100 text-blue-800">Physics</span>
+                            <span class="text-xs font-medium bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">Starting Soon</span>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">Quantum Mechanics Basics</h3>
+                        <p class="text-gray-600 text-sm mb-4">Dive into the fascinating world of quantum physics with experiments and visual demonstrations.</p>
+                        
+                        <div class="flex items-center text-sm text-gray-500 mb-4">
+                            <i class="fas fa-user mr-2 text-blue-500"></i>
+                            <span class="mr-4">Prof. Michael Chen</span>
+                            <i class="fas fa-clock mr-2 text-orange-500"></i>
+                            <span>Starts in 15 mins</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <i class="fas fa-users text-gray-400 mr-1"></i>
+                                <span class="text-sm text-gray-600">18/25 joined</span>
+                            </div>
+                            <button class="btn-primary text-sm px-4 py-2">
+                                Join Now <i class="fas fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Session Card 3 -->
+                    <div class="card p-5 border border-gray-100 hover:glow cursor-pointer">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="subject-badge bg-green-100 text-green-800">Biology</span>
+                            <span class="text-xs font-medium bg-blue-100 text-blue-800 px-2 py-1 rounded-full">Upcoming</span>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">Human Anatomy & Physiology</h3>
+                        <p class="text-gray-600 text-sm mb-4">Explore the human body systems with 3D models and interactive diagrams.</p>
+                        
+                        <div class="flex items-center text-sm text-gray-500 mb-4">
+                            <i class="fas fa-user mr-2 text-blue-500"></i>
+                            <span class="mr-4">Dr. Lisa Rodriguez</span>
+                            <i class="fas fa-clock mr-2 text-orange-500"></i>
+                            <span>Tomorrow, 10:00 AM</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <i class="fas fa-users text-gray-400 mr-1"></i>
+                                <span class="text-sm text-gray-600">12/20 joined</span>
+                            </div>
+                            <button class="btn-primary text-sm px-4 py-2">
+                                Join Now <i class="fas fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
-            <form id="sessionForm" onsubmit="createSession(event)" class="space-y-6">
-                <!-- Session Name -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Session Name *</label>
-                    <input type="text" id="sessionName" required 
-                           placeholder="e.g., Advanced Calculus - Derivatives and Limits"
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <!-- My Upcoming Sessions -->
+            <div class="card p-6">
+                <h2 class="text-2xl font-bold mb-6">My Upcoming Sessions</h2>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-gray-200">
+                                <th class="text-left py-3 px-4 text-gray-600 font-medium">Session</th>
+                                <th class="text-left py-3 px-4 text-gray-600 font-medium">Subject</th>
+                                <th class="text-left py-3 px-4 text-gray-600 font-medium">Teacher</th>
+                                <th class="text-left py-3 px-4 text-gray-600 font-medium">Date & Time</th>
+                                <th class="text-left py-3 px-4 text-gray-600 font-medium">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                <td class="py-4 px-4">
+                                    <div class="font-medium">Creative Writing Workshop</div>
+                                    <div class="text-sm text-gray-500">Improve your storytelling skills</div>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <span class="subject-badge bg-pink-100 text-pink-800">English</span>
+                                </td>
+                                <td class="py-4 px-4">Ms. Emily Watson</td>
+                                <td class="py-4 px-4">
+                                    <div class="font-medium">Tomorrow, 2:00 PM</div>
+                                    <div class="text-sm text-gray-500">45 minutes</div>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <button class="btn-secondary text-sm px-3 py-1">
+                                        <i class="fas fa-calendar-minus mr-1"></i> Cancel
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                <td class="py-4 px-4">
+                                    <div class="font-medium">Chemistry Lab - Reactions</div>
+                                    <div class="text-sm text-gray-500">Hands-on experiments</div>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <span class="subject-badge bg-orange-100 text-orange-800">Chemistry</span>
+                                </td>
+                                <td class="py-4 px-4">Dr. Robert Kim</td>
+                                <td class="py-4 px-4">
+                                    <div class="font-medium">Fri, 11:00 AM</div>
+                                    <div class="text-sm text-gray-500">1 hour</div>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <button class="btn-secondary text-sm px-3 py-1">
+                                        <i class="fas fa-calendar-minus mr-1"></i> Cancel
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-
-                <!-- Teacher Name -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Teacher Name *</label>
-                    <input type="text" id="teacherName" required 
-                           placeholder="e.g., Dr. Sarah Johnson"
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+        </div>
+        
+        <!-- Teacher/Mentor View (Hidden by default) -->
+        <div id="teacherView" class="hidden space-y-8">
+            <!-- Session Management -->
+            <div class="card p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">My Sessions</h2>
+                    <button id="createSessionBtn" class="btn-primary">
+                        <i class="fas fa-plus mr-2"></i> Create New Session
+                    </button>
                 </div>
-
-                <!-- Subject Selection -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Subject *</label>
-                    <select id="sessionSubject" required 
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        <option value="">Select a subject...</option>
-                        <option value="mathematics">Mathematics</option>
-                        <option value="physics">Physics</option>
-                        <option value="chemistry">Chemistry</option>
-                        <option value="biology">Biology</option>
-                        <option value="computer-science">Computer Science</option>
-                        <option value="english">English Language & Literature</option>
-                        <option value="history">History</option>
-                        <option value="geography">Geography</option>
-                        <option value="economics">Economics</option>
-                        <option value="psychology">Psychology</option>
-                        <option value="philosophy">Philosophy</option>
-                        <option value="art">Art & Design</option>
-                        <option value="music">Music</option>
-                        <option value="languages">Foreign Languages</option>
-                        <option value="business">Business Studies</option>
-                        <option value="engineering">Engineering</option>
-                        <option value="medicine">Medicine & Health Sciences</option>
-                        <option value="law">Law</option>
-                        <option value="other">Other</option>
-                    </select>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Teacher Session Card 1 -->
+                    <div class="card p-5 border border-gray-100">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="subject-badge bg-purple-100 text-purple-800">Mathematics</span>
+                            <span class="text-xs font-medium bg-green-100 text-green-800 px-2 py-1 rounded-full">Live</span>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">Advanced Calculus - Derivatives</h3>
+                        <p class="text-gray-600 text-sm mb-4">24 students currently attending</p>
+                        
+                        <div class="flex items-center text-sm text-gray-500 mb-4">
+                            <i class="fas fa-clock mr-2 text-orange-500"></i>
+                            <span>Started 15 mins ago</span>
+                        </div>
+                        
+                        <div class="flex space-x-2">
+                            <button class="btn-primary flex-1 text-sm py-2">
+                                Manage <i class="fas fa-cog ml-1"></i>
+                            </button>
+                            <button class="btn-secondary text-sm p-2">
+                                <i class="fas fa-chart-bar"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Teacher Session Card 2 -->
+                    <div class="card p-5 border border-gray-100">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="subject-badge bg-blue-100 text-blue-800">Physics</span>
+                            <span class="text-xs font-medium bg-gray-100 text-gray-800 px-2 py-1 rounded-full">Draft</span>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">Modern Physics Concepts</h3>
+                        <p class="text-gray-600 text-sm mb-4">Scheduled for next week</p>
+                        
+                        <div class="flex items-center text-sm text-gray-500 mb-4">
+                            <i class="fas fa-clock mr-2 text-orange-500"></i>
+                            <span>Mon, 10:00 AM</span>
+                        </div>
+                        
+                        <div class="flex space-x-2">
+                            <button class="btn-primary flex-1 text-sm py-2">
+                                Edit <i class="fas fa-edit ml-1"></i>
+                            </button>
+                            <button class="btn-secondary text-sm p-2">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Create New Session Card -->
+                    <div class="card p-5 border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-center cursor-pointer hover:border-blue-400 transition-colors">
+                        <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-4">
+                            <i class="fas fa-plus text-blue-500 text-2xl"></i>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">Create New Session</h3>
+                        <p class="text-gray-600 text-sm">Set up a new interactive learning session for your students</p>
+                    </div>
                 </div>
-
-                <!-- Session Description -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Session Description *</label>
-                    <textarea id="sessionDescription" required rows="4"
-                              placeholder="Describe what will be covered in this session, learning objectives, and any prerequisites..."
-                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"></textarea>
+            </div>
+            
+            <!-- Session Statistics -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="card p-5 text-center">
+                    <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-users text-green-500 text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">142</h3>
+                    <p class="text-gray-600">Total Students</p>
                 </div>
+                
+                <div class="card p-5 text-center">
+                    <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-chalkboard-teacher text-blue-500 text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">24</h3>
+                    <p class="text-gray-600">Sessions Hosted</p>
+                </div>
+                
+                <div class="card p-5 text-center">
+                    <div class="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-star text-purple-500 text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">4.8</h3>
+                    <p class="text-gray-600">Average Rating</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Role Toggle (for demo purposes) -->
+        <div class="fixed bottom-6 right-6 z-30">
+            <div class="bg-white rounded-xl shadow-lg p-4">
+                <h3 class="font-bold mb-2">Switch Role (Demo)</h3>
+                <div class="flex space-x-2">
+                    <button id="switchToStudent" class="btn-primary text-sm px-3 py-1">Student</button>
+                    <button id="switchToTeacher" class="btn-secondary text-sm px-3 py-1">Teacher</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                <!-- Session Duration -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <!-- Session Creation Modal -->
+    <div id="sessionModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">
+                    <i class="fas fa-chalkboard-teacher text-blue-600 mr-3"></i>Create New Session
+                </h2>
+                <button id="closeModal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="sessionForm" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Session Name -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Session Name *</label>
+                        <input type="text" required 
+                               placeholder="e.g., Advanced Calculus - Derivatives and Limits"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                    </div>
+
+                    <!-- Subject Selection -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Expected Duration</label>
-                        <select id="sessionDuration" 
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Subject *</label>
+                        <select required 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">Select a subject...</option>
+                            <option value="mathematics">Mathematics</option>
+                            <option value="physics">Physics</option>
+                            <option value="chemistry">Chemistry</option>
+                            <option value="biology">Biology</option>
+                            <option value="computer-science">Computer Science</option>
+                            <option value="english">English</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Duration -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Duration *</label>
+                        <select class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                             <option value="30">30 minutes</option>
                             <option value="45">45 minutes</option>
                             <option value="60" selected>1 hour</option>
                             <option value="90">1.5 hours</option>
                             <option value="120">2 hours</option>
-                            <option value="180">3 hours</option>
                         </select>
                     </div>
+
+                    <!-- Date & Time -->
                     <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Date *</label>
+                        <input type="date" required 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Time *</label>
+                        <input type="time" required 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <!-- Max Participants -->
+                    <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Max Participants</label>
-                        <select id="maxParticipants" 
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <select class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                             <option value="10">10 students</option>
                             <option value="20" selected>20 students</option>
                             <option value="30">30 students</option>
                             <option value="50">50 students</option>
                             <option value="100">100 students</option>
-                            <option value="unlimited">Unlimited</option>
                         </select>
+                    </div>
+
+                    <!-- Session Description -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Session Description *</label>
+                        <textarea required rows="4"
+                                  placeholder="Describe what will be covered in this session, learning objectives, and any prerequisites..."
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"></textarea>
                     </div>
                 </div>
 
                 <!-- Session Settings -->
-                <div class="bg-gray-50 rounded-lg p-4">
+                <div class="bg-gray-50 rounded-xl p-4">
                     <h3 class="font-medium text-gray-800 mb-3">Session Settings</h3>
                     <div class="space-y-3">
                         <label class="flex items-center">
-                            <input type="checkbox" id="requireApproval" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            <input type="checkbox" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
                             <span class="ml-2 text-sm text-gray-700">Require approval for participants to join</span>
                         </label>
                         <label class="flex items-center">
-                            <input type="checkbox" id="allowRecording" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
                             <span class="ml-2 text-sm text-gray-700">Allow session recording</span>
                         </label>
                         <label class="flex items-center">
-                            <input type="checkbox" id="enableChat" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            <input type="checkbox" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
                             <span class="ml-2 text-sm text-gray-700">Enable live chat</span>
                         </label>
                         <label class="flex items-center">
-                            <input type="checkbox" id="enableFileSharing" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            <input type="checkbox" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
                             <span class="ml-2 text-sm text-gray-700">Enable file sharing</span>
                         </label>
                     </div>
@@ -150,611 +572,162 @@
 
                 <!-- Action Buttons -->
                 <div class="flex gap-4 pt-4">
-                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-medium transition-colors">
-                        <i class="fas fa-play mr-2"></i>Start Session
+                    <button type="submit" class="flex-1 btn-primary py-3">
+                        <i class="fas fa-calendar-plus mr-2"></i> Schedule Session
                     </button>
-                    <button type="button" onclick="cancelSessionSetup()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-6 rounded-lg font-medium transition-colors">
-                        <i class="fas fa-times mr-2"></i>Cancel
+                    <button type="button" id="cancelSession" class="flex-1 btn-secondary py-3">
+                        <i class="fas fa-times mr-2"></i> Cancel
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Header -->
-    <div id="sessionHeader" class="bg-white shadow-sm border-b hidden">
-        <div class="max-w-7xl mx-auto px-4 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                    <i class="fas fa-chalkboard-teacher text-2xl text-blue-600 mr-3"></i>
-                    <div>
-                        <h1 id="displaySessionName" class="text-xl font-bold text-gray-800">Session Name</h1>
-                        <p id="displayTeacherName" class="text-sm text-gray-600">Hosted by Teacher</p>
-                        <div class="flex items-center gap-4 mt-1">
-                            <span id="displaySubject" class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium">Subject</span>
-                            <span id="displayDuration" class="text-xs text-gray-500">Duration: 1 hour</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex items-center gap-4">
-                    <div class="flex items-center text-green-600">
-                        <i class="fas fa-circle text-xs mr-2"></i>
-                        <span class="text-sm font-medium">Live</span>
-                    </div>
-                    <div class="text-sm text-gray-600">
-                        <i class="fas fa-users mr-1"></i>
-                        <span id="participantCount">0</span> participants
-                    </div>
-                    <button onclick="endSession()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                        <i class="fas fa-sign-out-alt mr-1"></i> End Session
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="sessionContent" class="max-w-7xl mx-auto px-4 py-6 hidden">
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <!-- Main Video Area -->
-            <div class="lg:col-span-3">
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                    <!-- Video Container -->
-                    <div class="video-container aspect-video relative">
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <div class="text-center text-white">
-                                <i class="fas fa-video text-6xl mb-4 opacity-50"></i>
-                                <p class="text-lg font-medium">Video Stream</p>
-                                <p class="text-sm opacity-75">Camera and screen sharing active</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Video Controls -->
-                        <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2">
-                            <div class="flex items-center gap-3 bg-black bg-opacity-50 rounded-full px-4 py-2">
-                                <button id="muteBtn" onclick="toggleMute()" class="text-white hover:text-blue-300 transition-colors">
-                                    <i class="fas fa-microphone text-lg"></i>
-                                </button>
-                                <button id="videoBtn" onclick="toggleVideo()" class="text-white hover:text-blue-300 transition-colors">
-                                    <i class="fas fa-video text-lg"></i>
-                                </button>
-                                <button onclick="shareScreen()" class="text-white hover:text-blue-300 transition-colors">
-                                    <i class="fas fa-desktop text-lg"></i>
-                                </button>
-                                <button onclick="toggleRecording()" class="text-white hover:text-red-300 transition-colors">
-                                    <i class="fas fa-record-vinyl text-lg"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Chat Section -->
-                    <div class="p-4 border-t">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="font-semibold text-gray-800">
-                                <i class="fas fa-comments text-blue-600 mr-2"></i>Live Chat
-                            </h3>
-                            <button onclick="clearChat()" class="text-gray-500 hover:text-gray-700 text-sm">
-                                <i class="fas fa-trash mr-1"></i>Clear
-                            </button>
-                        </div>
-                        
-                        <div id="chatMessages" class="h-48 overflow-y-auto bg-gray-50 rounded-lg p-3 mb-4 space-y-2">
-                            <div class="chat-message">
-                                <div class="flex items-start gap-2">
-                                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold">SJ</div>
-                                    <div>
-                                        <div class="flex items-center gap-2">
-                                            <span class="font-medium text-sm text-gray-800">Dr. Sarah Johnson</span>
-                                            <span class="text-xs text-gray-500">2:30 PM</span>
-                                        </div>
-                                        <p class="text-sm text-gray-700">Welcome everyone! Let's start with today's topic on calculus.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="chat-message">
-                                <div class="flex items-start gap-2">
-                                    <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold">AM</div>
-                                    <div>
-                                        <div class="flex items-center gap-2">
-                                            <span class="font-medium text-sm text-gray-800">Alex Miller</span>
-                                            <span class="text-xs text-gray-500">2:31 PM</span>
-                                        </div>
-                                        <p class="text-sm text-gray-700">Thank you! I'm excited to learn about derivatives today.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="flex gap-2">
-                            <input type="text" id="chatInput" placeholder="Type your message..." class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <button onclick="sendMessage()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
-                                <i class="fas fa-paper-plane"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sidebar -->
-            <div class="space-y-6">
-                <!-- Participants Panel -->
-                <div class="bg-white rounded-xl shadow-lg p-4">
-                    <h3 class="font-semibold text-gray-800 mb-4">
-                        <i class="fas fa-users text-purple-600 mr-2"></i>Participants
-                    </h3>
-                    
-                    <!-- Pending Requests -->
-                    <div class="mb-4">
-                        <h4 class="text-sm font-medium text-gray-600 mb-2">Pending Requests (3)</h4>
-                        <div class="space-y-2">
-                            <div class="participant-item flex items-center justify-between p-2 bg-yellow-50 rounded-lg">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center text-white text-xs font-bold">JD</div>
-                                    <span class="text-sm font-medium">John Doe</span>
-                                </div>
-                                <div class="flex gap-1">
-                                    <button onclick="acceptParticipant('john')" class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                    <button onclick="rejectParticipant('john')" class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="participant-item flex items-center justify-between p-2 bg-yellow-50 rounded-lg">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white text-xs font-bold">EM</div>
-                                    <span class="text-sm font-medium">Emma Wilson</span>
-                                </div>
-                                <div class="flex gap-1">
-                                    <button onclick="acceptParticipant('emma')" class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                    <button onclick="rejectParticipant('emma')" class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Active Participants -->
-                    <div>
-                        <h4 class="text-sm font-medium text-gray-600 mb-2">Active Participants (9)</h4>
-                        <div class="space-y-2 max-h-48 overflow-y-auto">
-                            <div class="participant-item flex items-center justify-between p-2 bg-green-50 rounded-lg">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold">SJ</div>
-                                    <div>
-                                        <span class="text-sm font-medium">Dr. Sarah Johnson</span>
-                                        <div class="text-xs text-gray-500">Host</div>
-                                    </div>
-                                </div>
-                                <i class="fas fa-crown text-yellow-500"></i>
-                            </div>
-                            <div class="participant-item flex items-center justify-between p-2 bg-green-50 rounded-lg">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold">AM</div>
-                                    <div>
-                                        <span class="text-sm font-medium">Alex Miller</span>
-                                        <div class="text-xs text-gray-500">Student</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-1">
-                                    <i class="fas fa-microphone text-green-500 text-xs"></i>
-                                    <i class="fas fa-video text-green-500 text-xs"></i>
-                                </div>
-                            </div>
-                            <div class="participant-item flex items-center justify-between p-2 bg-green-50 rounded-lg">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold">LB</div>
-                                    <div>
-                                        <span class="text-sm font-medium">Lisa Brown</span>
-                                        <div class="text-xs text-gray-500">Mentor</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-1">
-                                    <i class="fas fa-microphone-slash text-red-500 text-xs"></i>
-                                    <i class="fas fa-video text-green-500 text-xs"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- File Upload & Resources -->
-                <div class="bg-white rounded-xl shadow-lg p-4">
-                    <h3 class="font-semibold text-gray-800 mb-4">
-                        <i class="fas fa-folder text-orange-600 mr-2"></i>Session Files
-                    </h3>
-                    
-                    <!-- Upload Area -->
-                    <div class="mb-4">
-                        <div id="uploadZone" class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-blue-400 transition-colors cursor-pointer">
-                            <i class="fas fa-cloud-upload-alt text-2xl text-gray-400 mb-2"></i>
-                            <p class="text-sm text-gray-600">Drop files or click to upload</p>
-                            <input type="file" id="fileInput" multiple class="hidden">
-                        </div>
-                    </div>
-
-                    <!-- Uploaded Files -->
-                    <div class="space-y-2 max-h-48 overflow-y-auto">
-                        <div class="file-item flex items-center justify-between p-2 bg-gray-50 rounded-lg">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-file-pdf text-red-500"></i>
-                                <div>
-                                    <span class="text-sm font-medium">Calculus_Notes.pdf</span>
-                                    <div class="text-xs text-gray-500">2.3 MB</div>
-                                </div>
-                            </div>
-                            <button onclick="downloadFile('calculus')" class="text-blue-600 hover:text-blue-800">
-                                <i class="fas fa-download text-sm"></i>
-                            </button>
-                        </div>
-                        <div class="file-item flex items-center justify-between p-2 bg-gray-50 rounded-lg">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-file-powerpoint text-orange-500"></i>
-                                <div>
-                                    <span class="text-sm font-medium">Derivatives_Slides.pptx</span>
-                                    <div class="text-xs text-gray-500">5.1 MB</div>
-                                </div>
-                            </div>
-                            <button onclick="downloadFile('slides')" class="text-blue-600 hover:text-blue-800">
-                                <i class="fas fa-download text-sm"></i>
-                            </button>
-                        </div>
-                        <div class="file-item flex items-center justify-between p-2 bg-gray-50 rounded-lg">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-file-excel text-green-500"></i>
-                                <div>
-                                    <span class="text-sm font-medium">Practice_Problems.xlsx</span>
-                                    <div class="text-xs text-gray-500">1.8 MB</div>
-                                </div>
-                            </div>
-                            <button onclick="downloadFile('problems')" class="text-blue-600 hover:text-blue-800">
-                                <i class="fas fa-download text-sm"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quick Actions -->
-                <div class="bg-white rounded-xl shadow-lg p-4">
-                    <h3 class="font-semibold text-gray-800 mb-4">
-                        <i class="fas fa-bolt text-yellow-600 mr-2"></i>Quick Actions
-                    </h3>
-                    <div class="space-y-2">
-                        <button onclick="shareWhiteboard()" class="w-full bg-blue-100 hover:bg-blue-200 text-blue-700 py-2 px-3 rounded-lg text-sm font-medium transition-colors">
-                            <i class="fas fa-chalkboard mr-2"></i>Share Whiteboard
-                        </button>
-                        <button onclick="startPoll()" class="w-full bg-green-100 hover:bg-green-200 text-green-700 py-2 px-3 rounded-lg text-sm font-medium transition-colors">
-                            <i class="fas fa-poll mr-2"></i>Start Poll
-                        </button>
-                        <button onclick="breakoutRooms()" class="w-full bg-purple-100 hover:bg-purple-200 text-purple-700 py-2 px-3 rounded-lg text-sm font-medium transition-colors">
-                            <i class="fas fa-users mr-2"></i>Breakout Rooms
-                        </button>
-                        <button onclick="recordSession()" class="w-full bg-red-100 hover:bg-red-200 text-red-700 py-2 px-3 rounded-lg text-sm font-medium transition-colors">
-                            <i class="fas fa-record-vinyl mr-2"></i>Record Session
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
-        let isMuted = false;
-        let isVideoOn = true;
-        let isRecording = false;
-        let participants = [];
-        let sessionFiles = [];
-        let sessionData = {};
-
-        // Session Setup Functions
-        function createSession(event) {
-            event.preventDefault();
-            
-            // Get form data
-            const sessionName = document.getElementById('sessionName').value;
-            const teacherName = document.getElementById('teacherName').value;
-            const sessionSubject = document.getElementById('sessionSubject').value;
-            const sessionDescription = document.getElementById('sessionDescription').value;
-            const sessionDuration = document.getElementById('sessionDuration').value;
-            const maxParticipants = document.getElementById('maxParticipants').value;
-            
-            // Get settings
-            const requireApproval = document.getElementById('requireApproval').checked;
-            const allowRecording = document.getElementById('allowRecording').checked;
-            const enableChat = document.getElementById('enableChat').checked;
-            const enableFileSharing = document.getElementById('enableFileSharing').checked;
-
-            // Store session data
-            sessionData = {
-                name: sessionName,
-                teacher: teacherName,
-                subject: sessionSubject,
-                description: sessionDescription,
-                duration: sessionDuration,
-                maxParticipants: maxParticipants,
-                settings: {
-                    requireApproval,
-                    allowRecording,
-                    enableChat,
-                    enableFileSharing
-                }
-            };
-
-            // Update display
-            document.getElementById('displaySessionName').textContent = sessionName;
-            document.getElementById('displayTeacherName').textContent = `Hosted by ${teacherName}`;
-            document.getElementById('displaySubject').textContent = getSubjectDisplayName(sessionSubject);
-            document.getElementById('displayDuration').textContent = `Duration: ${getDurationText(sessionDuration)}`;
-
-            // Hide modal and show session
-            document.getElementById('sessionSetupModal').classList.add('hidden');
-            document.getElementById('sessionHeader').classList.remove('hidden');
-            document.getElementById('sessionContent').classList.remove('hidden');
-
-            // Initialize session
-            initializeSession();
-        }
-
-        function cancelSessionSetup() {
-            if (confirm('Are you sure you want to cancel? All entered information will be lost.')) {
-                // Reset form
-                document.getElementById('sessionForm').reset();
-            }
-        }
-
-        function getSubjectDisplayName(value) {
-            const subjects = {
-                'mathematics': 'Mathematics',
-                'physics': 'Physics',
-                'chemistry': 'Chemistry',
-                'biology': 'Biology',
-                'computer-science': 'Computer Science',
-                'english': 'English',
-                'history': 'History',
-                'geography': 'Geography',
-                'economics': 'Economics',
-                'psychology': 'Psychology',
-                'philosophy': 'Philosophy',
-                'art': 'Art & Design',
-                'music': 'Music',
-                'languages': 'Languages',
-                'business': 'Business',
-                'engineering': 'Engineering',
-                'medicine': 'Medicine',
-                'law': 'Law',
-                'other': 'Other'
-            };
-            return subjects[value] || value;
-        }
-
-        function getDurationText(minutes) {
-            if (minutes < 60) {
-                return `${minutes} minutes`;
-            } else if (minutes === 60) {
-                return '1 hour';
-            } else if (minutes < 120) {
-                return `${minutes / 60} hours`;
-            } else {
-                return `${minutes / 60} hours`;
-            }
-        }
-
-        function initializeSession() {
-            // Add welcome message to chat
-            const chatMessages = document.getElementById('chatMessages');
-            const welcomeMessage = document.createElement('div');
-            welcomeMessage.className = 'chat-message';
-            welcomeMessage.innerHTML = `
-                <div class="flex items-start gap-2">
-                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold">${sessionData.teacher.split(' ').map(n => n[0]).join('')}</div>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <span class="font-medium text-sm text-gray-800">${sessionData.teacher}</span>
-                            <span class="text-xs text-gray-500">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                        </div>
-                        <p class="text-sm text-gray-700">Welcome to "${sessionData.name}"! ${sessionData.description}</p>
-                    </div>
-                </div>
-            `;
-            chatMessages.appendChild(welcomeMessage);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('uploadZone').addEventListener('click', () => {
-                document.getElementById('fileInput').click();
-            });
-            
-            document.getElementById('fileInput').addEventListener('change', handleFileUpload);
+        // DOM Elements
+        const userMenuButton = document.getElementById('userMenuButton');
+        const userMenu = document.getElementById('userMenu');
+        const studentView = document.getElementById('studentView');
+        const teacherView = document.getElementById('teacherView');
+        const switchToStudent = document.getElementById('switchToStudent');
+        const switchToTeacher = document.getElementById('switchToTeacher');
+        const sessionModal = document.getElementById('sessionModal');
+        const createSessionBtn = document.getElementById('createSessionBtn');
+        const closeModal = document.getElementById('closeModal');
+        const cancelSession = document.getElementById('cancelSession');
+        const sessionForm = document.getElementById('sessionForm');
+        const notification = document.getElementById('notification');
+        const notificationTitle = document.getElementById('notification-title');
+        const notificationMessage = document.getElementById('notification-message');
+        
+        // Toggle User Menu
+        userMenuButton.addEventListener('click', () => {
+            userMenu.classList.toggle('hidden');
         });
-
-        // Video Controls
-        function toggleMute() {
-            isMuted = !isMuted;
-            const muteBtn = document.getElementById('muteBtn');
-            if (isMuted) {
-                muteBtn.innerHTML = '<i class="fas fa-microphone-slash text-lg"></i>';
-                muteBtn.classList.add('text-red-400');
-            } else {
-                muteBtn.innerHTML = '<i class="fas fa-microphone text-lg"></i>';
-                muteBtn.classList.remove('text-red-400');
+        
+        // Close user menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userMenuButton.contains(e.target) && !userMenu.contains(e.target)) {
+                userMenu.classList.add('hidden');
             }
-        }
-
-        function toggleVideo() {
-            isVideoOn = !isVideoOn;
-            const videoBtn = document.getElementById('videoBtn');
-            if (!isVideoOn) {
-                videoBtn.innerHTML = '<i class="fas fa-video-slash text-lg"></i>';
-                videoBtn.classList.add('text-red-400');
-            } else {
-                videoBtn.innerHTML = '<i class="fas fa-video text-lg"></i>';
-                videoBtn.classList.remove('text-red-400');
+        });
+        
+        // Role Switching (for demo)
+        switchToStudent.addEventListener('click', () => {
+            studentView.classList.remove('hidden');
+            teacherView.classList.add('hidden');
+            switchToStudent.classList.replace('btn-secondary', 'btn-primary');
+            switchToTeacher.classList.replace('btn-primary', 'btn-secondary');
+            showNotification('Role Changed', 'You are now viewing as a student');
+        });
+        
+        switchToTeacher.addEventListener('click', () => {
+            studentView.classList.add('hidden');
+            teacherView.classList.remove('hidden');
+            switchToStudent.classList.replace('btn-primary', 'btn-secondary');
+            switchToTeacher.classList.replace('btn-secondary', 'btn-primary');
+            showNotification('Role Changed', 'You are now viewing as a teacher');
+        });
+        
+        // Session Modal Controls
+        createSessionBtn.addEventListener('click', () => {
+            sessionModal.classList.remove('hidden');
+        });
+        
+        closeModal.addEventListener('click', () => {
+            sessionModal.classList.add('hidden');
+        });
+        
+        cancelSession.addEventListener('click', () => {
+            sessionModal.classList.add('hidden');
+        });
+        
+        // Close modal when clicking outside
+        sessionModal.addEventListener('click', (e) => {
+            if (e.target === sessionModal) {
+                sessionModal.classList.add('hidden');
             }
-        }
-
-        function shareScreen() {
-            alert('Screen sharing started! Participants can now see your screen.');
-        }
-
-        function toggleRecording() {
-            isRecording = !isRecording;
-            if (isRecording) {
-                alert('Session recording started!');
-            } else {
-                alert('Session recording stopped!');
+        });
+        
+        // Session Form Submission
+        sessionForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            sessionModal.classList.add('hidden');
+            showNotification('Session Created', 'Your new session has been scheduled successfully');
+            // In a real app, you would send data to your API here
+        });
+        
+        // Join Session Buttons
+        document.querySelectorAll('.card button.btn-primary').forEach(button => {
+            if (button.textContent.includes('Join Now')) {
+                button.addEventListener('click', () => {
+                    showNotification('Session Joined', 'You have successfully joined the session');
+                });
             }
-        }
-
-        // Chat Functions
-        function sendMessage() {
-            const input = document.getElementById('chatInput');
-            const message = input.value.trim();
-            if (!message) return;
-
-            const chatMessages = document.getElementById('chatMessages');
-            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        });
+        
+        // Notification System
+        function showNotification(title, message) {
+            notificationTitle.textContent = title;
+            notificationMessage.textContent = message;
+            notification.classList.remove('hidden');
+            notification.classList.add('show', 'slide-in');
             
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'chat-message';
-            messageDiv.innerHTML = `
-                <div class="flex items-start gap-2">
-                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold">${sessionData.teacher ? sessionData.teacher.split(' ').map(n => n[0]).join('') : 'YOU'}</div>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <span class="font-medium text-sm text-gray-800">${sessionData.teacher || 'You'}</span>
-                            <span class="text-xs text-gray-500">${time}</span>
-                        </div>
-                        <p class="text-sm text-gray-700">${message}</p>
-                    </div>
-                </div>
-            `;
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.classList.add('hidden');
+                }, 300);
+            }, 3000);
+        }
+        
+        // Add animation to cards on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('slide-in');
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.card').forEach(card => {
+            observer.observe(card);
+        });
+        
+        // Simulate API calls to your backend
+        async function fetchSessions() {
+            try {
+                // This would be replaced with your actual API endpoint
+                const response = await fetch('https://ce-apii.onrender.com/sessions');
+                const sessions = await response.json();
+                // Process and display sessions
+                console.log('Fetched sessions:', sessions);
+            } catch (error) {
+                console.error('Error fetching sessions:', error);
+            }
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Fetch sessions when page loads
+            fetchSessions();
             
-            chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-            input.value = '';
-        }
-
-        function clearChat() {
-            if (confirm('Are you sure you want to clear the chat?')) {
-                document.getElementById('chatMessages').innerHTML = '';
-            }
-        }
-
-        // Participant Management
-        function acceptParticipant(id) {
-            alert(`Participant accepted! They can now join the session.`);
-            // Update participant count
-            const currentCount = parseInt(document.getElementById('participantCount').textContent);
-            document.getElementById('participantCount').textContent = currentCount + 1;
-        }
-
-        function rejectParticipant(id) {
-            if (confirm('Are you sure you want to reject this participant?')) {
-                alert('Participant request rejected.');
-            }
-        }
-
-        // File Management
-        function handleFileUpload(event) {
-            const files = Array.from(event.target.files);
-            files.forEach(file => {
-                sessionFiles.push({
-                    name: file.name,
-                    size: file.size,
-                    type: file.type,
-                    file: file
+            // Add some interactive elements
+            document.querySelectorAll('.subject-badge').forEach(badge => {
+                badge.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.05)';
                 });
                 
-                alert(`File "${file.name}" uploaded successfully!`);
+                badge.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                });
             });
-        }
-
-        function downloadFile(fileId) {
-            alert(`Downloading file... In a real application, this would start the download.`);
-        }
-
-        // Quick Actions
-        function shareWhiteboard() {
-            alert('Whiteboard shared! Participants can now see and interact with the whiteboard.');
-        }
-
-        function startPoll() {
-            const question = prompt('Enter your poll question:');
-            if (question) {
-                alert(`Poll started: "${question}"`);
-            }
-        }
-
-        function breakoutRooms() {
-            alert('Breakout rooms created! Participants are being assigned to smaller groups.');
-        }
-
-        function recordSession() {
-            if (confirm('Start recording this session?')) {
-                alert('Session recording started! All participants have been notified.');
-            }
-        }
-
-        function endSession() {
-            if (confirm('Are you sure you want to end this session? All participants will be disconnected.')) {
-                alert('Session ended. Thank you for using our platform!');
-                // Reset to setup modal
-                document.getElementById('sessionSetupModal').classList.remove('hidden');
-                document.getElementById('sessionHeader').classList.add('hidden');
-                document.getElementById('sessionContent').classList.add('hidden');
-                document.getElementById('sessionForm').reset();
-            }
-        }
-
-        // Enter key for chat
-        document.getElementById('chatInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
         });
-
-        // Simulate incoming messages (only when session is active)
-        setInterval(() => {
-            if (!document.getElementById('sessionContent').classList.contains('hidden') && Math.random() > 0.98) {
-                const names = ['Alex Miller', 'Lisa Brown', 'Mike Johnson', 'Emma Wilson'];
-                const messages = [
-                    'Great explanation!',
-                    'Can you repeat that last part?',
-                    'I have a question about this topic.',
-                    'Thank you for the clarification.',
-                    'This is very helpful!'
-                ];
-                
-                const name = names[Math.floor(Math.random() * names.length)];
-                const message = messages[Math.floor(Math.random() * messages.length)];
-                const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                
-                const chatMessages = document.getElementById('chatMessages');
-                const messageDiv = document.createElement('div');
-                messageDiv.className = 'chat-message';
-                messageDiv.innerHTML = `
-                    <div class="flex items-start gap-2">
-                        <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold">${name.split(' ').map(n => n[0]).join('')}</div>
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <span class="font-medium text-sm text-gray-800">${name}</span>
-                                <span class="text-xs text-gray-500">${time}</span>
-                            </div>
-                            <p class="text-sm text-gray-700">${message}</p>
-                        </div>
-                    </div>
-                `;
-                
-                chatMessages.appendChild(messageDiv);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }
-        }, 5000);
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'984e7a1c440b9863',t:'MTc1ODg0NDc4NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
