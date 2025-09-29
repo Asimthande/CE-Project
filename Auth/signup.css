@@ -1,7 +1,7 @@
-/* Custom styles for signin page */
+/* Custom styles for signup page */
 
 /* Floating label animations */
-.input-container {
+.input-container, .select-container {
     position: relative;
 }
 
@@ -31,6 +31,47 @@
     font-weight: 500;
 }
 
+/* Select container styling */
+.select-container {
+    position: relative;
+}
+
+.select-icon {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+/* Password strength indicator */
+.password-strength {
+    height: 4px;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    width: 0%;
+}
+
+.strength-weak {
+    width: 25%;
+    background-color: #ef4444;
+}
+
+.strength-fair {
+    width: 50%;
+    background-color: #f59e0b;
+}
+
+.strength-good {
+    width: 75%;
+    background-color: #3b82f6;
+}
+
+.strength-strong {
+    width: 100%;
+    background-color: #10b981;
+}
+
 /* Animation for form elements */
 .fade-in {
     animation: fadeIn 0.5s ease-in-out;
@@ -49,24 +90,7 @@
 
 /* Header gradient */
 .header-section {
-    background: linear-gradient(135deg, #ec4899 0%, #ef4444 100%);
-}
-
-/* User type selection */
-.user-type-btn {
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-}
-
-.user-type-btn.active {
-    background-color: #3b82f6;
-    color: white;
-    border-color: #3b82f6;
-}
-
-.user-type-btn:hover:not(.active) {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
 }
 
 /* Responsive adjustments */
@@ -79,9 +103,5 @@
     
     .header-section .flex a {
         align-self: center;
-    }
-    
-    .user-type-selection .grid {
-        grid-template-columns: 1fr;
     }
 }
