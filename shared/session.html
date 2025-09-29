@@ -133,6 +133,14 @@
         .notification.show {
             transform: translateX(0);
         }
+        
+        .loading {
+            display: none;
+        }
+        
+        .loading.active {
+            display: inline-block;
+        }
     </style>
 </head>
 <body class="min-h-screen">
@@ -157,10 +165,13 @@
                 </div>
                 
                 <div class="flex items-center space-x-4">
+                    <div class="text-right">
+                        <p class="font-medium" id="userName">Loading...</p>
+                        <p class="text-sm text-gray-500" id="userRole">Loading role...</p>
+                    </div>
                     <div class="relative">
                         <button id="userMenuButton" class="flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 rounded-full px-4 py-2 transition-colors">
-                            <div class="w-8 h-8 rounded-full gradient-bg flex items-center justify-center text-white font-bold">JS</div>
-                            <span class="font-medium">John Student</span>
+                            <div class="w-8 h-8 rounded-full gradient-bg flex items-center justify-center text-white font-bold" id="userInitials">U</div>
                             <i class="fas fa-chevron-down text-gray-500 text-xs"></i>
                         </button>
                         
@@ -175,7 +186,7 @@
                                 <i class="fas fa-question-circle mr-2 text-gray-500"></i>Help & Support
                             </a>
                             <div class="border-t my-1"></div>
-                            <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                            <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100" id="logoutBtn">
                                 <i class="fas fa-sign-out-alt mr-2"></i>Logout
                             </a>
                         </div>
@@ -193,8 +204,17 @@
             <p class="text-xl text-gray-600 max-w-2xl mx-auto">Join engaging live sessions, collaborate with peers, and enhance your learning experience with our interactive platform.</p>
         </div>
 
-        <!-- Role-based Content -->
-        <div id="studentView" class="space-y-8">
+        <!-- Loading State -->
+        <div id="loadingState" class="text-center py-12">
+            <div class="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-spinner fa-spin text-white text-2xl"></i>
+            </div>
+            <h2 class="text-xl font-semibold text-gray-700">Loading sessions...</h2>
+            <p class="text-gray-500">Please wait while we fetch your data</p>
+        </div>
+
+        <!-- Student View -->
+        <div id="studentView" class="hidden space-y-8">
             <!-- Available Sessions -->
             <div class="card p-6">
                 <div class="flex justify-between items-center mb-6">
@@ -209,151 +229,21 @@
                     </div>
                 </div>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Session Card 1 -->
-                    <div class="card p-5 border border-gray-100 hover:glow cursor-pointer">
-                        <div class="flex justify-between items-start mb-4">
-                            <span class="subject-badge bg-purple-100 text-purple-800">Mathematics</span>
-                            <span class="text-xs font-medium bg-green-100 text-green-800 px-2 py-1 rounded-full">Live Now</span>
-                        </div>
-                        <h3 class="font-bold text-lg mb-2">Advanced Calculus - Derivatives</h3>
-                        <p class="text-gray-600 text-sm mb-4">Explore the fundamentals of derivatives with practical examples and interactive problem-solving.</p>
-                        
-                        <div class="flex items-center text-sm text-gray-500 mb-4">
-                            <i class="fas fa-user mr-2 text-blue-500"></i>
-                            <span class="mr-4">Dr. Sarah Johnson</span>
-                            <i class="fas fa-clock mr-2 text-orange-500"></i>
-                            <span>45 mins left</span>
-                        </div>
-                        
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <i class="fas fa-users text-gray-400 mr-1"></i>
-                                <span class="text-sm text-gray-600">24/30 joined</span>
-                            </div>
-                            <button class="btn-primary text-sm px-4 py-2">
-                                Join Now <i class="fas fa-arrow-right ml-1"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Session Card 2 -->
-                    <div class="card p-5 border border-gray-100 hover:glow cursor-pointer">
-                        <div class="flex justify-between items-start mb-4">
-                            <span class="subject-badge bg-blue-100 text-blue-800">Physics</span>
-                            <span class="text-xs font-medium bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">Starting Soon</span>
-                        </div>
-                        <h3 class="font-bold text-lg mb-2">Quantum Mechanics Basics</h3>
-                        <p class="text-gray-600 text-sm mb-4">Dive into the fascinating world of quantum physics with experiments and visual demonstrations.</p>
-                        
-                        <div class="flex items-center text-sm text-gray-500 mb-4">
-                            <i class="fas fa-user mr-2 text-blue-500"></i>
-                            <span class="mr-4">Prof. Michael Chen</span>
-                            <i class="fas fa-clock mr-2 text-orange-500"></i>
-                            <span>Starts in 15 mins</span>
-                        </div>
-                        
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <i class="fas fa-users text-gray-400 mr-1"></i>
-                                <span class="text-sm text-gray-600">18/25 joined</span>
-                            </div>
-                            <button class="btn-primary text-sm px-4 py-2">
-                                Join Now <i class="fas fa-arrow-right ml-1"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Session Card 3 -->
-                    <div class="card p-5 border border-gray-100 hover:glow cursor-pointer">
-                        <div class="flex justify-between items-start mb-4">
-                            <span class="subject-badge bg-green-100 text-green-800">Biology</span>
-                            <span class="text-xs font-medium bg-blue-100 text-blue-800 px-2 py-1 rounded-full">Upcoming</span>
-                        </div>
-                        <h3 class="font-bold text-lg mb-2">Human Anatomy & Physiology</h3>
-                        <p class="text-gray-600 text-sm mb-4">Explore the human body systems with 3D models and interactive diagrams.</p>
-                        
-                        <div class="flex items-center text-sm text-gray-500 mb-4">
-                            <i class="fas fa-user mr-2 text-blue-500"></i>
-                            <span class="mr-4">Dr. Lisa Rodriguez</span>
-                            <i class="fas fa-clock mr-2 text-orange-500"></i>
-                            <span>Tomorrow, 10:00 AM</span>
-                        </div>
-                        
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <i class="fas fa-users text-gray-400 mr-1"></i>
-                                <span class="text-sm text-gray-600">12/20 joined</span>
-                            </div>
-                            <button class="btn-primary text-sm px-4 py-2">
-                                Join Now <i class="fas fa-arrow-right ml-1"></i>
-                            </button>
-                        </div>
-                    </div>
+                <div id="availableSessionsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Sessions will be loaded here dynamically -->
                 </div>
             </div>
             
             <!-- My Upcoming Sessions -->
             <div class="card p-6">
                 <h2 class="text-2xl font-bold mb-6">My Upcoming Sessions</h2>
-                
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead>
-                            <tr class="border-b border-gray-200">
-                                <th class="text-left py-3 px-4 text-gray-600 font-medium">Session</th>
-                                <th class="text-left py-3 px-4 text-gray-600 font-medium">Subject</th>
-                                <th class="text-left py-3 px-4 text-gray-600 font-medium">Teacher</th>
-                                <th class="text-left py-3 px-4 text-gray-600 font-medium">Date & Time</th>
-                                <th class="text-left py-3 px-4 text-gray-600 font-medium">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="border-b border-gray-100 hover:bg-gray-50">
-                                <td class="py-4 px-4">
-                                    <div class="font-medium">Creative Writing Workshop</div>
-                                    <div class="text-sm text-gray-500">Improve your storytelling skills</div>
-                                </td>
-                                <td class="py-4 px-4">
-                                    <span class="subject-badge bg-pink-100 text-pink-800">English</span>
-                                </td>
-                                <td class="py-4 px-4">Ms. Emily Watson</td>
-                                <td class="py-4 px-4">
-                                    <div class="font-medium">Tomorrow, 2:00 PM</div>
-                                    <div class="text-sm text-gray-500">45 minutes</div>
-                                </td>
-                                <td class="py-4 px-4">
-                                    <button class="btn-secondary text-sm px-3 py-1">
-                                        <i class="fas fa-calendar-minus mr-1"></i> Cancel
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr class="border-b border-gray-100 hover:bg-gray-50">
-                                <td class="py-4 px-4">
-                                    <div class="font-medium">Chemistry Lab - Reactions</div>
-                                    <div class="text-sm text-gray-500">Hands-on experiments</div>
-                                </td>
-                                <td class="py-4 px-4">
-                                    <span class="subject-badge bg-orange-100 text-orange-800">Chemistry</span>
-                                </td>
-                                <td class="py-4 px-4">Dr. Robert Kim</td>
-                                <td class="py-4 px-4">
-                                    <div class="font-medium">Fri, 11:00 AM</div>
-                                    <div class="text-sm text-gray-500">1 hour</div>
-                                </td>
-                                <td class="py-4 px-4">
-                                    <button class="btn-secondary text-sm px-3 py-1">
-                                        <i class="fas fa-calendar-minus mr-1"></i> Cancel
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div id="mySessionsList">
+                    <!-- My sessions will be loaded here dynamically -->
                 </div>
             </div>
         </div>
         
-        <!-- Teacher/Mentor View (Hidden by default) -->
+        <!-- Teacher/Mentor View -->
         <div id="teacherView" class="hidden space-y-8">
             <!-- Session Management -->
             <div class="card p-6">
@@ -364,63 +254,8 @@
                     </button>
                 </div>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Teacher Session Card 1 -->
-                    <div class="card p-5 border border-gray-100">
-                        <div class="flex justify-between items-start mb-4">
-                            <span class="subject-badge bg-purple-100 text-purple-800">Mathematics</span>
-                            <span class="text-xs font-medium bg-green-100 text-green-800 px-2 py-1 rounded-full">Live</span>
-                        </div>
-                        <h3 class="font-bold text-lg mb-2">Advanced Calculus - Derivatives</h3>
-                        <p class="text-gray-600 text-sm mb-4">24 students currently attending</p>
-                        
-                        <div class="flex items-center text-sm text-gray-500 mb-4">
-                            <i class="fas fa-clock mr-2 text-orange-500"></i>
-                            <span>Started 15 mins ago</span>
-                        </div>
-                        
-                        <div class="flex space-x-2">
-                            <button class="btn-primary flex-1 text-sm py-2">
-                                Manage <i class="fas fa-cog ml-1"></i>
-                            </button>
-                            <button class="btn-secondary text-sm p-2">
-                                <i class="fas fa-chart-bar"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Teacher Session Card 2 -->
-                    <div class="card p-5 border border-gray-100">
-                        <div class="flex justify-between items-start mb-4">
-                            <span class="subject-badge bg-blue-100 text-blue-800">Physics</span>
-                            <span class="text-xs font-medium bg-gray-100 text-gray-800 px-2 py-1 rounded-full">Draft</span>
-                        </div>
-                        <h3 class="font-bold text-lg mb-2">Modern Physics Concepts</h3>
-                        <p class="text-gray-600 text-sm mb-4">Scheduled for next week</p>
-                        
-                        <div class="flex items-center text-sm text-gray-500 mb-4">
-                            <i class="fas fa-clock mr-2 text-orange-500"></i>
-                            <span>Mon, 10:00 AM</span>
-                        </div>
-                        
-                        <div class="flex space-x-2">
-                            <button class="btn-primary flex-1 text-sm py-2">
-                                Edit <i class="fas fa-edit ml-1"></i>
-                            </button>
-                            <button class="btn-secondary text-sm p-2">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Create New Session Card -->
-                    <div class="card p-5 border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-center cursor-pointer hover:border-blue-400 transition-colors">
-                        <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-4">
-                            <i class="fas fa-plus text-blue-500 text-2xl"></i>
-                        </div>
-                        <h3 class="font-bold text-lg mb-2">Create New Session</h3>
-                        <p class="text-gray-600 text-sm">Set up a new interactive learning session for your students</p>
-                    </div>
+                <div id="myHostedSessions" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Hosted sessions will be loaded here dynamically -->
                 </div>
             </div>
             
@@ -430,7 +265,7 @@
                     <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-users text-green-500 text-2xl"></i>
                     </div>
-                    <h3 class="text-2xl font-bold mb-2">142</h3>
+                    <h3 class="text-2xl font-bold mb-2" id="totalStudents">0</h3>
                     <p class="text-gray-600">Total Students</p>
                 </div>
                 
@@ -438,7 +273,7 @@
                     <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-chalkboard-teacher text-blue-500 text-2xl"></i>
                     </div>
-                    <h3 class="text-2xl font-bold mb-2">24</h3>
+                    <h3 class="text-2xl font-bold mb-2" id="sessionsHosted">0</h3>
                     <p class="text-gray-600">Sessions Hosted</p>
                 </div>
                 
@@ -446,19 +281,8 @@
                     <div class="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-star text-purple-500 text-2xl"></i>
                     </div>
-                    <h3 class="text-2xl font-bold mb-2">4.8</h3>
+                    <h3 class="text-2xl font-bold mb-2" id="averageRating">0</h3>
                     <p class="text-gray-600">Average Rating</p>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Role Toggle (for demo purposes) -->
-        <div class="fixed bottom-6 right-6 z-30">
-            <div class="bg-white rounded-xl shadow-lg p-4">
-                <h3 class="font-bold mb-2">Switch Role (Demo)</h3>
-                <div class="flex space-x-2">
-                    <button id="switchToStudent" class="btn-primary text-sm px-3 py-1">Student</button>
-                    <button id="switchToTeacher" class="btn-secondary text-sm px-3 py-1">Teacher</button>
                 </div>
             </div>
         </div>
@@ -481,7 +305,7 @@
                     <!-- Session Name -->
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Session Name *</label>
-                        <input type="text" required 
+                        <input type="text" id="sessionName" required 
                                placeholder="e.g., Advanced Calculus - Derivatives and Limits"
                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
                     </div>
@@ -489,47 +313,42 @@
                     <!-- Subject Selection -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Subject *</label>
-                        <select required 
+                        <select id="sessionSubject" required 
                                 class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                             <option value="">Select a subject...</option>
-                            <option value="mathematics">Mathematics</option>
-                            <option value="physics">Physics</option>
-                            <option value="chemistry">Chemistry</option>
-                            <option value="biology">Biology</option>
-                            <option value="computer-science">Computer Science</option>
-                            <option value="english">English</option>
+                            <option value="Mathematics">Mathematics</option>
+                            <option value="Physics">Physics</option>
+                            <option value="Chemistry">Chemistry</option>
+                            <option value="Biology">Biology</option>
+                            <option value="Computer Science">Computer Science</option>
+                            <option value="English">English</option>
                         </select>
                     </div>
                     
                     <!-- Duration -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Duration *</label>
-                        <select class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                            <option value="30">30 minutes</option>
-                            <option value="45">45 minutes</option>
-                            <option value="60" selected>1 hour</option>
-                            <option value="90">1.5 hours</option>
-                            <option value="120">2 hours</option>
-                        </select>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Duration (minutes) *</label>
+                        <input type="number" id="sessionDuration" required min="15" max="240" value="60"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                     </div>
 
                     <!-- Date & Time -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Date *</label>
-                        <input type="date" required 
+                        <input type="date" id="sessionDate" required 
                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                     </div>
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Time *</label>
-                        <input type="time" required 
+                        <input type="time" id="sessionTime" required 
                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                     </div>
 
                     <!-- Max Participants -->
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Max Participants</label>
-                        <select class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <select id="sessionCapacity" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                             <option value="10">10 students</option>
                             <option value="20" selected>20 students</option>
                             <option value="30">30 students</option>
@@ -541,32 +360,9 @@
                     <!-- Session Description -->
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Session Description *</label>
-                        <textarea required rows="4"
+                        <textarea id="sessionDescription" required rows="4"
                                   placeholder="Describe what will be covered in this session, learning objectives, and any prerequisites..."
                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"></textarea>
-                    </div>
-                </div>
-
-                <!-- Session Settings -->
-                <div class="bg-gray-50 rounded-xl p-4">
-                    <h3 class="font-medium text-gray-800 mb-3">Session Settings</h3>
-                    <div class="space-y-3">
-                        <label class="flex items-center">
-                            <input type="checkbox" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                            <span class="ml-2 text-sm text-gray-700">Require approval for participants to join</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                            <span class="ml-2 text-sm text-gray-700">Allow session recording</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="checkbox" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                            <span class="ml-2 text-sm text-gray-700">Enable live chat</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="checkbox" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                            <span class="ml-2 text-sm text-gray-700">Enable file sharing</span>
-                        </label>
                     </div>
                 </div>
 
@@ -584,13 +380,20 @@
     </div>
 
     <script>
+        // API Configuration
+        const API_BASE_URL = 'https://ce-apii.onrender.com';
+        
+        // Global variables
+        let currentUser = null;
+        let allSessions = [];
+        let allSubjects = [];
+        let myParticipations = [];
+
         // DOM Elements
         const userMenuButton = document.getElementById('userMenuButton');
         const userMenu = document.getElementById('userMenu');
         const studentView = document.getElementById('studentView');
         const teacherView = document.getElementById('teacherView');
-        const switchToStudent = document.getElementById('switchToStudent');
-        const switchToTeacher = document.getElementById('switchToTeacher');
         const sessionModal = document.getElementById('sessionModal');
         const createSessionBtn = document.getElementById('createSessionBtn');
         const closeModal = document.getElementById('closeModal');
@@ -599,77 +402,386 @@
         const notification = document.getElementById('notification');
         const notificationTitle = document.getElementById('notification-title');
         const notificationMessage = document.getElementById('notification-message');
-        
-        // Toggle User Menu
-        userMenuButton.addEventListener('click', () => {
-            userMenu.classList.toggle('hidden');
-        });
-        
-        // Close user menu when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!userMenuButton.contains(e.target) && !userMenu.contains(e.target)) {
-                userMenu.classList.add('hidden');
+        const loadingState = document.getElementById('loadingState');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const userName = document.getElementById('userName');
+        const userRole = document.getElementById('userRole');
+        const userInitials = document.getElementById('userInitials');
+
+        // Authentication Check
+        function checkAuthentication() {
+            const userData = localStorage.getItem('currentUser');
+            if (!userData) {
+                window.location.href = '/Auth/login.html';
+                return null;
             }
-        });
-        
-        // Role Switching (for demo)
-        switchToStudent.addEventListener('click', () => {
-            studentView.classList.remove('hidden');
-            teacherView.classList.add('hidden');
-            switchToStudent.classList.replace('btn-secondary', 'btn-primary');
-            switchToTeacher.classList.replace('btn-primary', 'btn-secondary');
-            showNotification('Role Changed', 'You are now viewing as a student');
-        });
-        
-        switchToTeacher.addEventListener('click', () => {
-            studentView.classList.add('hidden');
-            teacherView.classList.remove('hidden');
-            switchToStudent.classList.replace('btn-primary', 'btn-secondary');
-            switchToTeacher.classList.replace('btn-secondary', 'btn-primary');
-            showNotification('Role Changed', 'You are now viewing as a teacher');
-        });
-        
-        // Session Modal Controls
-        createSessionBtn.addEventListener('click', () => {
-            sessionModal.classList.remove('hidden');
-        });
-        
-        closeModal.addEventListener('click', () => {
-            sessionModal.classList.add('hidden');
-        });
-        
-        cancelSession.addEventListener('click', () => {
-            sessionModal.classList.add('hidden');
-        });
-        
-        // Close modal when clicking outside
-        sessionModal.addEventListener('click', (e) => {
-            if (e.target === sessionModal) {
-                sessionModal.classList.add('hidden');
+            
+            try {
+                const user = JSON.parse(userData);
+                currentUser = user;
+                return user;
+            } catch (error) {
+                console.error('Error parsing user data:', error);
+                window.location.href = '/Auth/login.html';
+                return null;
             }
-        });
-        
-        // Session Form Submission
-        sessionForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            sessionModal.classList.add('hidden');
-            showNotification('Session Created', 'Your new session has been scheduled successfully');
-            // In a real app, you would send data to your API here
-        });
-        
-        // Join Session Buttons
-        document.querySelectorAll('.card button.btn-primary').forEach(button => {
-            if (button.textContent.includes('Join Now')) {
-                button.addEventListener('click', () => {
-                    showNotification('Session Joined', 'You have successfully joined the session');
+        }
+
+        // Initialize user interface based on role
+        function initializeUI() {
+            if (!currentUser) return;
+
+            // Set user info
+            userName.textContent = `${currentUser.name} ${currentUser.surname}`;
+            userRole.textContent = currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1);
+            userInitials.textContent = `${currentUser.name[0]}${currentUser.surname[0]}`.toUpperCase();
+
+            // Show appropriate view based on role
+            if (currentUser.role === 'student') {
+                studentView.classList.remove('hidden');
+                teacherView.classList.add('hidden');
+            } else if (currentUser.role === 'teacher' || currentUser.role === 'mentor') {
+                studentView.classList.add('hidden');
+                teacherView.classList.remove('hidden');
+            }
+
+            // Hide loading state
+            loadingState.classList.add('hidden');
+        }
+
+        // API Functions
+        async function fetchSessions() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/sessions`);
+                if (!response.ok) throw new Error('Failed to fetch sessions');
+                const sessions = await response.json();
+                allSessions = sessions;
+                return sessions;
+            } catch (error) {
+                console.error('Error fetching sessions:', error);
+                showNotification('Error', 'Failed to load sessions');
+                return [];
+            }
+        }
+
+        async function fetchSubjects() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/subjects`);
+                if (!response.ok) throw new Error('Failed to fetch subjects');
+                const subjects = await response.json();
+                allSubjects = subjects;
+                return subjects;
+            } catch (error) {
+                console.error('Error fetching subjects:', error);
+                return [];
+            }
+        }
+
+        async function fetchSessionParticipants() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/session_participants`);
+                if (!response.ok) throw new Error('Failed to fetch participants');
+                const participants = await response.json();
+                return participants;
+            } catch (error) {
+                console.error('Error fetching participants:', error);
+                return [];
+            }
+        }
+
+        async function createSession(sessionData) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/sessions`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(sessionData)
                 });
+                
+                if (!response.ok) throw new Error('Failed to create session');
+                const newSession = await response.json();
+                return newSession;
+            } catch (error) {
+                console.error('Error creating session:', error);
+                throw error;
             }
-        });
-        
-        // Notification System
-        function showNotification(title, message) {
-            notificationTitle.textContent = title;
-            notificationMessage.textContent = message;
+        }
+
+        async function joinSession(sessionId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/session_participants`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        session_id: sessionId,
+                        student_id: currentUser.id
+                    })
+                });
+                
+                if (!response.ok) throw new Error('Failed to join session');
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                console.error('Error joining session:', error);
+                throw error;
+            }
+        }
+
+        // Render Functions
+        function renderAvailableSessions(sessions, participants) {
+            const container = document.getElementById('availableSessionsList');
+            if (!container) return;
+
+            if (sessions.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-3 text-center py-12">
+                        <i class="fas fa-calendar-times text-4xl text-gray-300 mb-4"></i>
+                        <h3 class="text-lg font-semibold text-gray-600">No sessions available</h3>
+                        <p class="text-gray-500">Check back later for new sessions</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const now = new Date();
+            const myParticipations = participants.filter(p => p.student_id === currentUser.id);
+            
+            container.innerHTML = sessions.map(session => {
+                const sessionDate = new Date(session.start_time);
+                const isLive = sessionDate <= now && new Date(sessionDate.getTime() + session.duration * 60000) >= now;
+                const isUpcoming = sessionDate > now;
+                const isPast = new Date(sessionDate.getTime() + session.duration * 60000) < now;
+                const hasJoined = myParticipations.some(p => p.session_id === session.id);
+                const participantCount = participants.filter(p => p.session_id === session.id).length;
+
+                let status = 'Upcoming';
+                let statusClass = 'bg-blue-100 text-blue-800';
+                
+                if (isLive) {
+                    status = 'Live Now';
+                    statusClass = 'bg-green-100 text-green-800';
+                } else if (isPast) {
+                    status = 'Completed';
+                    statusClass = 'bg-gray-100 text-gray-800';
+                }
+
+                return `
+                    <div class="card p-5 border border-gray-100 hover:glow cursor-pointer">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="subject-badge bg-purple-100 text-purple-800">${session.subject || 'General'}</span>
+                            <span class="text-xs font-medium ${statusClass} px-2 py-1 rounded-full">${status}</span>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">${session.name}</h3>
+                        <p class="text-gray-600 text-sm mb-4">${session.description || 'No description available'}</p>
+                        
+                        <div class="flex items-center text-sm text-gray-500 mb-4">
+                            <i class="fas fa-user mr-2 text-blue-500"></i>
+                            <span class="mr-4">Host</span>
+                            <i class="fas fa-clock mr-2 text-orange-500"></i>
+                            <span>${formatSessionTime(session.start_time, session.duration)}</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <i class="fas fa-users text-gray-400 mr-1"></i>
+                                <span class="text-sm text-gray-600">${participantCount}/${session.capacity} joined</span>
+                            </div>
+                            ${!hasJoined && isUpcoming ? `
+                                <button class="btn-primary text-sm px-4 py-2 join-session" data-session-id="${session.id}">
+                                    Join Now <i class="fas fa-arrow-right ml-1"></i>
+                                </button>
+                            ` : hasJoined ? `
+                                <span class="text-sm text-green-600 font-medium">Joined ✓</span>
+                            ` : isPast ? `
+                                <span class="text-sm text-gray-500">Completed</span>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderMySessions(sessions, participants) {
+            const container = document.getElementById('mySessionsList');
+            if (!container) return;
+
+            const myParticipations = participants.filter(p => p.student_id === currentUser.id);
+            const mySessionIds = myParticipations.map(p => p.session_id);
+            const mySessions = sessions.filter(s => mySessionIds.includes(s.id));
+            const now = new Date();
+
+            if (mySessions.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8">
+                        <i class="fas fa-calendar-plus text-4xl text-gray-300 mb-4"></i>
+                        <h3 class="text-lg font-semibold text-gray-600">No upcoming sessions</h3>
+                        <p class="text-gray-500">Join sessions from the available sessions list</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const upcomingSessions = mySessions.filter(s => new Date(s.start_time) > now);
+
+            container.innerHTML = `
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-gray-200">
+                                <th class="text-left py-3 px-4 text-gray-600 font-medium">Session</th>
+                                <th class="text-left py-3 px-4 text-gray-600 font-medium">Subject</th>
+                                <th class="text-left py-3 px-4 text-gray-600 font-medium">Date & Time</th>
+                                <th class="text-left py-3 px-4 text-gray-600 font-medium">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${upcomingSessions.map(session => `
+                                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                    <td class="py-4 px-4">
+                                        <div class="font-medium">${session.name}</div>
+                                        <div class="text-sm text-gray-500">${session.description || 'No description'}</div>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <span class="subject-badge bg-purple-100 text-purple-800">${session.subject || 'General'}</span>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <div class="font-medium">${formatDateTime(session.start_time)}</div>
+                                        <div class="text-sm text-gray-500">${session.duration} minutes</div>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">Upcoming</span>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function renderTeacherSessions(sessions, participants) {
+            const container = document.getElementById('myHostedSessions');
+            if (!container) return;
+
+            const mySessions = sessions.filter(s => s.hoster === currentUser.id);
+            const now = new Date();
+
+            if (mySessions.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-3 text-center py-12">
+                        <i class="fas fa-chalkboard-teacher text-4xl text-gray-300 mb-4"></i>
+                        <h3 class="text-lg font-semibold text-gray-600">No sessions created yet</h3>
+                        <p class="text-gray-500">Create your first session to get started</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = mySessions.map(session => {
+                const sessionDate = new Date(session.start_time);
+                const isLive = sessionDate <= now && new Date(sessionDate.getTime() + session.duration * 60000) >= now;
+                const isUpcoming = sessionDate > now;
+                const isPast = new Date(sessionDate.getTime() + session.duration * 60000) < now;
+                const participantCount = participants.filter(p => p.session_id === session.id).length;
+
+                let status = 'Upcoming';
+                let statusClass = 'bg-blue-100 text-blue-800';
+                
+                if (isLive) {
+                    status = 'Live';
+                    statusClass = 'bg-green-100 text-green-800';
+                } else if (isPast) {
+                    status = 'Completed';
+                    statusClass = 'bg-gray-100 text-gray-800';
+                }
+
+                return `
+                    <div class="card p-5 border border-gray-100">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="subject-badge bg-purple-100 text-purple-800">${session.subject || 'General'}</span>
+                            <span class="text-xs font-medium ${statusClass} px-2 py-1 rounded-full">${status}</span>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">${session.name}</h3>
+                        <p class="text-gray-600 text-sm mb-4">${participantCount} students ${isLive ? 'attending' : 'registered'}</p>
+                        
+                        <div class="flex items-center text-sm text-gray-500 mb-4">
+                            <i class="fas fa-clock mr-2 text-orange-500"></i>
+                            <span>${formatSessionTime(session.start_time, session.duration)}</span>
+                        </div>
+                        
+                        <div class="flex space-x-2">
+                            <button class="btn-primary flex-1 text-sm py-2 manage-session" data-session-id="${session.id}">
+                                Manage <i class="fas fa-cog ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('') + `
+                <div class="card p-5 border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-center cursor-pointer hover:border-blue-400 transition-colors" id="createSessionCard">
+                    <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-4">
+                        <i class="fas fa-plus text-blue-500 text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Create New Session</h3>
+                    <p class="text-gray-600 text-sm">Set up a new interactive learning session for your students</p>
+                </div>
+            `;
+        }
+
+        function updateTeacherStats(sessions, participants) {
+            const mySessions = sessions.filter(s => s.hoster === currentUser.id);
+            const mySessionIds = mySessions.map(s => s.id);
+            const totalParticipants = participants.filter(p => mySessionIds.includes(p.session_id)).length;
+            
+            document.getElementById('totalStudents').textContent = totalParticipants;
+            document.getElementById('sessionsHosted').textContent = mySessions.length;
+            document.getElementById('averageRating').textContent = '4.8'; // This would come from ratings API
+        }
+
+        // Utility Functions
+        function formatSessionTime(startTime, duration) {
+            const start = new Date(startTime);
+            const end = new Date(start.getTime() + duration * 60000);
+            const now = new Date();
+            
+            if (start <= now && end >= now) {
+                const minsLeft = Math.round((end - now) / 60000);
+                return `${minsLeft} mins left`;
+            } else if (start > now) {
+                if (start.toDateString() === now.toDateString()) {
+                    return `Today, ${start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+                } else if (start.getTime() - now.getTime() < 24 * 60 * 60 * 1000) {
+                    return `Tomorrow, ${start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+                } else {
+                    return start.toLocaleDateString() + ', ' + start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                }
+            } else {
+                return 'Completed';
+            }
+        }
+
+        function formatDateTime(dateTime) {
+            const date = new Date(dateTime);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }
+
+        function showNotification(title, message, type = 'success') {
+            const icon = type === 'success' ? 'fa-check-circle text-green-500' : 
+                         type === 'error' ? 'fa-exclamation-circle text-red-500' : 
+                         'fa-info-circle text-blue-500';
+            
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas ${icon} text-xl mr-3"></i>
+                    <div>
+                        <p class="font-semibold">${title}</p>
+                        <p class="text-sm text-gray-600">${message}</p>
+                    </div>
+                </div>
+            `;
+            
             notification.classList.remove('hidden');
             notification.classList.add('show', 'slide-in');
             
@@ -678,56 +790,150 @@
                 setTimeout(() => {
                     notification.classList.add('hidden');
                 }, 300);
-            }, 3000);
+            }, 4000);
         }
-        
-        // Add animation to cards on scroll
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-        
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('slide-in');
-                }
-            });
-        }, observerOptions);
-        
-        document.querySelectorAll('.card').forEach(card => {
-            observer.observe(card);
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            sessionStorage.removeItem('userSession');
+            window.location.href = '/Auth/login.html';
+        }
+
+        // Event Listeners
+        userMenuButton.addEventListener('click', () => {
+            userMenu.classList.toggle('hidden');
         });
         
-        // Simulate API calls to your backend
-        async function fetchSessions() {
+        document.addEventListener('click', (e) => {
+            if (!userMenuButton.contains(e.target) && !userMenu.contains(e.target)) {
+                userMenu.classList.add('hidden');
+            }
+        });
+
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            logout();
+        });
+
+        createSessionBtn.addEventListener('click', () => {
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('sessionDate').min = today;
+            sessionModal.classList.remove('hidden');
+        });
+
+        closeModal.addEventListener('click', () => {
+            sessionModal.classList.add('hidden');
+        });
+
+        cancelSession.addEventListener('click', () => {
+            sessionModal.classList.add('hidden');
+        });
+
+        sessionModal.addEventListener('click', (e) => {
+            if (e.target === sessionModal) {
+                sessionModal.classList.add('hidden');
+            }
+        });
+
+        sessionForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = sessionForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Creating...';
+            submitBtn.disabled = true;
+
             try {
-                // This would be replaced with your actual API endpoint
-                const response = await fetch('https://ce-apii.onrender.com/sessions');
-                const sessions = await response.json();
-                // Process and display sessions
-                console.log('Fetched sessions:', sessions);
+                const sessionData = {
+                    hoster: currentUser.id,
+                    name: document.getElementById('sessionName').value,
+                    subject: document.getElementById('sessionSubject').value,
+                    description: document.getElementById('sessionDescription').value,
+                    duration: parseInt(document.getElementById('sessionDuration').value),
+                    capacity: parseInt(document.getElementById('sessionCapacity').value),
+                    start_time: new Date(`${document.getElementById('sessionDate').value}T${document.getElementById('sessionTime').value}`).toISOString()
+                };
+
+                await createSession(sessionData);
+                sessionModal.classList.add('hidden');
+                showNotification('Success', 'Session created successfully!');
+                
+                // Refresh data
+                await loadData();
+                
             } catch (error) {
-                console.error('Error fetching sessions:', error);
+                console.error('Error creating session:', error);
+                showNotification('Error', 'Failed to create session', 'error');
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Event delegation for dynamic elements
+        document.addEventListener('click', async (e) => {
+            // Join session buttons
+            if (e.target.classList.contains('join-session') || e.target.closest('.join-session')) {
+                const button = e.target.classList.contains('join-session') ? e.target : e.target.closest('.join-session');
+                const sessionId = button.dataset.sessionId;
+                
+                button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Joining...';
+                button.disabled = true;
+
+                try {
+                    await joinSession(sessionId);
+                    showNotification('Success', 'Successfully joined the session!');
+                    await loadData(); // Refresh data
+                } catch (error) {
+                    console.error('Error joining session:', error);
+                    showNotification('Error', 'Failed to join session', 'error');
+                    button.innerHTML = 'Join Now <i class="fas fa-arrow-right ml-1"></i>';
+                    button.disabled = false;
+                }
+            }
+
+            // Create session card
+            if (e.target.id === 'createSessionCard' || e.target.closest('#createSessionCard')) {
+                createSessionBtn.click();
+            }
+        });
+
+        // Main data loading function
+        async function loadData() {
+            try {
+                const [sessions, subjects, participants] = await Promise.all([
+                    fetchSessions(),
+                    fetchSubjects(),
+                    fetchSessionParticipants()
+                ]);
+
+                if (currentUser.role === 'student') {
+                    renderAvailableSessions(sessions, participants);
+                    renderMySessions(sessions, participants);
+                } else if (currentUser.role === 'teacher' || currentUser.role === 'mentor') {
+                    renderTeacherSessions(sessions, participants);
+                    updateTeacherStats(sessions, participants);
+                }
+
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showNotification('Error', 'Failed to load data', 'error');
             }
         }
-        
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            // Fetch sessions when page loads
-            fetchSessions();
-            
-            // Add some interactive elements
-            document.querySelectorAll('.subject-badge').forEach(badge => {
-                badge.addEventListener('mouseenter', function() {
-                    this.style.transform = 'scale(1.05)';
-                });
-                
-                badge.addEventListener('mouseleave', function() {
-                    this.style.transform = 'scale(1)';
-                });
-            });
-        });
+
+        // Initialize Application
+        async function initializeApp() {
+            const user = checkAuthentication();
+            if (!user) return;
+
+            initializeUI();
+            await loadData();
+        }
+
+        // Start the application
+        document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
 </body>
 </html>
