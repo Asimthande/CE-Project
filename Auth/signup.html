@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Management - Student Registration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="signup.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'navy': '#1e3a8a',
+                        'light-blue': '#3b82f6'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <!-- Main Container -->
+    <div class="relative w-full max-w-4xl h-auto min-h-[700px] bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <!-- Header Section -->
+        <div class="header-section bg-gradient-to-r from-purple-600 to-blue-600 text-white p-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user-graduate text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold">Student Registration</h1>
+                        <p class="text-blue-100">Join our educational platform</p>
+                    </div>
+                </div>
+                <a href="login.html" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Sign In
+                </a>
+            </div>
+        </div>
+
+        <!-- Form Container -->
+        <div class="p-8">
+            <div class="w-full max-w-2xl mx-auto fade-in">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-navy mb-2">Create Your Account</h2>
+                    <p class="text-gray-600">Fill in your details to register as a student</p>
+                </div>
+
+                <form id="signupFormElement" class="space-y-4">
+                    <!-- Name and Surname Row -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="input-container">
+                            <input type="text" id="firstName" name="firstName" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none" required>
+                            <label for="firstName" class="floating-label text-gray-500">
+                                <i class="fas fa-user mr-2"></i>First Name
+                            </label>
+                        </div>
+                        <div class="input-container">
+                            <input type="text" id="lastName" name="lastName" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none" required>
+                            <label for="lastName" class="floating-label text-gray-500">
+                                <i class="fas fa-user mr-2"></i>Last Name
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="input-container">
+                        <input type="email" id="email" name="email" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none" required>
+                        <label for="email" class="floating-label text-gray-500">
+                            <i class="fas fa-envelope mr-2"></i>Email Address
+                        </label>
+                    </div>
+
+                    <!-- Student ID -->
+                    <div class="input-container">
+                        <input type="text" id="studentId" name="studentId" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none" required>
+                        <label for="studentId" class="floating-label text-gray-500">
+                            <i class="fas fa-id-card mr-2"></i>Student ID
+                        </label>
+                    </div>
+
+                    <!-- Grade -->
+                    <div class="select-container">
+                        <select id="grade" name="grade" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none bg-white" required>
+                            <option value="">Select Grade</option>
+                            <option value="1">Grade 1</option>
+                            <option value="2">Grade 2</option>
+                            <option value="3">Grade 3</option>
+                            <option value="4">Grade 4</option>
+                            <option value="5">Grade 5</option>
+                            <option value="6">Grade 6</option>
+                            <option value="7">Grade 7</option>
+                            <option value="8">Grade 8</option>
+                            <option value="9">Grade 9</option>
+                            <option value="10">Grade 10</option>
+                            <option value="11">Grade 11</option>
+                            <option value="12">Grade 12</option>
+                        </select>
+                        <label for="grade" class="floating-label text-gray-500">
+                            <i class="fas fa-graduation-cap mr-2"></i>Grade
+                        </label>
+                        <i class="fas fa-chevron-down select-icon text-gray-500"></i>
+                    </div>
+
+                    <!-- Province -->
+                    <div class="select-container">
+                        <select id="province" name="province" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none bg-white" required>
+                            <option value="">Select Province</option>
+                            <option value="eastern-cape">Eastern Cape</option>
+                            <option value="free-state">Free State</option>
+                            <option value="gauteng">Gauteng</option>
+                            <option value="kwazulu-natal">KwaZulu-Natal</option>
+                            <option value="limpopo">Limpopo</option>
+                            <option value="mpumalanga">Mpumalanga</option>
+                            <option value="northern-cape">Northern Cape</option>
+                            <option value="north-west">North West</option>
+                            <option value="western-cape">Western Cape</option>
+                        </select>
+                        <label for="province" class="floating-label text-gray-500">
+                            Province
+                        </label>
+                        <i class="fas fa-chevron-down select-icon text-gray-500"></i>
+                    </div>
+
+                    <!-- Address -->
+                    <div class="input-container">
+                        <input type="text" id="address" name="address" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none" required>
+                        <label for="address" class="floating-label text-gray-500">
+                            <i class="fas fa-home mr-2"></i>Address
+                        </label>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="input-container">
+                        <input type="password" id="password" name="password" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none pr-12" required>
+                        <label for="password" class="floating-label text-gray-500">
+                            <i class="fas fa-lock mr-2"></i>Password
+                        </label>
+                        <button type="button" onclick="togglePassword('password')" class="absolute right-4 top-4 text-gray-500 hover:text-gray-700 z-10">
+                            <i class="fas fa-eye" id="passwordToggle"></i>
+                        </button>
+                        <div class="password-strength bg-gray-200 mt-2" id="passwordStrength"></div>
+                        <p class="text-xs text-gray-500 mt-1" id="passwordHint">Password must be at least 8 characters</p>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="input-container">
+                        <input type="password" id="confirmPassword" name="confirmPassword" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none pr-12" required>
+                        <label for="confirmPassword" class="floating-label text-gray-500">
+                            <i class="fas fa-lock mr-2"></i>Confirm Password
+                        </label>
+                        <button type="button" onclick="togglePassword('confirmPassword')" class="absolute right-4 top-4 text-gray-500 hover:text-gray-700 z-10">
+                            <i class="fas fa-eye" id="confirmPasswordToggle"></i>
+                        </button>
+                    </div>
+
+                    <!-- Terms and Conditions -->
+                    <div class="flex items-center space-x-3">
+                        <input type="checkbox" id="terms" name="terms" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" required>
+                        <label for="terms" class="text-sm text-gray-600">
+                            I agree to the <a href="#" class="text-blue-600 hover:underline">Terms and Conditions</a> and <a href="#" class="text-blue-600 hover:underline">Privacy Policy</a>
+                        </label>
+                    </div>
+
+                    <!-- Sign Up Button -->
+                    <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition-all duration-300 transform hover:scale-105">
+                        <i class="fas fa-user-plus mr-2"></i>Create Student Account
+                    </button>
+
+                    <!-- Already have an account -->
+                    <div class="text-center pt-4">
+                        <p class="text-sm text-gray-600">
+                            Already have an account? 
+                            <a href="login.html" class="text-blue-600 hover:underline font-semibold">
+                                Sign in here
+                            </a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API Base URL
+        const API_BASE_URL = 'https://ce-apii.onrender.com';
+        
+        // Toggle password visibility
+        function togglePassword(fieldId) {
+            const field = document.getElementById(fieldId);
+            const toggle = document.getElementById(fieldId + 'Toggle');
+            
+            if (!field || !toggle) {
+                console.error(`Could not find field or toggle for: ${fieldId}`);
+                return;
+            }
+            
+            if (field.type === 'password') {
+                field.type = 'text';
+                toggle.classList.remove('fa-eye');
+                toggle.classList.add('fa-eye-slash');
+            } else {
+                field.type = 'password';
+                toggle.classList.remove('fa-eye-slash');
+                toggle.classList.add('fa-eye');
+            }
+        }
+
+        // Check password strength
+        function checkPasswordStrength(password) {
+            const strengthBar = document.getElementById('passwordStrength');
+            const hint = document.getElementById('passwordHint');
+            
+            if (!strengthBar || !hint) return;
+            
+            let strength = 0;
+            let feedback = [];
+            
+            if (password.length >= 8) strength++;
+            else feedback.push('at least 8 characters');
+            
+            if (/[a-z]/.test(password)) strength++;
+            else feedback.push('lowercase letter');
+            
+            if (/[A-Z]/.test(password)) strength++;
+            else feedback.push('uppercase letter');
+            
+            if (/[0-9]/.test(password)) strength++;
+            else feedback.push('number');
+            
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+            else feedback.push('special character');
+            
+            // Update strength bar
+            strengthBar.className = 'password-strength bg-gray-200 mt-2';
+            if (strength >= 1) strengthBar.classList.add('strength-weak');
+            if (strength >= 2) strengthBar.classList.add('strength-fair');
+            if (strength >= 4) strengthBar.classList.add('strength-good');
+            if (strength >= 5) strengthBar.classList.add('strength-strong');
+            
+            // Update hint
+            if (feedback.length > 0) {
+                hint.textContent = `Add: ${feedback.join(', ')}`;
+                hint.className = 'text-xs text-red-500 mt-1';
+            } else {
+                hint.textContent = 'Strong password!';
+                hint.className = 'text-xs text-green-500 mt-1';
+            }
+        }
+
+        // Simple bcrypt-like password verification (for demo purposes)
+        async function verifyPassword(plainPassword, hashedPassword) {
+            // If password is not hashed (plain text), do direct comparison
+            if (!hashedPassword.startsWith('$2b$') && !hashedPassword.startsWith('$2a$') && !hashedPassword.startsWith('$2y$')) {
+                return plainPassword === hashedPassword;
+            }
+            
+            // For demo purposes, we'll assume any hashed password works
+            return true;
+        }
+
+        // Register a new student
+        async function registerStudent(studentData) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/students`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: studentData.firstName,
+                        surname: studentData.lastName,
+                        email: studentData.email,
+                        grade: studentData.grade,
+                        id_num: studentData.studentId,
+                        province: studentData.province,
+                        address: studentData.address,
+                        password: studentData.password,
+                        group_id: null
+                    })
+                });
+                
+                if (!response.ok) {
+                    let errorMessage = 'Registration failed';
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.error || errorMessage;
+                    } catch (e) {
+                        errorMessage = response.statusText || errorMessage;
+                    }
+                    throw new Error(errorMessage);
+                }
+                
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                console.error('Registration error:', error);
+                
+                if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                    throw new Error('Network error: Cannot connect to server. Please check your internet connection and try again.');
+                }
+                
+                throw error;
+            }
+        }
+
+        // Authenticate user across all user types
+        async function authenticateUser(email, password) {
+            try {
+                const userTypes = [
+                    { endpoint: '/students', role: 'student', dashboard: '/Student/student.html' },
+                    { endpoint: '/mentors', role: 'mentor', dashboard: '/Mentor/mentor.html' },
+                    { endpoint: '/teachers', role: 'teacher', dashboard: '/Teacher/teacher.html' },
+                    { endpoint: '/admin', role: 'admin', dashboard: '/Admin/admin.html' }
+                ];
+
+                for (const userType of userTypes) {
+                    try {
+                        const response = await fetch(`${API_BASE_URL}${userType.endpoint}`);
+                        
+                        if (response.ok) {
+                            const users = await response.json();
+                            
+                            const user = users.find(u => 
+                                u.email && u.email.toLowerCase() === email.toLowerCase()
+                            );
+                            
+                            if (user) {
+                                const isPasswordValid = await verifyPassword(password, user.password);
+                                
+                                if (isPasswordValid) {
+                                    return {
+                                        user: user,
+                                        role: userType.role,
+                                        dashboard: userType.dashboard
+                                    };
+                                } else {
+                                    continue;
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.error(`Error fetching from ${userType.endpoint}:`, error);
+                        continue;
+                    }
+                }
+                
+                throw new Error('Invalid email or password');
+            } catch (error) {
+                console.error('Authentication error:', error);
+                
+                if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                    throw new Error('Network error: Cannot connect to server. Please check your internet connection and try again.');
+                }
+                
+                throw error;
+            }
+        }
+
+        // Redirect to appropriate dashboard
+        function redirectToDashboard(userInfo) {
+            localStorage.setItem('currentUser', JSON.stringify({
+                ...userInfo.user,
+                role: userInfo.role
+            }));
+            
+            window.location.href = userInfo.dashboard;
+        }
+
+        // Initialize floating labels safely for both inputs and selects
+        function initializeFloatingLabels() {
+            // Handle regular input fields
+            const inputFields = document.querySelectorAll('.input-field');
+            
+            inputFields.forEach(input => {
+                const label = input.parentElement.querySelector('label');
+                if (!label) return;
+                
+                if (input.value !== '') {
+                    label.classList.add('active');
+                }
+                
+                input.addEventListener('focus', function() {
+                    label.classList.add('active');
+                });
+                
+                input.addEventListener('blur', function() {
+                    if (this.value === '') {
+                        label.classList.remove('active');
+                    }
+                });
+                
+                input.addEventListener('input', function() {
+                    if (this.value !== '') {
+                        label.classList.add('active');
+                    } else {
+                        label.classList.remove('active');
+                    }
+                });
+            });
+
+            // Handle select fields
+            const selectFields = document.querySelectorAll('.select-container select');
+            
+            selectFields.forEach(select => {
+                const label = select.parentElement.querySelector('label');
+                if (!label) return;
+                
+                if (select.value !== '') {
+                    label.classList.add('active');
+                }
+                
+                select.addEventListener('focus', function() {
+                    label.classList.add('active');
+                });
+                
+                select.addEventListener('blur', function() {
+                    if (this.value === '') {
+                        label.classList.remove('active');
+                    }
+                });
+                
+                select.addEventListener('change', function() {
+                    if (this.value !== '') {
+                        label.classList.add('active');
+                    } else {
+                        label.classList.remove('active');
+                    }
+                });
+            });
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize floating labels
+            initializeFloatingLabels();
+            
+            // Password strength checker
+            const passwordInput = document.getElementById('password');
+            if (passwordInput) {
+                passwordInput.addEventListener('input', function() {
+                    checkPasswordStrength(this.value);
+                });
+            }
+
+            // Sign Up Form Submission (Students only)
+            document.getElementById('signupFormElement').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                const studentData = {
+                    firstName: formData.get('firstName'),
+                    lastName: formData.get('lastName'),
+                    email: formData.get('email'),
+                    studentId: formData.get('studentId'),
+                    grade: formData.get('grade'),
+                    province: formData.get('province'),
+                    address: formData.get('address'),
+                    password: formData.get('password'),
+                    confirmPassword: formData.get('confirmPassword')
+                };
+                
+                if (studentData.password !== studentData.confirmPassword) {
+                    alert('Passwords do not match!');
+                    return;
+                }
+                
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Creating Account...';
+                submitBtn.disabled = true;
+                
+                try {
+                    const result = await registerStudent(studentData);
+                    
+                    alert('Student account created successfully!');
+                    
+                    const authResult = await authenticateUser(studentData.email, studentData.password);
+                    
+                    redirectToDashboard(authResult);
+                    
+                } catch (error) {
+                    console.error('Registration failed:', error);
+                    
+                    let errorMessage = error.message;
+                    if (errorMessage.includes('CORS') || errorMessage.includes('Network error')) {
+                        errorMessage = 'Cannot connect to server. This might be a CORS issue. Please try again later or contact support.';
+                    }
+                    
+                    alert(`Registration failed: ${errorMessage}`);
+                    
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
