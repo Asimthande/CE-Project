@@ -7,32 +7,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Custom CSS for the authentication page */
         body {
             box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-        }
-
-        .form-container {
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            display: none;
-        }
-
-        .form-container.active {
-            display: flex;
-        }
-
-        .slide-panel {
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .fade-in {
-            animation: fadeIn 0.8s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .floating-label {
@@ -57,29 +34,6 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
-        .password-strength {
-            height: 4px;
-            border-radius: 2px;
-            transition: all 0.3s ease;
-        }
-
-        .strength-weak { background: #ef4444; width: 25%; }
-        .strength-fair { background: #f59e0b; width: 50%; }
-        .strength-good { background: #10b981; width: 75%; }
-        .strength-strong { background: #059669; width: 100%; }
-
-        .signup-gradient {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .signin-gradient {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        }
-
-        .overlay-panel {
-            background: linear-gradient(135deg, rgba(30, 58, 138, 0.9) 0%, rgba(59, 130, 246, 0.9) 100%);
-        }
-
         .input-container {
             position: relative;
             margin-bottom: 1.5rem;
@@ -98,68 +52,6 @@
             z-index: 0;
         }
 
-        .select-container {
-            position: relative;
-        }
-
-        .select-container select {
-            padding-top: 1.5rem;
-            padding-bottom: 0.5rem;
-            appearance: none;
-            background: transparent;
-            z-index: 1;
-        }
-
-        .select-container label {
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
-            transition: all 0.3s ease;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        .select-icon {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        /* Form Tabs */
-        .form-tabs {
-            display: none;
-            position: absolute;
-            top: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            background: white;
-            border-radius: 50px;
-            padding: 0.5rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            z-index: 20;
-            gap: 0.5rem;
-        }
-
-        .form-tab {
-            padding: 0.75rem 2rem;
-            border-radius: 25px;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: transparent;
-            color: #666;
-        }
-
-        .form-tab.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        /* Password toggle button */
         .password-toggle {
             position: absolute;
             right: 1rem;
@@ -170,125 +62,41 @@
             color: #6b7280;
             cursor: pointer;
             z-index: 10;
+        }
+
+        .user-type-btn {
+            transition: all 0.3s ease;
+            border: 2px solid #e5e7eb;
+        }
+
+        .user-type-btn.active {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .loading {
             display: none;
         }
 
-        .input-container.active .password-toggle {
-            display: block;
-        }
-
-        /* Media Queries */
-        /* Small screens (768px to 991px) */
-        @media (max-width: 991px) {
-            .slide-panel {
-                display: none !important;
-            }
-            
-            .forms-container {
-                width: 100% !important;
-            }
-            
-            .form-tabs {
-                display: flex !important;
-            }
-            
-            .form-container {
-                width: 100% !important;
-            }
-        }
-
-        /* Extra small screens (576px to 767px) */
-        @media (max-width: 767px) {
-            .form-tabs {
-                top: 1.5rem;
-            }
-            
-            .form-tab {
-                padding: 0.6rem 1.5rem;
-                font-size: 0.9rem;
-            }
-            
-            .form-container {
-                padding: 2rem 1rem !important;
-            }
-        }
-
-        /* Mobile screens (up to 575px) */
-        @media (max-width: 575px) {
-            .form-tabs {
-                top: 1rem;
-                padding: 0.25rem;
-            }
-            
-            .form-tab {
-                padding: 0.5rem 1.25rem;
-                font-size: 0.85rem;
-            }
-            
-            .form-container {
-                padding: 1.5rem 1rem !important;
-            }
-            
-            .input-container {
-                margin-bottom: 1rem !important;
-            }
-            
-            .input-field {
-                padding-top: 1.25rem !important;
-                padding-bottom: 0.25rem !important;
-            }
-            
-            .floating-label.active {
-                transform: translateY(-18px) scale(0.75) !important;
-            }
-        }
-
-        /* Very small screens (up to 400px) */
-        @media (max-width: 400px) {
-            .form-tabs {
-                width: 90%;
-            }
-            
-            .form-tab {
-                padding: 0.4rem 1rem;
-                font-size: 0.8rem;
-            }
-            
-            .form-container {
-                padding: 1rem !important;
-            }
-        }
-
-        /* iPhone 14 Pro Max specific fixes */
-        @media only screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) {
-            .form-tabs {
-                top: 3rem;
-            }
-            
-            .form-container {
-                padding-top: 4rem !important;
-            }
+        .loading.active {
+            display: inline-block;
         }
     </style>
-    <link rel="stylesheet" href="signin.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'navy': '#1e3a8a',
-                        'light-blue': '#3b82f6'
-                    }
-                }
-            }
-        }
-    </script>
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
     <!-- Main Container -->
-    <div class="relative w-full max-w-4xl h-auto min-h-[700px] bg-white rounded-2xl shadow-2xl overflow-hidden">
+    <div class="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden">
         <!-- Header Section -->
-        <div class="header-section bg-gradient-to-r from-pink-600 to-red-600 text-white p-6">
+        <div class="header-section bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-3">
                     <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
@@ -296,171 +104,44 @@
                     </div>
                     <div>
                         <h1 class="text-2xl font-bold">Welcome Back</h1>
-                        <p class="text-pink-100">Sign in to your account</p>
+                        <p class="text-blue-100">Sign in to your account</p>
                     </div>
                 </div>
-                <a href="signup.html" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300">
-                    <i class="fas fa-user-plus mr-2"></i>Sign Up
-                </a>
             </div>
         </div>
 
-        <!-- Forms Container -->
-        <div class="relative h-full flex">
-            <!-- Sign Up Form -->
-            <div class="form-container w-1/2 p-8 flex items-center justify-center active" id="signupForm">
-                <div class="w-full max-w-md fade-in">
-                    <div class="text-center mb-8">
-                        <div class="w-16 h-16 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-user-graduate text-white text-2xl"></i>
-                        </div>
-                        <h2 class="text-3xl font-bold text-navy mb-2">Student Registration</h2>
-                        <p class="text-gray-600">Sign up to join as a student</p>
-                    </div>
-
-                    <form id="signupFormElement" class="space-y-4">
-                        <!-- Name and Surname Row -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="input-container">
-                                <input type="text" id="firstName" name="firstName" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none" required>
-                                <label for="firstName" class="floating-label text-gray-500">
-                                    <i class="fas fa-user mr-2"></i>First Name
-                                </label>
-                            </div>
-                            <div class="input-container">
-                                <input type="text" id="lastName" name="lastName" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none" required>
-                                <label for="lastName" class="floating-label text-gray-500">
-                                    <i class="fas fa-user mr-2"></i>Last Name
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Email -->
-                        <div class="input-container">
-                            <input type="email" id="email" name="email" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none" required>
-                            <label for="email" class="floating-label text-gray-500">
-                                <i class="fas fa-envelope mr-2"></i>Email Address
-                            </label>
-                        </div>
-
-                        <!-- Student ID -->
-                        <div class="input-container">
-                            <input type="text" id="studentId" name="studentId" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none" required>
-                            <label for="studentId" class="floating-label text-gray-500">
-                                <i class="fas fa-id-card mr-2"></i>Student ID
-                            </label>
-                        </div>
-
-                        <!-- Grade -->
-                        <div class="select-container">
-                            <select id="grade" name="grade" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none bg-white" required>
-                                <option value="">Select Grade</option>
-                                <option value="1">Grade 1</option>
-                                <option value="2">Grade 2</option>
-                                <option value="3">Grade 3</option>
-                                <option value="4">Grade 4</option>
-                                <option value="5">Grade 5</option>
-                                <option value="6">Grade 6</option>
-                                <option value="7">Grade 7</option>
-                                <option value="8">Grade 8</option>
-                                <option value="9">Grade 9</option>
-                                <option value="10">Grade 10</option>
-                                <option value="11">Grade 11</option>
-                                <option value="12">Grade 12</option>
-                            </select>
-                            <label for="grade" class="floating-label text-gray-500">
-                                <i class="fas fa-graduation-cap mr-2"></i>Grade
-                            </label>
-                            <i class="fas fa-chevron-down select-icon text-gray-500"></i>
-                        </div>
-
-                        <!-- Province -->
-                        <div class="select-container">
-                            <select id="province" name="province" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none bg-white" required>
-                                <option value="">Select Province</option>
-                                <option value="eastern-cape">Eastern Cape</option>
-                                <option value="free-state">Free State</option>
-                                <option value="gauteng">Gauteng</option>
-                                <option value="kwazulu-natal">KwaZulu-Natal</option>
-                                <option value="limpopo">Limpopo</option>
-                                <option value="mpumalanga">Mpumalanga</option>
-                                <option value="northern-cape">Northern Cape</option>
-                                <option value="north-west">North West</option>
-                                <option value="western-cape">Western Cape</option>
-                            </select>
-                            <label for="province" class="floating-label text-gray-500">
-                                Province
-                            </label>
-                            <i class="fas fa-chevron-down select-icon text-gray-500"></i>
-                        </div>
-
-                        <!-- Address -->
-                        <div class="input-container">
-                            <input type="text" id="address" name="address" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none" required>
-                            <label for="address" class="floating-label text-gray-500">
-                                <i class="fas fa-home mr-2"></i>Address
-                            </label>
-                        </div>
-
-                        <!-- Password -->
-                        <div class="input-container">
-                            <input type="password" id="password" name="password" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none pr-12" required>
-                            <label for="password" class="floating-label text-gray-500">
-                                <i class="fas fa-lock mr-2"></i>Password
-                            </label>
-                            <button type="button" class="password-toggle" onclick="togglePassword('password')">
-                                <i class="fas fa-eye" id="passwordToggle"></i>
-                            </button>
-                            <div class="password-strength bg-gray-200 mt-2" id="passwordStrength"></div>
-                            <p class="text-xs text-gray-500 mt-1" id="passwordHint">Password must be at least 8 characters</p>
-                        </div>
-
-                        <!-- Confirm Password -->
-                        <div class="input-container">
-                            <input type="password" id="confirmPassword" name="confirmPassword" class="input-field w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none pr-12" required>
-                            <label for="confirmPassword" class="floating-label text-gray-500">
-                                <i class="fas fa-lock mr-2"></i>Confirm Password
-                            </label>
-                            <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">
-                                <i class="fas fa-eye" id="confirmPasswordToggle"></i>
-                            </button>
-                        </div>
-
-                        <!-- Terms and Conditions -->
-                        <div class="flex items-center space-x-3">
-                            <input type="checkbox" id="terms" name="terms" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" required>
-                            <label for="terms" class="text-sm text-gray-600">
-                                I agree to the <a href="#" class="text-blue-600 hover:underline">Terms and Conditions</a> and <a href="#" class="text-blue-600 hover:underline">Privacy Policy</a>
-                            </label>
-                        </div>
-
-                        <!-- Sign Up Button -->
-                        <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition-all duration-300 transform hover:scale-105">
-                            <i class="fas fa-user-plus mr-2"></i>Create Student Account
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Sign In Form -->
-            <div class="form-container w-1/2 p-8 flex items-center justify-center" id="signinForm">
-                <div class="w-full max-w-md fade-in">
-                    <div class="text-center mb-8">
-                        <div class="w-16 h-16 bg-gradient-to-r from-pink-600 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-sign-in-alt text-white text-2xl"></i>
-                        </div>
-                        <h2 class="text-3xl font-bold text-navy mb-2">Welcome Back</h2>
-                        <p class="text-gray-600">Sign in to your account</p>
-                    </div>
         <!-- Form Container -->
         <div class="p-8">
-            <div class="w-full max-w-md mx-auto fade-in">
+            <div class="w-full mx-auto fade-in">
                 <div class="text-center mb-8">
-                    <div class="w-16 h-16 bg-gradient-to-r from-pink-600 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <div class="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-sign-in-alt text-white text-2xl"></i>
                     </div>
-                    <h2 class="text-3xl font-bold text-navy mb-2">Sign In</h2>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Sign In</h2>
                     <p class="text-gray-600">Access your educational account</p>
+                </div>
+
+                <!-- User Type Selection -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-3">I am a:</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button type="button" class="user-type-btn py-3 px-4 rounded-lg text-center active" data-role="student">
+                            <i class="fas fa-user-graduate text-blue-600 text-lg mb-1 block"></i>
+                            <span class="text-sm font-medium">Student</span>
+                        </button>
+                        <button type="button" class="user-type-btn py-3 px-4 rounded-lg text-center" data-role="mentor">
+                            <i class="fas fa-chalkboard-teacher text-green-600 text-lg mb-1 block"></i>
+                            <span class="text-sm font-medium">Mentor</span>
+                        </button>
+                        <button type="button" class="user-type-btn py-3 px-4 rounded-lg text-center" data-role="teacher">
+                            <i class="fas fa-user-tie text-purple-600 text-lg mb-1 block"></i>
+                            <span class="text-sm font-medium">Teacher</span>
+                        </button>
+                        <button type="button" class="user-type-btn py-3 px-4 rounded-lg text-center" data-role="admin">
+                            <i class="fas fa-cog text-red-600 text-lg mb-1 block"></i>
+                            <span class="text-sm font-medium">Admin</span>
+                        </button>
+                    </div>
                 </div>
 
                 <form id="signinFormElement" class="space-y-6">
@@ -478,6 +159,9 @@
                         <label for="loginPassword" class="floating-label text-gray-500">
                             <i class="fas fa-lock mr-2"></i>Password
                         </label>
+                        <button type="button" class="password-toggle" onclick="togglePassword('loginPassword')">
+                            <i class="fas fa-eye"></i>
+                        </button>
                     </div>
 
                     <!-- Remember Me and Forgot Password -->
@@ -490,11 +174,12 @@
                     </div>
 
                     <!-- Sign In Button -->
-                    <button type="submit" class="w-full bg-gradient-to-r from-pink-600 to-red-600 text-white py-3 rounded-lg font-semibold hover:from-pink-700 hover:to-red-700 transition-all duration-300 transform hover:scale-105">
-                        <i class="fas fa-sign-in-alt mr-2"></i>Sign In
+                    <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 relative">
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        <span>Sign In</span>
+                        <i class="fas fa-spinner fa-spin loading absolute right-4"></i>
                     </button>
 
-                    <!-- User Type Selection -->
                     <!-- Additional Options -->
                     <div class="text-center pt-4">
                         <p class="text-sm text-gray-600">
@@ -513,15 +198,13 @@
         // API Base URL
         const API_BASE_URL = 'https://ce-apii.onrender.com';
         
+        // Global variables
+        let selectedUserType = 'student';
+
         // Toggle password visibility
         function togglePassword(fieldId) {
             const field = document.getElementById(fieldId);
-            const toggle = document.getElementById(fieldId + 'Toggle');
-            
-            if (!field || !toggle) {
-                console.error(`Could not find field or toggle for: ${fieldId}`);
-                return;
-            }
+            const toggle = field.parentElement.querySelector('.password-toggle i');
             
             if (field.type === 'password') {
                 field.type = 'text';
@@ -534,94 +217,238 @@
             }
         }
 
-        // Update password toggle visibility based on active form
-        function updatePasswordToggleVisibility() {
-            const activeForm = document.querySelector('.form-container.active');
-            const passwordFields = activeForm.querySelectorAll('input[type="password"]');
-            
-            // Show password toggles only for active form
-            document.querySelectorAll('.password-toggle').forEach(toggle => {
-                toggle.style.display = 'none';
-            });
-            
-            passwordFields.forEach(field => {
-                const container = field.closest('.input-container');
-                container.classList.add('active');
-            });
-        }
-
-        // Simple bcrypt-like password verification (for demo purposes)
+        // Enhanced password verification that works with both plain text and bcrypt
         async function verifyPassword(plainPassword, hashedPassword) {
-            // If password is not hashed (plain text), do direct comparison
-            if (!hashedPassword.startsWith('$2b$') && !hashedPassword.startsWith('$2a$') && !hashedPassword.startsWith('$2y$')) {
+            console.log('Verifying password...');
+            console.log('Plain password:', plainPassword);
+            console.log('Stored password:', hashedPassword);
+            
+            // If the stored password is plain text (not hashed), do direct comparison
+            if (!hashedPassword.startsWith('$2b$') && 
+                !hashedPassword.startsWith('$2a$') && 
+                !hashedPassword.startsWith('$2y$')) {
+                console.log('Using plain text comparison');
                 return plainPassword === hashedPassword;
             }
             
-            // For demo purposes, we'll assume any hashed password works
-            return true;
+            // For bcrypt hashed passwords, we need to verify on the server
+            // Since we can't verify bcrypt in the browser, we'll create a simple API endpoint simulation
+            try {
+                console.log('Attempting bcrypt verification...');
+                
+                // In a real application, you would send both to the server for verification
+                // For now, we'll simulate successful verification for demo purposes
+                // IMPORTANT: In production, this should be handled by your backend API
+                
+                // Simulate API call to verify password
+                const response = await fetch(`${API_BASE_URL}/verify-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        password: plainPassword,
+                        hash: hashedPassword
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Server verification result:', result);
+                    return result.valid === true;
+                } else {
+                    console.log('Server verification failed, falling back to plain text');
+                    // Fallback: if server verification fails, try plain text
+                    return plainPassword === hashedPassword;
+                }
+            } catch (error) {
+                console.error('Password verification error:', error);
+                console.log('Falling back to plain text comparison due to error');
+                // Fallback to plain text comparison if server verification fails
+                return plainPassword === hashedPassword;
+            }
         }
 
-        // Authenticate user across all user types
-        async function authenticateUser(email, password) {
+        // Authenticate user for specific type with proper email and password verification
+        async function authenticateUserForType(email, password, userType) {
             try {
-                const userTypes = [
-                    { endpoint: '/students', role: 'student', dashboard: '/Student/student.html' },
-                    { endpoint: '/mentors', role: 'mentor', dashboard: '/Mentor/mentor.html' },
-                    { endpoint: '/teachers', role: 'teacher', dashboard: '/Teacher/teacher.html' },
-                    { endpoint: '/admin', role: 'admin', dashboard: '/Admin/admin.html' }
-                ];
+                console.log(`Authenticating ${userType} with email: ${email}`);
+                
+                const endpointMap = {
+                    'student': '/students',
+                    'mentor': '/mentors', 
+                    'teacher': '/teachers',
+                    'admin': '/admin'
+                };
 
-                for (const userType of userTypes) {
-                    try {
-                        const response = await fetch(`${API_BASE_URL}${userType.endpoint}`);
-                        
-                        if (response.ok) {
-                            const users = await response.json();
-                            
-                            const user = users.find(u => 
-                                u.email && u.email.toLowerCase() === email.toLowerCase()
-                            );
-                            
-                            if (user) {
-                                const isPasswordValid = await verifyPassword(password, user.password);
-                                
-                                if (isPasswordValid) {
-                                    return {
-                                        user: user,
-                                        role: userType.role,
-                                        dashboard: userType.dashboard
-                                    };
-                                } else {
-                                    continue;
-                                }
-                            }
-                        }
-                    } catch (error) {
-                        console.error(`Error fetching from ${userType.endpoint}:`, error);
-                        continue;
-                    }
+                const dashboardMap = {
+                    'student': '/Student/student.html',
+                    'mentor': '/Mentor/mentor.html',
+                    'teacher': '/Teacher/teacher.html',
+                    'admin': '/Admin/admin.html'
+                };
+
+                const endpoint = endpointMap[userType];
+                if (!endpoint) {
+                    throw new Error('Invalid user type');
                 }
+
+                console.log(`Fetching users from: ${endpoint}`);
+                const response = await fetch(`${API_BASE_URL}${endpoint}`);
                 
-                throw new Error('Invalid email or password');
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch ${userType} data: ${response.status}`);
+                }
+
+                const users = await response.json();
+                console.log(`Found ${users.length} ${userType}(s)`);
+                
+                // Find user by email (case-insensitive)
+                const user = users.find(u => {
+                    if (!u.email) return false;
+                    return u.email.toLowerCase().trim() === email.toLowerCase().trim();
+                });
+                
+                if (!user) {
+                    console.log(`No ${userType} found with email: ${email}`);
+                    throw new Error('Invalid email address');
+                }
+
+                console.log(`User found: ${user.name} ${user.surname}`);
+                console.log('Verifying password...');
+
+                // Verify password
+                const isPasswordValid = await verifyPassword(password, user.password);
+                
+                if (!isPasswordValid) {
+                    console.log('Password verification failed');
+                    throw new Error('Invalid password');
+                }
+
+                console.log('Password verified successfully!');
+                
+                return {
+                    user: user,
+                    role: userType,
+                    dashboard: dashboardMap[userType]
+                };
+
             } catch (error) {
-                console.error('Authentication error:', error);
-                
-                if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
-                    throw new Error('Network error: Cannot connect to server. Please check your internet connection and try again.');
-                }
-                
+                console.error(`Authentication error for ${userType}:`, error);
                 throw error;
             }
         }
 
+        // Main authentication function
+        async function authenticateUser(email, password) {
+            const userTypes = ['student', 'mentor', 'teacher', 'admin'];
+            
+            // Validate inputs
+            if (!email || !password) {
+                throw new Error('Please enter both email and password');
+            }
+
+            if (!validateEmail(email)) {
+                throw new Error('Please enter a valid email address');
+            }
+
+            // First try the selected user type
+            try {
+                console.log(`Trying authentication as ${selectedUserType}...`);
+                const result = await authenticateUserForType(email, password, selectedUserType);
+                return result;
+            } catch (error) {
+                console.log(`Authentication failed for ${selectedUserType}:`, error.message);
+                
+                // If selected type fails, try all other types
+                for (const userType of userTypes) {
+                    if (userType === selectedUserType) continue;
+                    
+                    try {
+                        console.log(`Trying authentication as ${userType}...`);
+                        const result = await authenticateUserForType(email, password, userType);
+                        console.log(`User authenticated as ${userType}`);
+                        return result;
+                    } catch (error) {
+                        console.log(`Authentication failed for ${userType}:`, error.message);
+                        continue;
+                    }
+                }
+                
+                // If all types fail, throw appropriate error
+                if (error.message.includes('Invalid email address')) {
+                    throw new Error('Invalid email address');
+                } else if (error.message.includes('Invalid password')) {
+                    throw new Error('Invalid password');
+                } else {
+                    throw new Error('Invalid email or password');
+                }
+            }
+        }
+
+        // Email validation function
+        function validateEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // Create user session
+        function createUserSession(userInfo) {
+            const sessionData = {
+                id: userInfo.user.id,
+                name: userInfo.user.name,
+                surname: userInfo.user.surname,
+                email: userInfo.user.email,
+                role: userInfo.role,
+                loginTime: new Date().toISOString(),
+                expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours
+            };
+
+            // Store in localStorage
+            localStorage.setItem('currentUser', JSON.stringify(sessionData));
+            
+            // Also store in sessionStorage for additional security
+            sessionStorage.setItem('userSession', JSON.stringify({
+                id: userInfo.user.id,
+                role: userInfo.role,
+                token: btoa(`${userInfo.user.email}:${Date.now()}`)
+            }));
+
+            return sessionData;
+        }
+
         // Redirect to appropriate dashboard
         function redirectToDashboard(userInfo) {
-            localStorage.setItem('currentUser', JSON.stringify({
-                ...userInfo.user,
-                role: userInfo.role
-            }));
+            const sessionData = createUserSession(userInfo);
             
-            window.location.href = userInfo.dashboard;
+            showNotification(`Welcome back, ${sessionData.name}! Redirecting to ${sessionData.role} dashboard...`, 'success');
+            
+            setTimeout(() => {
+                window.location.href = userInfo.dashboard;
+            }, 1500);
+        }
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            // Remove existing notifications
+            const existingNotification = document.querySelector('.notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+
+            const notification = document.createElement('div');
+            notification.className = `notification fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white font-medium z-50 ${
+                type === 'success' ? 'bg-green-500' :
+                type === 'error' ? 'bg-red-500' :
+                'bg-blue-500'
+            }`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
         }
 
         // Initialize floating labels
@@ -660,68 +487,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize floating labels
             initializeFloatingLabels();
-            
-            // Password strength checker
-            const passwordInput = document.getElementById('password');
-            if (passwordInput) {
-                passwordInput.addEventListener('input', function() {
-                    checkPasswordStrength(this.value);
-                });
-            }
 
-            // Initialize password toggle visibility
-            updatePasswordToggleVisibility();
-
-            // Sign Up Form Submission (Students only)
-            document.getElementById('signupFormElement').addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                const formData = new FormData(this);
-                const studentData = {
-                    firstName: formData.get('firstName'),
-                    lastName: formData.get('lastName'),
-                    email: formData.get('email'),
-                    studentId: formData.get('studentId'),
-                    grade: formData.get('grade'),
-                    province: formData.get('province'),
-                    address: formData.get('address'),
-                    password: formData.get('password'),
-                    confirmPassword: formData.get('confirmPassword')
-                };
-                
-                if (studentData.password !== studentData.confirmPassword) {
-                    alert('Passwords do not match!');
-                    return;
-                }
-                
-                const submitBtn = this.querySelector('button[type="submit"]');
-                const originalText = submitBtn.innerHTML;
-                
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Creating Account...';
-                submitBtn.disabled = true;
-                
-                try {
-                    const result = await registerStudent(studentData);
-                    
-                    alert('Student account created successfully!');
-                    
-                    const authResult = await authenticateUser(studentData.email, studentData.password);
-                    
-                    redirectToDashboard(authResult);
-                    
-                } catch (error) {
-                    console.error('Registration failed:', error);
-                    
-                    let errorMessage = error.message;
-                    if (errorMessage.includes('CORS') || errorMessage.includes('Network error')) {
-                        errorMessage = 'Cannot connect to server. This might be a CORS issue. Please try again later or contact support.';
-                    }
-                    
-                    alert(`Registration failed: ${errorMessage}`);
-                    
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.disabled = false;
-                }
             // User type selection
             const userTypeBtns = document.querySelectorAll('.user-type-btn');
             userTypeBtns.forEach(btn => {
@@ -729,45 +495,78 @@
                     userTypeBtns.forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
                     
-                    const role = this.getAttribute('data-role');
-                    // You could use this to pre-fill fields or change form behavior
-                    console.log(`Selected role: ${role}`);
+                    selectedUserType = this.getAttribute('data-role');
+                    console.log(`Selected role: ${selectedUserType}`);
                 });
             });
 
-            // Sign In Form Submission (All user types)
+            // Sign In Form Submission
             document.getElementById('signinFormElement').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
                 const formData = new FormData(this);
-                const email = formData.get('loginEmail');
+                const email = formData.get('loginEmail').trim();
                 const password = formData.get('loginPassword');
+                const rememberMe = formData.get('remember');
                 
                 const submitBtn = this.querySelector('button[type="submit"]');
-                const originalText = submitBtn.innerHTML;
+                const submitText = submitBtn.querySelector('span');
+                const loadingSpinner = submitBtn.querySelector('.loading');
                 
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Signing In...';
+                // Show loading state
+                submitText.textContent = 'Signing In...';
+                loadingSpinner.classList.add('active');
                 submitBtn.disabled = true;
                 
                 try {
+                    console.log('Starting authentication process...');
                     const authResult = await authenticateUser(email, password);
                     
-                    alert(`Welcome back, ${authResult.user.name}! (${authResult.role})`);
+                    // Set longer expiration if "Remember me" is checked
+                    if (rememberMe) {
+                        const sessionData = JSON.parse(localStorage.getItem('currentUser'));
+                        sessionData.expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(); // 30 days
+                        localStorage.setItem('currentUser', JSON.stringify(sessionData));
+                    }
                     
                     redirectToDashboard(authResult);
                     
                 } catch (error) {
                     console.error('Authentication failed:', error);
                     
-                    let errorMessage = error.message;
-                    if (errorMessage.includes('CORS') || errorMessage.includes('Network error')) {
-                        errorMessage = 'Cannot connect to server. This might be a CORS issue. Please try again later or contact support.';
+                    let errorMessage = 'Authentication failed';
+                    
+                    if (error.message.includes('Invalid email address')) {
+                        errorMessage = 'No account found with this email address';
+                    } else if (error.message.includes('Invalid password')) {
+                        errorMessage = 'Incorrect password. Please try again.';
+                    } else if (error.message.includes('Please enter both email and password')) {
+                        errorMessage = 'Please enter both email and password';
+                    } else if (error.message.includes('Please enter a valid email address')) {
+                        errorMessage = 'Please enter a valid email address';
+                    } else if (error.message.includes('Failed to fetch') || error.message.includes('Network error')) {
+                        errorMessage = 'Network error: Cannot connect to server. Please check your internet connection.';
+                    } else {
+                        errorMessage = error.message;
                     }
                     
-                    alert(`Authentication failed: ${errorMessage}`);
+                    showNotification(errorMessage, 'error');
                     
-                    submitBtn.innerHTML = originalText;
+                    // Reset button state
+                    submitText.textContent = 'Sign In';
+                    loadingSpinner.classList.remove('active');
                     submitBtn.disabled = false;
+                }
+            });
+
+            // Add real-time email validation
+            const emailInput = document.getElementById('loginEmail');
+            emailInput.addEventListener('blur', function() {
+                if (this.value && !validateEmail(this.value)) {
+                    this.classList.add('border-red-500');
+                    showNotification('Please enter a valid email address', 'error');
+                } else {
+                    this.classList.remove('border-red-500');
                 }
             });
         });
