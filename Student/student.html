@@ -99,6 +99,9 @@
                         <button onclick="showSection('profile')" class="nav-btn text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-lg text-sm font-medium btn-bounce flex items-center">
                             <i class="fas fa-user mr-2"></i>Profile
                         </button>
+                        <button onclick="logout()" class="nav-btn text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-lg text-sm font-medium btn-bounce flex items-center">
+                            <i class="fas fa-sign-out-alt"></i> Log Out
+                        </button>
                     </div>
                 </div>
                 <div class="md:hidden">
@@ -609,29 +612,26 @@
     </main>
 
     <script>
-        // Configuration
-        const API_BASE_URL = 'https://ce-apii.onrender.com'; // Update with your server URL
-        
-        // Global state
+        const API_BASE_URL = 'https://ce-apii.onrender.com';
+        function logout(){
+            currentUser=!currentUser;
+            window.location.href="/index.html";
+            return;
+        }
         let currentUser = null;
         let userData = null;
         let currentQuiz = null;
         let currentQuestion = 0;
         let userAnswers = [];
         let quizTimer = null;
-
-        // Initialize dashboard
         document.addEventListener('DOMContentLoaded', function() {
-            // Get user data from localStorage (set during authentication)
             currentUser = JSON.parse(localStorage.getItem('currentUser'));
             
             if (!currentUser) {
-                // Redirect to login if no user data
                 window.location.href = 'Auth/login.html';
                 return;
             }
             
-            // Load initial data
             loadDashboardData();
             loadUserProfile();
             

@@ -5,24 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher Dashboard - UJ Community Engagement</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="teacher.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
             box-sizing: border-box;
         }
         .gradient-bg {
-            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
         }
         .card-hover {
             transition: all 0.3s ease;
         }
         .card-hover:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(255, 107, 53, 0.15);
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.15);
         }
-        .orange-glow {
-            box-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
+        .purple-glow {
+            box-shadow: 0 0 20px rgba(79, 70, 229, 0.3);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: black;
         }
     </style>
 </head>
@@ -33,20 +61,20 @@
             <div class="flex justify-between items-center py-4">
                 <div class="flex items-center space-x-3">
                     <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                        <span class="text-orange-500 font-bold text-lg">UJ</span>
+                        <span class="text-indigo-600 font-bold text-lg">UJ</span>
                     </div>
                     <div>
                         <h1 class="text-xl font-bold">Teacher Dashboard</h1>
-                        <p class="text-orange-100 text-sm">UJ Community Engagement</p>
+                        <p class="text-indigo-100 text-sm">UJ Community Engagement</p>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
                     <div class="text-right">
-                        <p class="font-semibold">Prof. Sarah Johnson</p>
-                        <p class="text-orange-100 text-sm">Mathematics Department</p>
+                        <p class="font-semibold" id="teacherName">Loading...</p>
+                        <p class="text-indigo-100 text-sm" id="teacherDepartment">Loading...</p>
                     </div>
                     <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                        <span class="text-orange-500 font-bold">SJ</span>
+                        <span class="text-indigo-600 font-bold" id="teacherInitials">...</span>
                     </div>
                 </div>
             </div>
@@ -59,45 +87,45 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <div class="bg-white rounded-lg p-6 shadow-md card-hover">
                 <div class="flex items-center">
-                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-users text-orange-600 text-xl"></i>
+                    <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-users text-indigo-600 text-xl"></i>
                     </div>
                     <div class="ml-4">
                         <p class="text-gray-600 text-sm">Total Students</p>
-                        <p class="text-2xl font-bold text-gray-900">247</p>
+                        <p class="text-2xl font-bold text-gray-900" id="totalStudents">0</p>
                     </div>
                 </div>
             </div>
             <div class="bg-white rounded-lg p-6 shadow-md card-hover">
                 <div class="flex items-center">
-                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-chalkboard-teacher text-orange-600 text-xl"></i>
+                    <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-chalkboard-teacher text-indigo-600 text-xl"></i>
                     </div>
                     <div class="ml-4">
                         <p class="text-gray-600 text-sm">Active Sessions</p>
-                        <p class="text-2xl font-bold text-gray-900">12</p>
+                        <p class="text-2xl font-bold text-gray-900" id="activeSessions">0</p>
                     </div>
                 </div>
             </div>
             <div class="bg-white rounded-lg p-6 shadow-md card-hover">
                 <div class="flex items-center">
-                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-clipboard-question text-orange-600 text-xl"></i>
+                    <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-clipboard-question text-indigo-600 text-xl"></i>
                     </div>
                     <div class="ml-4">
                         <p class="text-gray-600 text-sm">Pending Quizzes</p>
-                        <p class="text-2xl font-bold text-gray-900">8</p>
+                        <p class="text-2xl font-bold text-gray-900" id="pendingQuizzes">0</p>
                     </div>
                 </div>
             </div>
             <div class="bg-white rounded-lg p-6 shadow-md card-hover">
                 <div class="flex items-center">
-                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-clock text-orange-600 text-xl"></i>
+                    <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-clock text-indigo-600 text-xl"></i>
                     </div>
                     <div class="ml-4">
                         <p class="text-gray-600 text-sm">Pending Approvals</p>
-                        <p class="text-2xl font-bold text-gray-900">5</p>
+                        <p class="text-2xl font-bold text-gray-900" id="pendingApprovals">0</p>
                     </div>
                 </div>
             </div>
@@ -111,31 +139,12 @@
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-xl font-bold text-gray-900">Study Sessions</h2>
-                        <button class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                        <button id="createSessionBtn" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
                             + Create Session
                         </button>
                     </div>
-                    <div class="space-y-3">
-                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h3 class="font-semibold text-gray-900">Calculus Review Session</h3>
-                                    <p class="text-gray-600 text-sm">Mathematics 101 • 45 students enrolled</p>
-                                    <p class="text-orange-600 text-sm font-medium">Today, 2:00 PM - 4:00 PM</p>
-                                </div>
-                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">Active</span>
-                            </div>
-                        </div>
-                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h3 class="font-semibold text-gray-900">Linear Algebra Workshop</h3>
-                                    <p class="text-gray-600 text-sm">Mathematics 201 • 32 students enrolled</p>
-                                    <p class="text-orange-600 text-sm font-medium">Tomorrow, 10:00 AM - 12:00 PM</p>
-                                </div>
-                                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">Scheduled</span>
-                            </div>
-                        </div>
+                    <div id="sessionsList" class="space-y-3">
+                        <!-- Sessions will be loaded here -->
                     </div>
                 </div>
 
@@ -143,33 +152,12 @@
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-xl font-bold text-gray-900">Resources</h2>
-                        <button class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                        <button id="createResourceBtn" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
                             + Upload Resource
                         </button>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                                    <span class="text-red-600 text-sm font-bold">PDF</span>
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="font-medium text-gray-900">Calculus Notes Ch.1-3</h4>
-                                    <p class="text-gray-600 text-sm">Shared with 247 students</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                                    <span class="text-blue-600 text-sm font-bold">DOC</span>
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="font-medium text-gray-900">Assignment Template</h4>
-                                    <p class="text-gray-600 text-sm">Shared with 180 students</p>
-                                </div>
-                            </div>
-                        </div>
+                    <div id="resourcesList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Resources will be loaded here -->
                     </div>
                 </div>
 
@@ -177,35 +165,12 @@
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-xl font-bold text-gray-900">Quizzes</h2>
-                        <button class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                        <button id="createQuizBtn" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
                             + Create Quiz
                         </button>
                     </div>
-                    <div class="space-y-3">
-                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <h4 class="font-medium text-gray-900">Derivatives Quiz</h4>
-                                    <p class="text-gray-600 text-sm">15 questions • Due: March 25, 2024</p>
-                                </div>
-                                <div class="flex space-x-2">
-                                    <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">Draft</span>
-                                    <button class="text-orange-600 hover:text-orange-700 font-medium text-sm">Edit</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <h4 class="font-medium text-gray-900">Integration Basics</h4>
-                                    <p class="text-gray-600 text-sm">20 questions • 156 submissions</p>
-                                </div>
-                                <div class="flex space-x-2">
-                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">Published</span>
-                                    <button class="text-orange-600 hover:text-orange-700 font-medium text-sm">View Results</button>
-                                </div>
-                            </div>
-                        </div>
+                    <div id="quizzesList" class="space-y-3">
+                        <!-- Quizzes will be loaded here -->
                     </div>
                 </div>
             </div>
@@ -214,171 +179,1347 @@
             <div class="space-y-6">
                 <!-- Student Marks -->
                 <div class="bg-white rounded-lg shadow-md p-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">Recent Marks</h3>
-                    <div class="space-y-3">
-                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                            <div>
-                                <p class="font-medium text-gray-900">John Smith</p>
-                                <p class="text-gray-600 text-sm">Integration Quiz</p>
-                            </div>
-                            <span class="text-green-600 font-bold">85%</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                            <div>
-                                <p class="font-medium text-gray-900">Sarah Wilson</p>
-                                <p class="text-gray-600 text-sm">Derivatives Test</p>
-                            </div>
-                            <span class="text-green-600 font-bold">92%</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                            <div>
-                                <p class="font-medium text-gray-900">Mike Johnson</p>
-                                <p class="text-gray-600 text-sm">Limits Assignment</p>
-                            </div>
-                            <span class="text-yellow-600 font-bold">78%</span>
-                        </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Recent Students</h3>
+                    <div id="studentsList" class="space-y-3">
+                        <!-- Students will be loaded here -->
                     </div>
-                    <button class="w-full mt-4 text-orange-600 hover:text-orange-700 font-medium text-sm border border-orange-200 hover:border-orange-300 rounded-lg py-2 transition-colors">
-                        View All Marks
+                    <button id="viewAllStudentsBtn" class="w-full mt-4 text-indigo-600 hover:text-indigo-700 font-medium text-sm border border-indigo-200 hover:border-indigo-300 rounded-lg py-2 transition-colors">
+                        View All Students
                     </button>
                 </div>
 
                 <!-- Pending Approvals -->
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <h3 class="text-lg font-bold text-gray-900 mb-4">Pending Approvals</h3>
-                    <div class="space-y-3">
-                        <div class="border border-gray-200 rounded-lg p-3">
-                            <div class="flex justify-between items-start mb-2">
-                                <div>
-                                    <p class="font-medium text-gray-900">Emma Davis</p>
-                                    <p class="text-gray-600 text-sm">Wants to join: Advanced Calculus</p>
-                                </div>
-                            </div>
-                            <div class="flex space-x-2">
-                                <button class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors">
-                                    Approve
-                                </button>
-                                <button class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-3 py-1 rounded text-sm font-medium transition-colors">
-                                    Decline
-                                </button>
-                            </div>
-                        </div>
-                        <div class="border border-gray-200 rounded-lg p-3">
-                            <div class="flex justify-between items-start mb-2">
-                                <div>
-                                    <p class="font-medium text-gray-900">Alex Chen</p>
-                                    <p class="text-gray-600 text-sm">Wants to join: Linear Algebra</p>
-                                </div>
-                            </div>
-                            <div class="flex space-x-2">
-                                <button class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors">
-                                    Approve
-                                </button>
-                                <button class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-3 py-1 rounded text-sm font-medium transition-colors">
-                                    Decline
-                                </button>
-                            </div>
-                        </div>
+                    <div id="pendingApprovalsList" class="space-y-3">
+                        <!-- Pending approvals will be loaded here -->
                     </div>
                 </div>
 
                 <!-- Resource Access Management -->
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <h3 class="text-lg font-bold text-gray-900 mb-4">Resource Access</h3>
-                    <div class="space-y-3">
-                        <div class="border border-gray-200 rounded-lg p-3">
-                            <h4 class="font-medium text-gray-900 mb-2">Calculus Notes Ch.4-6</h4>
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-600 text-sm">Access Level:</span>
-                                <select class="border border-gray-300 rounded px-2 py-1 text-sm">
-                                    <option>All Students</option>
-                                    <option>Advanced Only</option>
-                                    <option>Restricted</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="border border-gray-200 rounded-lg p-3">
-                            <h4 class="font-medium text-gray-900 mb-2">Exam Solutions</h4>
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-600 text-sm">Access Level:</span>
-                                <select class="border border-gray-300 rounded px-2 py-1 text-sm">
-                                    <option>Restricted</option>
-                                    <option>All Students</option>
-                                    <option>Advanced Only</option>
-                                </select>
-                            </div>
-                        </div>
+                    <div id="resourceAccessList" class="space-y-3">
+                        <!-- Resource access controls will be loaded here -->
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <script>
-        // Add interactivity to buttons
-        document.addEventListener('DOMContentLoaded', function() {
-            // Handle approval buttons
-            const approveButtons = document.querySelectorAll('button:contains("Approve")');
-            const declineButtons = document.querySelectorAll('button:contains("Decline")');
-            
-            // Add click handlers for approve/decline buttons
-            document.querySelectorAll('button').forEach(button => {
-                if (button.textContent.includes('Approve')) {
-                    button.addEventListener('click', function() {
-                        const card = this.closest('.border');
-                        card.style.backgroundColor = '#f0fdf4';
-                        card.style.borderColor = '#22c55e';
-                        this.textContent = 'Approved';
-                        this.disabled = true;
-                        this.classList.remove('bg-green-500', 'hover:bg-green-600');
-                        this.classList.add('bg-gray-400');
-                    });
-                }
-                
-                if (button.textContent.includes('Decline')) {
-                    button.addEventListener('click', function() {
-                        const card = this.closest('.border');
-                        card.style.backgroundColor = '#fef2f2';
-                        card.style.borderColor = '#ef4444';
-                        const approveBtn = card.querySelector('button');
-                        if (approveBtn && approveBtn.textContent.includes('Approve')) {
-                            approveBtn.textContent = 'Declined';
-                            approveBtn.disabled = true;
-                            approveBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
-                            approveBtn.classList.add('bg-gray-400');
-                        }
-                        this.style.display = 'none';
-                    });
-                }
-            });
+    <!-- Session Modal -->
+    <div id="sessionModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 class="text-xl font-bold mb-4" id="sessionModalTitle">Create Study Session</h2>
+            <form id="sessionForm">
+                <input type="hidden" id="sessionId">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="sessionName">Session Name</label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="sessionName" type="text" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="sessionSubject">Subject</label>
+                    <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="sessionSubject" required>
+                        <option value="">Select a subject</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="sessionDescription">Description</label>
+                    <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="sessionDescription" rows="3"></textarea>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="sessionCapacity">Capacity</label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="sessionCapacity" type="number" min="1" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="sessionDuration">Duration (minutes)</label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="sessionDuration" type="number" min="1" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="sessionStartTime">Start Time</label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="sessionStartTime" type="datetime-local" required>
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-lg font-medium transition-colors" id="cancelSessionBtn">Cancel</button>
+                    <button type="submit" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">Save Session</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-            // Handle resource access changes
-            document.querySelectorAll('select').forEach(select => {
-                select.addEventListener('change', function() {
-                    const card = this.closest('.border');
-                    card.style.backgroundColor = '#fff7ed';
-                    card.style.borderColor = '#f97316';
-                    
-                    // Show a brief confirmation
-                    const originalBg = card.style.backgroundColor;
-                    card.style.backgroundColor = '#dcfce7';
-                    setTimeout(() => {
-                        card.style.backgroundColor = originalBg;
-                    }, 1000);
+    <!-- Resource Modal -->
+    <div id="resourceModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 class="text-xl font-bold mb-4" id="resourceModalTitle">Upload Resource</h2>
+            <form id="resourceForm">
+                <input type="hidden" id="resourceId">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="resourceName">Resource Name</label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="resourceName" type="text" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="resourceSubject">Subject</label>
+                    <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="resourceSubject" required>
+                        <option value="">Select a subject</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="resourceType">Type</label>
+                    <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="resourceType" required>
+                        <option value="">Select type</option>
+                        <option value="PDF">PDF</option>
+                        <option value="DOC">Document</option>
+                        <option value="VIDEO">Video</option>
+                        <option value="SLIDES">Slides</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="resourceDescription">Description</label>
+                    <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="resourceDescription" rows="3"></textarea>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="resourceFile">File Path/URL</label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="resourceFile" type="text" required>
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-lg font-medium transition-colors" id="cancelResourceBtn">Cancel</button>
+                    <button type="submit" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">Save Resource</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Quiz Modal -->
+    <div id="quizModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 class="text-xl font-bold mb-4" id="quizModalTitle">Create Quiz</h2>
+            <form id="quizForm">
+                <input type="hidden" id="quizId">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="quizName">Quiz Name</label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="quizName" type="text" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="quizSubject">Subject</label>
+                    <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="quizSubject" required>
+                        <option value="">Select a subject</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="quizType">Type</label>
+                    <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="quizType" required>
+                        <option value="">Select type</option>
+                        <option value="MULTIPLE_CHOICE">Multiple Choice</option>
+                        <option value="TRUE_FALSE">True/False</option>
+                        <option value="SHORT_ANSWER">Short Answer</option>
+                        <option value="ESSAY">Essay</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="quizDescription">Description</label>
+                    <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="quizDescription" rows="3"></textarea>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="quizFile">File Path/URL</label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="quizFile" type="text" required>
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-lg font-medium transition-colors" id="cancelQuizBtn">Cancel</button>
+                    <button type="submit" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">Save Quiz</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // API Base URL
+        const API_BASE_URL = 'https://ce-apii.onrender.com';
+        
+        // Global data storage
+        let teachers = [];
+        let students = [];
+        let sessions = [];
+        let resources = [];
+        let quizzes = [];
+        let subjects = [];
+        let currentTeacher = null;
+
+        // DOM Elements
+        const sessionModal = document.getElementById('sessionModal');
+        const resourceModal = document.getElementById('resourceModal');
+        const quizModal = document.getElementById('quizModal');
+        const closeButtons = document.querySelectorAll('.close');
+        const cancelButtons = document.querySelectorAll('[id$="Btn"]');
+        
+        // Initialize the dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDashboard();
+            setupEventListeners();
+        });
+
+        // Initialize dashboard data
+        async function initializeDashboard() {
+            try {
+                // Load teacher data (assuming teacher ID 1 for demo)
+                await loadTeacher(1);
+                
+                // Load all data
+                await Promise.all([
+                    loadStudents(),
+                    loadSessions(),
+                    loadResources(),
+                    loadQuizzes(),
+                    loadSubjects()
+                ]);
+                
+                // Update UI with loaded data
+                updateDashboardStats();
+                renderSessions();
+                renderResources();
+                renderQuizzes();
+                renderStudents();
+                renderPendingApprovals();
+                populateSubjectDropdowns();
+            } catch (error) {
+                console.error('Error initializing dashboard:', error);
+                showNotification('Failed to load dashboard data', 'error');
+            }
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Modal open buttons
+            document.getElementById('createSessionBtn').addEventListener('click', () => openSessionModal());
+            document.getElementById('createResourceBtn').addEventListener('click', () => openResourceModal());
+            document.getElementById('createQuizBtn').addEventListener('click', () => openQuizModal());
+            
+            // Modal close buttons
+            closeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    sessionModal.style.display = 'none';
+                    resourceModal.style.display = 'none';
+                    quizModal.style.display = 'none';
                 });
             });
+            
+            // Cancel buttons
+            document.getElementById('cancelSessionBtn').addEventListener('click', () => sessionModal.style.display = 'none');
+            document.getElementById('cancelResourceBtn').addEventListener('click', () => resourceModal.style.display = 'none');
+            document.getElementById('cancelQuizBtn').addEventListener('click', () => quizModal.style.display = 'none');
+            
+            // Form submissions
+            document.getElementById('sessionForm').addEventListener('submit', handleSessionSubmit);
+            document.getElementById('resourceForm').addEventListener('submit', handleResourceSubmit);
+            document.getElementById('quizForm').addEventListener('submit', handleQuizSubmit);
+            
+            // View all students button
+            document.getElementById('viewAllStudentsBtn').addEventListener('click', () => {
+                alert('This would open a full student list view in a real application');
+            });
+            
+            // Close modals when clicking outside
+            window.addEventListener('click', (event) => {
+                if (event.target === sessionModal) sessionModal.style.display = 'none';
+                if (event.target === resourceModal) resourceModal.style.display = 'none';
+                if (event.target === quizModal) quizModal.style.display = 'none';
+            });
+        }
 
-            // Add hover effects to cards
+        // API Functions
+        async function loadTeacher(id) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/teachers/${id}`);
+                if (response.ok) {
+                    const teacher = await response.json();
+                    currentTeacher = teacher;
+                    document.getElementById('teacherName').textContent = `${teacher.name} ${teacher.surname}`;
+                    document.getElementById('teacherDepartment').textContent = 'Mathematics Department';
+                    document.getElementById('teacherInitials').textContent = 
+                        `${teacher.name.charAt(0)}${teacher.surname.charAt(0)}`;
+                } else {
+                    // If teacher not found, use mock data
+                    currentTeacher = {
+                        id: 1,
+                        name: 'Sarah',
+                        surname: 'Johnson',
+                        email: 'sarah.johnson@uj.ac.za',
+                        group_id: 1
+                    };
+                    document.getElementById('teacherName').textContent = 'Prof. Sarah Johnson';
+                    document.getElementById('teacherDepartment').textContent = 'Mathematics Department';
+                    document.getElementById('teacherInitials').textContent = 'SJ';
+                }
+            } catch (error) {
+                console.error('Error loading teacher:', error);
+                // Use mock data as fallback
+                currentTeacher = {
+                    id: 1,
+                    name: 'Sarah',
+                    surname: 'Johnson',
+                    email: 'sarah.johnson@uj.ac.za',
+                    group_id: 1
+                };
+                document.getElementById('teacherName').textContent = 'Prof. Sarah Johnson';
+                document.getElementById('teacherDepartment').textContent = 'Mathematics Department';
+                document.getElementById('teacherInitials').textContent = 'SJ';
+            }
+        }
+
+        async function loadStudents() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/students`);
+                if (response.ok) {
+                    students = await response.json();
+                } else {
+                    // Mock data if API fails
+                    students = [
+                        { id: 1, name: 'John', surname: 'Smith', grade: '12', email: 'john.smith@student.uj.ac.za' },
+                        { id: 2, name: 'Sarah', surname: 'Wilson', grade: '11', email: 'sarah.wilson@student.uj.ac.za' },
+                        { id: 3, name: 'Mike', surname: 'Johnson', grade: '12', email: 'mike.johnson@student.uj.ac.za' },
+                        { id: 4, name: 'Emma', surname: 'Davis', grade: '11', email: 'emma.davis@student.uj.ac.za' },
+                        { id: 5, name: 'Alex', surname: 'Chen', grade: '12', email: 'alex.chen@student.uj.ac.za' }
+                    ];
+                }
+            } catch (error) {
+                console.error('Error loading students:', error);
+                // Use mock data as fallback
+                students = [
+                    { id: 1, name: 'John', surname: 'Smith', grade: '12', email: 'john.smith@student.uj.ac.za' },
+                    { id: 2, name: 'Sarah', surname: 'Wilson', grade: '11', email: 'sarah.wilson@student.uj.ac.za' },
+                    { id: 3, name: 'Mike', surname: 'Johnson', grade: '12', email: 'mike.johnson@student.uj.ac.za' },
+                    { id: 4, name: 'Emma', surname: 'Davis', grade: '11', email: 'emma.davis@student.uj.ac.za' },
+                    { id: 5, name: 'Alex', surname: 'Chen', grade: '12', email: 'alex.chen@student.uj.ac.za' }
+                ];
+            }
+        }
+
+        async function loadSessions() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/sessions`);
+                if (response.ok) {
+                    sessions = await response.json();
+                } else {
+                    // Mock data if API fails
+                    sessions = [
+                        { 
+                            id: 1, 
+                            name: 'Calculus Review Session', 
+                            subject: 'Mathematics', 
+                            description: 'Review of key calculus concepts', 
+                            capacity: 45,
+                            duration: 120,
+                            start_time: new Date(Date.now() + 2*60*60*1000).toISOString(),
+                            hoster: 1
+                        },
+                        { 
+                            id: 2, 
+                            name: 'Linear Algebra Workshop', 
+                            subject: 'Mathematics', 
+                            description: 'Introduction to linear algebra', 
+                            capacity: 32,
+                            duration: 120,
+                            start_time: new Date(Date.now() + 24*60*60*1000).toISOString(),
+                            hoster: 1
+                        }
+                    ];
+                }
+            } catch (error) {
+                console.error('Error loading sessions:', error);
+                // Use mock data as fallback
+                sessions = [
+                    { 
+                        id: 1, 
+                        name: 'Calculus Review Session', 
+                        subject: 'Mathematics', 
+                        description: 'Review of key calculus concepts', 
+                        capacity: 45,
+                        duration: 120,
+                        start_time: new Date(Date.now() + 2*60*60*1000).toISOString(),
+                        hoster: 1
+                    },
+                    { 
+                        id: 2, 
+                        name: 'Linear Algebra Workshop', 
+                        subject: 'Mathematics', 
+                        description: 'Introduction to linear algebra', 
+                        capacity: 32,
+                        duration: 120,
+                        start_time: new Date(Date.now() + 24*60*60*1000).toISOString(),
+                        hoster: 1
+                    }
+                ];
+            }
+        }
+
+        async function loadResources() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/resources`);
+                if (response.ok) {
+                    resources = await response.json();
+                } else {
+                    // Mock data if API fails
+                    resources = [
+                        { 
+                            id: 1, 
+                            name: 'Calculus Notes Ch.1-3', 
+                            subject: 'Mathematics', 
+                            type: 'PDF', 
+                            description: 'Comprehensive notes on calculus chapters 1-3',
+                            file_path: '/resources/calculus_notes_1-3.pdf',
+                            upload_by: 1
+                        },
+                        { 
+                            id: 2, 
+                            name: 'Assignment Template', 
+                            subject: 'Mathematics', 
+                            type: 'DOC', 
+                            description: 'Template for mathematics assignments',
+                            file_path: '/resources/assignment_template.docx',
+                            upload_by: 1
+                        }
+                    ];
+                }
+            } catch (error) {
+                console.error('Error loading resources:', error);
+                // Use mock data as fallback
+                resources = [
+                    { 
+                        id: 1, 
+                        name: 'Calculus Notes Ch.1-3', 
+                        subject: 'Mathematics', 
+                        type: 'PDF', 
+                        description: 'Comprehensive notes on calculus chapters 1-3',
+                        file_path: '/resources/calculus_notes_1-3.pdf',
+                        upload_by: 1
+                    },
+                    { 
+                        id: 2, 
+                        name: 'Assignment Template', 
+                        subject: 'Mathematics', 
+                        type: 'DOC', 
+                        description: 'Template for mathematics assignments',
+                        file_path: '/resources/assignment_template.docx',
+                        upload_by: 1
+                    }
+                ];
+            }
+        }
+
+        async function loadQuizzes() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/quizzes`);
+                if (response.ok) {
+                    quizzes = await response.json();
+                } else {
+                    // Mock data if API fails
+                    quizzes = [
+                        { 
+                            id: 1, 
+                            name: 'Derivatives Quiz', 
+                            subject: 'Mathematics', 
+                            type: 'MULTIPLE_CHOICE', 
+                            description: '15 questions on derivatives',
+                            file_path: '/quizzes/derivatives_quiz.pdf',
+                            upload_by: 1
+                        },
+                        { 
+                            id: 2, 
+                            name: 'Integration Basics', 
+                            subject: 'Mathematics', 
+                            type: 'MULTIPLE_CHOICE', 
+                            description: '20 questions on integration basics',
+                            file_path: '/quizzes/integration_basics.pdf',
+                            upload_by: 1
+                        }
+                    ];
+                }
+            } catch (error) {
+                console.error('Error loading quizzes:', error);
+                // Use mock data as fallback
+                quizzes = [
+                    { 
+                        id: 1, 
+                        name: 'Derivatives Quiz', 
+                        subject: 'Mathematics', 
+                        type: 'MULTIPLE_CHOICE', 
+                        description: '15 questions on derivatives',
+                        file_path: '/quizzes/derivatives_quiz.pdf',
+                        upload_by: 1
+                    },
+                    { 
+                        id: 2, 
+                        name: 'Integration Basics', 
+                        subject: 'Mathematics', 
+                        type: 'MULTIPLE_CHOICE', 
+                        description: '20 questions on integration basics',
+                        file_path: '/quizzes/integration_basics.pdf',
+                        upload_by: 1
+                    }
+                ];
+            }
+        }
+
+        async function loadSubjects() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/subjects`);
+                if (response.ok) {
+                    subjects = await response.json();
+                } else {
+                    // Mock data if API fails
+                    subjects = [
+                        { id: 1, name: 'Mathematics', description: 'Mathematics subject' },
+                        { id: 2, name: 'Physics', description: 'Physics subject' },
+                        { id: 3, name: 'Chemistry', description: 'Chemistry subject' }
+                    ];
+                }
+            } catch (error) {
+                console.error('Error loading subjects:', error);
+                // Use mock data as fallback
+                subjects = [
+                    { id: 1, name: 'Mathematics', description: 'Mathematics subject' },
+                    { id: 2, name: 'Physics', description: 'Physics subject' },
+                    { id: 3, name: 'Chemistry', description: 'Chemistry subject' }
+                ];
+            }
+        }
+
+        async function createSession(sessionData) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/sessions`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(sessionData)
+                });
+                
+                if (response.ok) {
+                    const newSession = await response.json();
+                    sessions.push(newSession);
+                    renderSessions();
+                    updateDashboardStats();
+                    showNotification('Session created successfully', 'success');
+                    return newSession;
+                } else {
+                    throw new Error('Failed to create session');
+                }
+            } catch (error) {
+                console.error('Error creating session:', error);
+                // Add to local data if API fails
+                const newSession = {
+                    id: sessions.length > 0 ? Math.max(...sessions.map(s => s.id)) + 1 : 1,
+                    ...sessionData
+                };
+                sessions.push(newSession);
+                renderSessions();
+                updateDashboardStats();
+                showNotification('Session created (offline mode)', 'info');
+                return newSession;
+            }
+        }
+
+        async function updateSession(id, sessionData) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/sessions/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(sessionData)
+                });
+                
+                if (response.ok) {
+                    const updatedSession = await response.json();
+                    const index = sessions.findIndex(s => s.id === id);
+                    if (index !== -1) {
+                        sessions[index] = updatedSession;
+                    }
+                    renderSessions();
+                    showNotification('Session updated successfully', 'success');
+                    return updatedSession;
+                } else {
+                    throw new Error('Failed to update session');
+                }
+            } catch (error) {
+                console.error('Error updating session:', error);
+                // Update local data if API fails
+                const index = sessions.findIndex(s => s.id === id);
+                if (index !== -1) {
+                    sessions[index] = { ...sessions[index], ...sessionData };
+                }
+                renderSessions();
+                showNotification('Session updated (offline mode)', 'info');
+                return sessions[index];
+            }
+        }
+
+        async function deleteSession(id) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/sessions/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    sessions = sessions.filter(s => s.id !== id);
+                    renderSessions();
+                    updateDashboardStats();
+                    showNotification('Session deleted successfully', 'success');
+                } else {
+                    throw new Error('Failed to delete session');
+                }
+            } catch (error) {
+                console.error('Error deleting session:', error);
+                // Delete from local data if API fails
+                sessions = sessions.filter(s => s.id !== id);
+                renderSessions();
+                updateDashboardStats();
+                showNotification('Session deleted (offline mode)', 'info');
+            }
+        }
+
+        async function createResource(resourceData) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/resources`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(resourceData)
+                });
+                
+                if (response.ok) {
+                    const newResource = await response.json();
+                    resources.push(newResource);
+                    renderResources();
+                    showNotification('Resource created successfully', 'success');
+                    return newResource;
+                } else {
+                    throw new Error('Failed to create resource');
+                }
+            } catch (error) {
+                console.error('Error creating resource:', error);
+                // Add to local data if API fails
+                const newResource = {
+                    id: resources.length > 0 ? Math.max(...resources.map(r => r.id)) + 1 : 1,
+                    ...resourceData
+                };
+                resources.push(newResource);
+                renderResources();
+                showNotification('Resource created (offline mode)', 'info');
+                return newResource;
+            }
+        }
+
+        async function updateResource(id, resourceData) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/resources/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(resourceData)
+                });
+                
+                if (response.ok) {
+                    const updatedResource = await response.json();
+                    const index = resources.findIndex(r => r.id === id);
+                    if (index !== -1) {
+                        resources[index] = updatedResource;
+                    }
+                    renderResources();
+                    showNotification('Resource updated successfully', 'success');
+                    return updatedResource;
+                } else {
+                    throw new Error('Failed to update resource');
+                }
+            } catch (error) {
+                console.error('Error updating resource:', error);
+                // Update local data if API fails
+                const index = resources.findIndex(r => r.id === id);
+                if (index !== -1) {
+                    resources[index] = { ...resources[index], ...resourceData };
+                }
+                renderResources();
+                showNotification('Resource updated (offline mode)', 'info');
+                return resources[index];
+            }
+        }
+
+        async function deleteResource(id) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/resources/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    resources = resources.filter(r => r.id !== id);
+                    renderResources();
+                    showNotification('Resource deleted successfully', 'success');
+                } else {
+                    throw new Error('Failed to delete resource');
+                }
+            } catch (error) {
+                console.error('Error deleting resource:', error);
+                // Delete from local data if API fails
+                resources = resources.filter(r => r.id !== id);
+                renderResources();
+                showNotification('Resource deleted (offline mode)', 'info');
+            }
+        }
+
+        async function createQuiz(quizData) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/quizzes`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(quizData)
+                });
+                
+                if (response.ok) {
+                    const newQuiz = await response.json();
+                    quizzes.push(newQuiz);
+                    renderQuizzes();
+                    updateDashboardStats();
+                    showNotification('Quiz created successfully', 'success');
+                    return newQuiz;
+                } else {
+                    throw new Error('Failed to create quiz');
+                }
+            } catch (error) {
+                console.error('Error creating quiz:', error);
+                // Add to local data if API fails
+                const newQuiz = {
+                    id: quizzes.length > 0 ? Math.max(...quizzes.map(q => q.id)) + 1 : 1,
+                    ...quizData
+                };
+                quizzes.push(newQuiz);
+                renderQuizzes();
+                updateDashboardStats();
+                showNotification('Quiz created (offline mode)', 'info');
+                return newQuiz;
+            }
+        }
+
+        async function updateQuiz(id, quizData) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/quizzes/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(quizData)
+                });
+                
+                if (response.ok) {
+                    const updatedQuiz = await response.json();
+                    const index = quizzes.findIndex(q => q.id === id);
+                    if (index !== -1) {
+                        quizzes[index] = updatedQuiz;
+                    }
+                    renderQuizzes();
+                    showNotification('Quiz updated successfully', 'success');
+                    return updatedQuiz;
+                } else {
+                    throw new Error('Failed to update quiz');
+                }
+            } catch (error) {
+                console.error('Error updating quiz:', error);
+                // Update local data if API fails
+                const index = quizzes.findIndex(q => q.id === id);
+                if (index !== -1) {
+                    quizzes[index] = { ...quizzes[index], ...quizData };
+                }
+                renderQuizzes();
+                showNotification('Quiz updated (offline mode)', 'info');
+                return quizzes[index];
+            }
+        }
+
+        async function deleteQuiz(id) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/quizzes/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    quizzes = quizzes.filter(q => q.id !== id);
+                    renderQuizzes();
+                    updateDashboardStats();
+                    showNotification('Quiz deleted successfully', 'success');
+                } else {
+                    throw new Error('Failed to delete quiz');
+                }
+            } catch (error) {
+                console.error('Error deleting quiz:', error);
+                // Delete from local data if API fails
+                quizzes = quizzes.filter(q => q.id !== id);
+                renderQuizzes();
+                updateDashboardStats();
+                showNotification('Quiz deleted (offline mode)', 'info');
+            }
+        }
+
+        // UI Rendering Functions
+        function updateDashboardStats() {
+            document.getElementById('totalStudents').textContent = students.length;
+            
+            const now = new Date();
+            const activeSessionsCount = sessions.filter(session => {
+                const startTime = new Date(session.start_time);
+                const endTime = new Date(startTime.getTime() + session.duration * 60000);
+                return now >= startTime && now <= endTime;
+            }).length;
+            document.getElementById('activeSessions').textContent = activeSessionsCount;
+            
+            document.getElementById('pendingQuizzes').textContent = quizzes.filter(q => 
+                q.status === 'draft' || !q.status
+            ).length;
+            
+            document.getElementById('pendingApprovals').textContent = 2; // Mock value
+        }
+
+        function renderSessions() {
+            const sessionsList = document.getElementById('sessionsList');
+            sessionsList.innerHTML = '';
+            
+            if (sessions.length === 0) {
+                sessionsList.innerHTML = '<p class="text-gray-500 text-center py-4">No sessions found. Create your first session!</p>';
+                return;
+            }
+            
+            sessions.forEach(session => {
+                const startTime = new Date(session.start_time);
+                const endTime = new Date(startTime.getTime() + session.duration * 60000);
+                const now = new Date();
+                
+                let status = 'Scheduled';
+                let statusClass = 'bg-blue-100 text-blue-800';
+                
+                if (now >= startTime && now <= endTime) {
+                    status = 'Active';
+                    statusClass = 'bg-green-100 text-green-800';
+                } else if (now > endTime) {
+                    status = 'Completed';
+                    statusClass = 'bg-gray-100 text-gray-800';
+                }
+                
+                const sessionElement = document.createElement('div');
+                sessionElement.className = 'border border-gray-200 rounded-lg p-4 hover:border-indigo-300 transition-colors';
+                sessionElement.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-gray-900">${session.name}</h3>
+                            <p class="text-gray-600 text-sm">${session.subject} • ${session.capacity} students capacity</p>
+                            <p class="text-indigo-600 text-sm font-medium">${formatDateTime(startTime)} - ${formatTime(endTime)}</p>
+                            ${session.description ? `<p class="text-gray-500 text-sm mt-1">${session.description}</p>` : ''}
+                        </div>
+                        <div class="flex items-center space-x-2 ml-4">
+                            <span class="${statusClass} px-2 py-1 rounded-full text-xs font-medium">${status}</span>
+                            <button class="text-indigo-600 hover:text-indigo-700 font-medium text-sm edit-session" data-id="${session.id}">Edit</button>
+                            <button class="text-red-600 hover:text-red-700 font-medium text-sm delete-session" data-id="${session.id}">Delete</button>
+                        </div>
+                    </div>
+                `;
+                
+                sessionsList.appendChild(sessionElement);
+            });
+            
+            // Add event listeners to edit and delete buttons
+            document.querySelectorAll('.edit-session').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const sessionId = parseInt(e.target.getAttribute('data-id'));
+                    openSessionModal(sessionId);
+                });
+            });
+            
+            document.querySelectorAll('.delete-session').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const sessionId = parseInt(e.target.getAttribute('data-id'));
+                    if (confirm('Are you sure you want to delete this session?')) {
+                        deleteSession(sessionId);
+                    }
+                });
+            });
+        }
+
+        function renderResources() {
+            const resourcesList = document.getElementById('resourcesList');
+            resourcesList.innerHTML = '';
+            
+            if (resources.length === 0) {
+                resourcesList.innerHTML = '<p class="text-gray-500 text-center py-4 col-span-2">No resources found. Upload your first resource!</p>';
+                return;
+            }
+            
+            resources.forEach(resource => {
+                let iconClass = 'fas fa-file';
+                let bgColor = 'bg-gray-100';
+                let textColor = 'text-gray-600';
+                
+                switch(resource.type) {
+                    case 'PDF':
+                        iconClass = 'fas fa-file-pdf';
+                        bgColor = 'bg-red-100';
+                        textColor = 'text-red-600';
+                        break;
+                    case 'DOC':
+                        iconClass = 'fas fa-file-word';
+                        bgColor = 'bg-blue-100';
+                        textColor = 'text-blue-600';
+                        break;
+                    case 'VIDEO':
+                        iconClass = 'fas fa-video';
+                        bgColor = 'bg-purple-100';
+                        textColor = 'text-purple-600';
+                        break;
+                    case 'SLIDES':
+                        iconClass = 'fas fa-presentation';
+                        bgColor = 'bg-orange-100';
+                        textColor = 'text-orange-600';
+                        break;
+                }
+                
+                const resourceElement = document.createElement('div');
+                resourceElement.className = 'border border-gray-200 rounded-lg p-4 hover:border-indigo-300 transition-colors';
+                resourceElement.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 ${bgColor} rounded-lg flex items-center justify-center">
+                            <i class="${iconClass} ${textColor} text-lg"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-medium text-gray-900">${resource.name}</h4>
+                            <p class="text-gray-600 text-sm">${resource.subject} • ${resource.type}</p>
+                            ${resource.description ? `<p class="text-gray-500 text-sm mt-1">${resource.description}</p>` : ''}
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="text-indigo-600 hover:text-indigo-700 font-medium text-sm edit-resource" data-id="${resource.id}">Edit</button>
+                            <button class="text-red-600 hover:text-red-700 font-medium text-sm delete-resource" data-id="${resource.id}">Delete</button>
+                        </div>
+                    </div>
+                `;
+                
+                resourcesList.appendChild(resourceElement);
+            });
+            
+            // Add event listeners to edit and delete buttons
+            document.querySelectorAll('.edit-resource').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const resourceId = parseInt(e.target.getAttribute('data-id'));
+                    openResourceModal(resourceId);
+                });
+            });
+            
+            document.querySelectorAll('.delete-resource').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const resourceId = parseInt(e.target.getAttribute('data-id'));
+                    if (confirm('Are you sure you want to delete this resource?')) {
+                        deleteResource(resourceId);
+                    }
+                });
+            });
+        }
+
+        function renderQuizzes() {
+            const quizzesList = document.getElementById('quizzesList');
+            quizzesList.innerHTML = '';
+            
+            if (quizzes.length === 0) {
+                quizzesList.innerHTML = '<p class="text-gray-500 text-center py-4">No quizzes found. Create your first quiz!</p>';
+                return;
+            }
+            
+            quizzes.forEach(quiz => {
+                let status = quiz.status || 'draft';
+                let statusText = status === 'published' ? 'Published' : 'Draft';
+                let statusClass = status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
+                
+                const quizElement = document.createElement('div');
+                quizElement.className = 'border border-gray-200 rounded-lg p-4 hover:border-indigo-300 transition-colors';
+                quizElement.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <div class="flex-1">
+                            <h4 class="font-medium text-gray-900">${quiz.name}</h4>
+                            <p class="text-gray-600 text-sm">${quiz.subject} • ${quiz.type}</p>
+                            ${quiz.description ? `<p class="text-gray-500 text-sm mt-1">${quiz.description}</p>` : ''}
+                        </div>
+                        <div class="flex items-center space-x-2 ml-4">
+                            <span class="${statusClass} px-2 py-1 rounded-full text-xs font-medium">${statusText}</span>
+                            <button class="text-indigo-600 hover:text-indigo-700 font-medium text-sm edit-quiz" data-id="${quiz.id}">Edit</button>
+                            <button class="text-red-600 hover:text-red-700 font-medium text-sm delete-quiz" data-id="${quiz.id}">Delete</button>
+                        </div>
+                    </div>
+                `;
+                
+                quizzesList.appendChild(quizElement);
+            });
+            
+            // Add event listeners to edit and delete buttons
+            document.querySelectorAll('.edit-quiz').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const quizId = parseInt(e.target.getAttribute('data-id'));
+                    openQuizModal(quizId);
+                });
+            });
+            
+            document.querySelectorAll('.delete-quiz').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const quizId = parseInt(e.target.getAttribute('data-id'));
+                    if (confirm('Are you sure you want to delete this quiz?')) {
+                        deleteQuiz(quizId);
+                    }
+                });
+            });
+        }
+
+        function renderStudents() {
+            const studentsList = document.getElementById('studentsList');
+            studentsList.innerHTML = '';
+            
+            // Show only first 5 students
+            const studentsToShow = students.slice(0, 5);
+            
+            studentsToShow.forEach(student => {
+                const studentElement = document.createElement('div');
+                studentElement.className = 'flex justify-between items-center py-2 border-b border-gray-100';
+                studentElement.innerHTML = `
+                    <div>
+                        <p class="font-medium text-gray-900">${student.name} ${student.surname}</p>
+                        <p class="text-gray-600 text-sm">Grade ${student.grade}</p>
+                    </div>
+                    <span class="text-indigo-600 font-bold">View</span>
+                `;
+                
+                studentsList.appendChild(studentElement);
+            });
+        }
+
+        function renderPendingApprovals() {
+            const pendingApprovalsList = document.getElementById('pendingApprovalsList');
+            pendingApprovalsList.innerHTML = '';
+            
+            // Mock pending approvals
+            const pendingApprovals = [
+                { id: 1, name: 'Emma Davis', request: 'Wants to join: Advanced Calculus' },
+                { id: 2, name: 'Alex Chen', request: 'Wants to join: Linear Algebra' }
+            ];
+            
+            pendingApprovals.forEach(approval => {
+                const approvalElement = document.createElement('div');
+                approvalElement.className = 'border border-gray-200 rounded-lg p-3';
+                approvalElement.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <p class="font-medium text-gray-900">${approval.name}</p>
+                            <p class="text-gray-600 text-sm">${approval.request}</p>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors approve-btn" data-id="${approval.id}">
+                            Approve
+                        </button>
+                        <button class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-3 py-1 rounded text-sm font-medium transition-colors decline-btn" data-id="${approval.id}">
+                            Decline
+                        </button>
+                    </div>
+                `;
+                
+                pendingApprovalsList.appendChild(approvalElement);
+            });
+            
+            // Add event listeners to approve and decline buttons
+            document.querySelectorAll('.approve-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const card = this.closest('.border');
+                    card.style.backgroundColor = '#f0fdf4';
+                    card.style.borderColor = '#22c55e';
+                    this.textContent = 'Approved';
+                    this.disabled = true;
+                    this.classList.remove('bg-green-500', 'hover:bg-green-600');
+                    this.classList.add('bg-gray-400');
+                    
+                    const declineBtn = card.querySelector('.decline-btn');
+                    if (declineBtn) declineBtn.style.display = 'none';
+                    
+                    showNotification('Request approved successfully', 'success');
+                });
+            });
+            
+            document.querySelectorAll('.decline-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const card = this.closest('.border');
+                    card.style.backgroundColor = '#fef2f2';
+                    card.style.borderColor = '#ef4444';
+                    const approveBtn = card.querySelector('.approve-btn');
+                    if (approveBtn) {
+                        approveBtn.textContent = 'Declined';
+                        approveBtn.disabled = true;
+                        approveBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
+                        approveBtn.classList.add('bg-gray-400');
+                    }
+                    this.style.display = 'none';
+                    
+                    showNotification('Request declined', 'info');
+                });
+            });
+        }
+
+        function populateSubjectDropdowns() {
+            const subjectDropdowns = [
+                document.getElementById('sessionSubject'),
+                document.getElementById('resourceSubject'),
+                document.getElementById('quizSubject')
+            ];
+            
+            subjectDropdowns.forEach(dropdown => {
+                if (dropdown) {
+                    // Clear existing options except the first one
+                    while (dropdown.options.length > 1) {
+                        dropdown.remove(1);
+                    }
+                    
+                    // Add subjects
+                    subjects.forEach(subject => {
+                        const option = document.createElement('option');
+                        option.value = subject.name;
+                        option.textContent = subject.name;
+                        dropdown.appendChild(option);
+                    });
+                }
+            });
+        }
+
+        // Modal Functions
+        function openSessionModal(sessionId = null) {
+            const modal = document.getElementById('sessionModal');
+            const title = document.getElementById('sessionModalTitle');
+            const form = document.getElementById('sessionForm');
+            
+            if (sessionId) {
+                // Edit mode
+                title.textContent = 'Edit Study Session';
+                const session = sessions.find(s => s.id === sessionId);
+                if (session) {
+                    document.getElementById('sessionId').value = session.id;
+                    document.getElementById('sessionName').value = session.name;
+                    document.getElementById('sessionSubject').value = session.subject;
+                    document.getElementById('sessionDescription').value = session.description || '';
+                    document.getElementById('sessionCapacity').value = session.capacity;
+                    document.getElementById('sessionDuration').value = session.duration;
+                    
+                    // Format datetime for input
+                    const startTime = new Date(session.start_time);
+                    const formattedDate = startTime.toISOString().slice(0, 16);
+                    document.getElementById('sessionStartTime').value = formattedDate;
+                }
+            } else {
+                // Create mode
+                title.textContent = 'Create Study Session';
+                form.reset();
+                document.getElementById('sessionId').value = '';
+                
+                // Set default start time to next hour
+                const nextHour = new Date();
+                nextHour.setHours(nextHour.getHours() + 1);
+                nextHour.setMinutes(0);
+                nextHour.setSeconds(0);
+                document.getElementById('sessionStartTime').value = nextHour.toISOString().slice(0, 16);
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        function openResourceModal(resourceId = null) {
+            const modal = document.getElementById('resourceModal');
+            const title = document.getElementById('resourceModalTitle');
+            const form = document.getElementById('resourceForm');
+            
+            if (resourceId) {
+                // Edit mode
+                title.textContent = 'Edit Resource';
+                const resource = resources.find(r => r.id === resourceId);
+                if (resource) {
+                    document.getElementById('resourceId').value = resource.id;
+                    document.getElementById('resourceName').value = resource.name;
+                    document.getElementById('resourceSubject').value = resource.subject;
+                    document.getElementById('resourceType').value = resource.type;
+                    document.getElementById('resourceDescription').value = resource.description || '';
+                    document.getElementById('resourceFile').value = resource.file_path;
+                }
+            } else {
+                // Create mode
+                title.textContent = 'Upload Resource';
+                form.reset();
+                document.getElementById('resourceId').value = '';
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        function openQuizModal(quizId = null) {
+            const modal = document.getElementById('quizModal');
+            const title = document.getElementById('quizModalTitle');
+            const form = document.getElementById('quizForm');
+            
+            if (quizId) {
+                // Edit mode
+                title.textContent = 'Edit Quiz';
+                const quiz = quizzes.find(q => q.id === quizId);
+                if (quiz) {
+                    document.getElementById('quizId').value = quiz.id;
+                    document.getElementById('quizName').value = quiz.name;
+                    document.getElementById('quizSubject').value = quiz.subject;
+                    document.getElementById('quizType').value = quiz.type;
+                    document.getElementById('quizDescription').value = quiz.description || '';
+                    document.getElementById('quizFile').value = quiz.file_path;
+                }
+            } else {
+                // Create mode
+                title.textContent = 'Create Quiz';
+                form.reset();
+                document.getElementById('quizId').value = '';
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        // Form Handlers
+        async function handleSessionSubmit(e) {
+            e.preventDefault();
+            
+            const sessionId = document.getElementById('sessionId').value;
+            const sessionData = {
+                name: document.getElementById('sessionName').value,
+                subject: document.getElementById('sessionSubject').value,
+                description: document.getElementById('sessionDescription').value,
+                capacity: parseInt(document.getElementById('sessionCapacity').value),
+                duration: parseInt(document.getElementById('sessionDuration').value),
+                start_time: document.getElementById('sessionStartTime').value,
+                hoster: currentTeacher.id
+            };
+            
+            try {
+                if (sessionId) {
+                    await updateSession(parseInt(sessionId), sessionData);
+                } else {
+                    await createSession(sessionData);
+                }
+                
+                sessionModal.style.display = 'none';
+            } catch (error) {
+                console.error('Error saving session:', error);
+                showNotification('Failed to save session', 'error');
+            }
+        }
+
+        async function handleResourceSubmit(e) {
+            e.preventDefault();
+            
+            const resourceId = document.getElementById('resourceId').value;
+            const resourceData = {
+                name: document.getElementById('resourceName').value,
+                subject: document.getElementById('resourceSubject').value,
+                type: document.getElementById('resourceType').value,
+                description: document.getElementById('resourceDescription').value,
+                file_path: document.getElementById('resourceFile').value,
+                upload_by: currentTeacher.id
+            };
+            
+            try {
+                if (resourceId) {
+                    await updateResource(parseInt(resourceId), resourceData);
+                } else {
+                    await createResource(resourceData);
+                }
+                
+                resourceModal.style.display = 'none';
+            } catch (error) {
+                console.error('Error saving resource:', error);
+                showNotification('Failed to save resource', 'error');
+            }
+        }
+
+        async function handleQuizSubmit(e) {
+            e.preventDefault();
+            
+            const quizId = document.getElementById('quizId').value;
+            const quizData = {
+                name: document.getElementById('quizName').value,
+                subject: document.getElementById('quizSubject').value,
+                type: document.getElementById('quizType').value,
+                description: document.getElementById('quizDescription').value,
+                file_path: document.getElementById('quizFile').value,
+                upload_by: currentTeacher.id
+            };
+            
+            try {
+                if (quizId) {
+                    await updateQuiz(parseInt(quizId), quizData);
+                } else {
+                    await createQuiz(quizData);
+                }
+                
+                quizModal.style.display = 'none';
+            } catch (error) {
+                console.error('Error saving quiz:', error);
+                showNotification('Failed to save quiz', 'error');
+            }
+        }
+
+        // Utility Functions
+        function formatDateTime(date) {
+            return date.toLocaleString('en-US', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit'
+            });
+        }
+
+        function formatTime(date) {
+            return date.toLocaleString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit'
+            });
+        }
+
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
+                type === 'success' ? 'bg-green-500 text-white' :
+                type === 'error' ? 'bg-red-500 text-white' :
+                type === 'warning' ? 'bg-yellow-500 text-white' :
+                'bg-indigo-500 text-white'
+            }`;
+            notification.textContent = message;
+            
+            // Add to page
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Add hover effects to cards
+        document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.card-hover').forEach(card => {
                 card.addEventListener('mouseenter', function() {
-                    this.classList.add('orange-glow');
+                    this.classList.add('purple-glow');
                 });
                 
                 card.addEventListener('mouseleave', function() {
-                    this.classList.remove('orange-glow');
+                    this.classList.remove('purple-glow');
                 });
             });
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'984ddb9c0496f4a0',t:'MTc1ODgzODI5MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
